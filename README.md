@@ -29,5 +29,5 @@
 * It seems obvious that handicap accessible locations can be represented as a graph. Useful, time-tested graphing algorithms like Dijkstra's, DFS, and BFS might help us plot routes very effectively. Additionally we might store locations in a hashtable (localStorage) for quick lookup to improve the load time of our application. In terms of the interface, we might use backbone.js to efficiently scrape accessibility data and display it using the frontend MV structure. For more long term data persistence, such as a login system, we might use php phar's blowfish algorithm for hashing and salt generation, with a MySQL backend (or SQLite for Heroku deployment). 
 
 ### 7. Markups 
-https://github.com/tuftsdev/comp20-team26/blob/master/accessibility_mockups.bmml
-https://github.com/tuftsdev/comp20-team26/blob/master/accessibility_mockups.pdf
+* https://github.com/tuftsdev/comp20-team26/blob/master/accessibility_mockups.bmml
+* https://github.com/tuftsdev/comp20-team26/blob/master/accessibility_mockups.pdf
