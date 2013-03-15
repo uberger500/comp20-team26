@@ -7,7 +7,7 @@
 - Vrettos, Charlie
 
 ### 1. Title
-* Accessibilibuddy
+* AccessibiliBuddy
 
 ### 2. Problem Statement
 * For persons in wheelchairs or with otherwise impaired movement, accessibility is one of the most important factors in deciding a path to get from one location to another. However, for the estimated 1.6 million Americans alone who are in wheelchairs there is no dynamic application which actively interacts with its client in order to maximize accessibility in a path, location, or city-wide context.
@@ -22,11 +22,12 @@
 4.	Data storage in the clouds- stores comments from past customers about restaurants, stores, and public facilities. Comments would include information about flexibility with wheel chair seating, response to service dogs, treatment of customers with disabilities, and other issues important to that community.
 5.	Front-end framework including Bootstrap- we will use Bootstrap to ensure a clean responsive design. 
 
-
 ### 5. Data
-* foo
+* Geolocation data will be collected. User ratings and comments will be collected and added to the database. Public transportation locational data and taxi data will be required. 
 
 ### 6. Algorithms & special techniques necessary
 * It seems obvious that handicap accessible locations can be represented as a graph. Useful, time-tested graphing algorithms like Dijkstra's, DFS, and BFS might help us plot routes very effectively. Additionally we might store locations in a hashtable (localStorage) for quick lookup to improve the load time of our application. In terms of the interface, we might use backbone.js to efficiently scrape accessibility data and display it using the frontend MV structure. For more long term data persistence, such as a login system, we might use php phar's blowfish algorithm for hashing and salt generation, with a MySQL backend (or SQLite for Heroku deployment). 
 
-### 7. Markups
+### 7. Markups 
+https://github.com/tuftsdev/comp20-team26/blob/master/accessibility_mockups.bmml
+https://github.com/tuftsdev/comp20-team26/blob/master/accessibility_mockups.pdf
