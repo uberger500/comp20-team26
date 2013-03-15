@@ -16,7 +16,12 @@
 * foo
 
 ### 4. Features
-* foo
+1.  Geolocation- finds where users are and how close they are to their desired destination. 
+2.	Reporting with charts and graphs- presents data on scaled values of destination convenience and accessibility. 
+3.	Custom search- allows user to search for restaurants, stores, and public facilities (e.g., Handicap accessible restrooms).
+4.	Data storage in the clouds- stores comments from past customers about restaurants, stores, and public facilities. Comments would include information about flexibility with wheel chair seating, response to service dogs, treatment of customers with disabilities, and other issues important to that community.
+5.	Front-end framework including Bootstrap- we will use Bootstrap to ensure a clean responsive design. 
+
 
 ### 5. Data
 * foo
