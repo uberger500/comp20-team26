@@ -13,7 +13,7 @@
 * For persons in wheelchairs or with otherwise impaired movement, accessibility is one of the most important factors in deciding a path to get from one location to another. However, for the estimated 1.6 million Americans alone who are in wheelchairs there is no dynamic application which actively interacts with its client in order to maximize accessibility in a path, location, or city-wide context.
 
 ### 3. How do you solve the problem?
-* foo
+* We will create a service that allows users to search their vicinity for handicapped accessible locations and attractions and to find handicapped accessible routes to those locations. These attractions will have accessibility ratings and reviews by other users that have visited them. Businesses will be encouraged to become more disability friendly in order to be added to AccessibiliBuddy’s database with good reviews to interest more potential customers. Different paths (handicapped accessible taxis, public transportation, crosswalk navigation, etc) to the locations will be shown with estimated time required to arrive, estimated cost, and unique accessibility ratings for the individual paths.
 
 ### 4. Features
 1.  Geolocation- finds where users are and how close they are to their desired destination. 
