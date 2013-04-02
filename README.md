@@ -31,3 +31,6 @@
 ### 7. Markups 
 * https://github.com/tuftsdev/comp20-team26/blob/master/accessibility_mockups.bmml
 * https://github.com/tuftsdev/comp20-team26/blob/master/accessibility_mockups.pdf
+
+#Comments by Ming
+* This is a potential blockbuster idea.
