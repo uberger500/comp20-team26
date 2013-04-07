@@ -21,11 +21,11 @@
 3. Chat with others on your flight (or send emails/SMS for the requirement).
 4. Data storage in the clouds for all your past flights, miles traveled, etc connected to your login account.
 5. Reporting with charts and graphs; charts about your flyer history and trivia.game scores.
-6. Geolocation for detecting flights around you
+6. Geolocation for detecting airport
 7. Front-end framework
 
 ### 5. Data
-* Trivia/facts collected from http://www.50states.com/facts/ . Flight info (location, speed, altitude, etc) from http://www.wolframalpha.com/ api. Airplane info from http://www.http://flightaware.com/ api. The flight number and sometimes geolocation of the user is collected. The flights flown by a user will be stored as data connected to their login account.
+* Trivia/facts collected from http://www.50states.com/facts/ . Flight info (location, speed, altitude, etc) from http://www.wolframalpha.com/ api. Airplane info from http://www.flightaware.com/ api. The flight number and sometimes geolocation of the user is collected. The flights flown by a user will be stored as data connected to their login account.
 
 ### 6. Algorithms & special techniques necessary
 * Techniques involving google maps API like drawing polylines of flight paths, identifying which state the user is above according to longitude and latitude to determine the facts/trivia to be shown.
