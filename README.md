@@ -7,7 +7,7 @@
 - Vrettos, Charlie
 
 ### 1. Title
-* ???
+* WingMan
 
 ### 2. Problem Statement
 * Have you ever been bored on a plane ride before? We know we have and we have the solution for you. As internet is becoming more available on regular commercial flights, and while almost everyone travels with a electronic device with internet capabilities, there still isn't a product that includes all the entertainment needs that a flyer desires.
