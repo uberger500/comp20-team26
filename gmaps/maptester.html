@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Map Tester</title>
+	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true&amp;libraries=places"></script>
+	<script src="gmap.js"></script>
+	<link rel="stylesheet" href="maptester.css" />
+</head>
+<body onload="init()">
+	<div id="header"><h2>Refresh Timer</h2><span id = "timer"></span></div>
+	<div id = "leftbox">
+<span class = "bolds">United Airlines 768 (4/8/13) <br/>Test coordinates:</span><br/><br/>
+<li>42.76N, 80.45W at 3:58 PM est = 42.76, -80.45</li>
+<li>42.78N, 79.71W at 4:03 PM est = 42.78, -79.71</li>
+<li>42.8N, 78.2W at 4:09 PM est = 42.8, -78.2</li>
+<li>42.8N, 77.21W at 4:14 PM est = 42.8, -77.21</li>
+<li>42.79N, 76.11W at 4:21 PM est = 42.79, -76.11</li>
+<li>42.78N, 75.36W at 4:25 PM est = 42.78, -75.36</li>
+<li>42.76N, 74.22W at 4:30 PM est = 42.76, -74.22</li>
+<li>42.68N, 73.12W at 4:38 PM est = 42.68, -73.13</li><br/>
+
+- Updates after 5 seconds (normally 5-10 mins)<br/>
+- Detects either Canada or USA (more countries later)<br/>
+- Detects specific address if USA<br/>
+- Next: Detecting just the state if USA for corresponding facts<br/><br/>
+
+<span class = "bolds">Loading location...</span><br/><br/>
+	
+	
+	
+	</div>
+	<div id="map_canvas"></div>
+</body>
+</html>
