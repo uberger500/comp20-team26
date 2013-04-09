@@ -72,10 +72,13 @@ function draw_marker(tally){
 	myLat = test_plane[tally][0];
 	myLon = test_plane[tally][1];
 	
+	plane = 'plane.png';	
+	
 	myLoc = new google.maps.LatLng(myLat, myLon);
 	map.setCenter(myLoc);
 	meMarker = new google.maps.Marker({
 		position: myLoc,
+		icon: plane,
 	});
 	meMarker.setMap(map);	
 	
