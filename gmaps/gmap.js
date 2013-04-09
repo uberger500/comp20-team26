@@ -10,6 +10,8 @@ var myLng = 0;
 var myLoc = new google.maps.LatLng(0,0);
 var request = new XMLHttpRequest();
 
+// ========================================================================
+
 // United Airlines 768 
 // 42.76N, 80.45W at 3:58 PM est = 42.76, -80.45
 // 42.78N, 79.71W at 4:03 PM est = 42.78, -79.71
@@ -21,27 +23,96 @@ var request = new XMLHttpRequest();
 // 42.68N, 73.12W at 4:38 PM est = 42.68, -73.13
 // live data @ http://www.flightradar24.com/
 
-//x0 = [42.75, -80.45];
-x0 = [42.76, -80.45];
-x1 = [42.78, -79.71];
-x2 = [42.8, -78.2];
-x3 = [42.8, -77.21];
-x4 = [42.79, -76.11];
-x5 = [42.78, -75.36];
-x6 = [42.76, -74.22];
-x7 = [42.68, -73.12];
+test_plane1 = [];
+test_plane1.push([42.76, -80.45]);
+test_plane1.push([42.78, -79.71]);
+test_plane1.push([42.8, -78.2]);
+test_plane1.push([42.8, -77.21]);
+test_plane1.push([42.79, -76.11]);
+test_plane1.push([42.78, -75.36]);
+test_plane1.push([42.76, -74.22]);
+test_plane1.push([42.68, -73.12]);
 
-test_plane = [x0, x1, x2, x3, x4, x5, x6, x7];
-//test_plane = [x6];
+function plane1(){
+	plane = test_plane1;
+	init();
+}
 
+// ========================================================================
+//American Airlines 1885
+
+test_plane2 = [];
+test_plane2.push([30.2028, -97.6682]);	// 30.2028N, 97.6682W
+test_plane2.push([30.16, -97.75]);
+test_plane2.push([30.66, -97.94]);
+test_plane2.push([31.23, -98.07]);
+test_plane2.push([31.78, -97.82]);
+test_plane2.push([32.42, -97.53]);
+test_plane2.push([32.7, -97.23]);
+test_plane2.push([33.13, -97.13]);
+test_plane2.push([32.8969, -97.0381]);
+
+function plane2(){
+	plane = test_plane2;
+	init();
+}
+
+// ========================================================================
+
+//Delta 818
+
+test_plane3 = [];
+test_plane3.push([44.88, -93.22]);
+test_plane3.push([45.02, -93.14]);
+test_plane3.push([45.31, -92.16]);
+test_plane3.push([45.24, -90.96]);
+test_plane3.push([45.18, -90.16]);
+test_plane3.push([45.09, -89.13]);
+test_plane3.push([45.01, -88.16]);
+test_plane3.push([44.88, -86.94]);
+test_plane3.push([44.75, -85.98]);
+test_plane3.push([44.68, -85.17]);
+test_plane3.push([44.53, -84.03]);
+test_plane3.push([44.41, -83.15]);
+test_plane3.push([44.17, -82.07]);
+test_plane3.push([43.97, -81.12]);
+test_plane3.push([43.77, -80.13]);
+test_plane3.push([43.6, -79.2]);
+test_plane3.push([43.47, -78.24]);
+test_plane3.push([43.3, -77.2]);
+test_plane3.push([43.19, -76.35]);
+test_plane3.push([42.95, -75.36]);
+test_plane3.push([42.77, -74.55]);
+test_plane3.push([42.71, -73.44]);
+test_plane3.push([42.65, -72.5]);
+test_plane3.push([42.59, -72.18]);
+test_plane3.push([42.52, -71.65]);
+test_plane3.push([42.48, -71.34]);
+test_plane3.push([42.45, -71.05]);
+test_plane3.push([42.38, -70.9]);
+test_plane3.push([42.33, -70.82]);
+test_plane3.push([42.28, -70.83]);
+test_plane3.push([42.27, -70.88]);
+test_plane3.push([42.42, -70.93]);
+test_plane3.push([42.33, -70.95]);
+test_plane3.push([42.33, -70.97]);
+test_plane3.push([42.35, -70.99]);
+test_plane3.push([42.3631, -71.0064]);
+
+function plane3(){
+	plane = test_plane3;
+	init();
+}
+
+// ========================================================================
 var tally = 0;
 
 function init(){
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-
+	document.getElementById("locs").innerHTML="";
 	draw_marker(0);
-
-	count = 5;
+	tally = 0;
+	count = 3;
 	counter=setInterval(timer, 1000);
 }
 
@@ -49,16 +120,16 @@ function timer(){
 	count = count-1;
 	if (count <= 0){
 		clearInterval(counter);
-		console.log("reseting timer, updating plane coords");
+//		console.log("reseting timer, updating plane coords");
 		tally++;
-		if (tally >= test_plane.length){
+		if (tally >= plane.length){
 			document.getElementById("timer").innerHTML="COMPLETED ALL DATA POINTS";	
-			console.log("COMPLETED ALL DATA POINTS");
+//			console.log("COMPLETED ALL DATA POINTS");
 			return;
 		}
 		else{
 			draw_marker(tally);
-			count = 5;
+			count = 3;
 			counter = setInterval(timer, 1000);
 		}
 	}
@@ -67,18 +138,18 @@ function timer(){
 
 function draw_marker(tally){
 
-	console.log(tally+1 + " of " + test_plane.length);
+//	console.log(tally+1 + " of " + plane.length);
 
-	myLat = test_plane[tally][0];
-	myLon = test_plane[tally][1];
+	myLat = plane[tally][0];
+	myLon = plane[tally][1];
 	
-	plane = 'planesmall3.png';	
+	planepic = 'images/planesmall3.png';	
 	
 	myLoc = new google.maps.LatLng(myLat, myLon);
 	map.setCenter(myLoc);
 	meMarker = new google.maps.Marker({
 		position: myLoc,
-		icon: plane,
+		icon: planepic,
 	});
 	meMarker.setMap(map);	
 	
