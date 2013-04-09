@@ -117,18 +117,20 @@ function find_state(myLoc){
 						var x = y.long_name;
 						if (x == "Canada"){
 							newLocation = "Canada";
+							document.getElementById("facts").innerHTML="<h3>Current facts:</h3><li>Cold</li><li>Maple Syrup</li><li>Lots of moose</li>";	
 						}					
 						else if (x == "United States"){
 							newLocation = "United States";
 							for (i = 0; i < parsed_response.results.length; i++) {
 								myAddress[i] = parsed_response.results[i].formatted_address;
 							}
-							newLocation = "USA: " + myAddress[0];							
+							newLocation = "USA: " + myAddress[0];	
+							document.getElementById("facts").innerHTML="<h3>Current facts:</h3><li>Lots of McDonalds</li><li>Lots of WalMarts</li>";														
 						}
 					}
 				
 				}
-				document.getElementById("leftbox").innerHTML+="<li>" + newLocation;	
+				document.getElementById("locs").innerHTML+="<li>" + newLocation;	
 			}
 		}
 		catch(error) {
