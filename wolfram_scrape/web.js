@@ -89,6 +89,7 @@ request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=PGPETX-U
 			//finaldata['speed'] = "552 mpg (miles per hour)"
 			//finaldata['position'] = "46.02N, 64W" 
 			//finaldata['time'] = Current information (2:40 am EDT)
+			
 				// Still need to convert coordinates into google maps acceptible coords
 				// 		making the south and west degrees negative
 				// Still need to clean up distance & speed into pure numbers
@@ -117,12 +118,45 @@ request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=PGPETX-U
 					flagged = true; //end
 				}
 			}
-		
 			finaldata['altitude'] = parseInt(finaldata['altitude']);
 
 	// does mph turn to kilometers when flying over canada? would mess up parseint
 	// also feet to meters in altitude
 	// standardize query ^^?
+
+			//Still need to turn coordinates like 46.02N, 64W to 4.02, -64
+			
+		var coords = finaldata['position'].split(', ');
+		var lat = coords[0];	
+		var lon = coords[1];
+	
+		var directionindex = lat.indexOf("N");
+	
+		//LATITUDE CONVERSION
+		if (directionindex != -1){ //if string contains letter N
+			//north: make it positive int
+			finaldata['latitude'] = parseFloat(lat);
+		}
+		else{ 
+			directionindex = lat.indexOf("S");
+			if (directionindex != -1){
+				//south: make it a negative integer
+				finaldata['latitude'] = parseFloat(lat)*-1;
+			}
+		}
+		// LONGITUDE CONVERSION
+		directionindex = lon.indexOf("W");
+		if (directionindex != -1){
+			//west: make it a negative integer
+			finaldata['longitude'] = parseFloat(lon)*-1;
+		}
+		else{
+			directionindex = lon.indexOf("E");
+			//east: positive integer
+			if (directionindex != -1){
+				finaldata['longitude'] = parseFloat(lon);
+			}
+		}
 
 			console.dir(finaldata);
 		}
