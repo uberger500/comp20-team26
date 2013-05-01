@@ -47,7 +47,7 @@ function findnearbyplanes(){
 				if (JSON.stringify(data).indexOf('flight') == -1){ //if theres no substring flight, no flights found
 				//if (data == "{'error1'}" || data == "{'error2'}" || data == "{'error3'}" || data == "{'error4'}" || data == "[]" || data == "[ ]"){
 					document.getElementById("status").innerHTML += "Cound not find any flights above you";
-					alert(data);
+//					alert(data);
 				}
 				else{
 					// now split results into array of strings of flights
