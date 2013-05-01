@@ -10,16 +10,15 @@ var myLng = 0;
 var myLoc = new google.maps.LatLng(0,0);
 var request = new XMLHttpRequest();
 
-// ========================================================================
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
-function geo(){
-
-	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-
+function geo(){ //draw the map
+	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions); 
 }
 
-function findnearbyplanes(){
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
+function findnearbyplanes(){
 
 	if (navigator.geolocation) {
 		document.getElementById("status").innerHTML = "Attempting geolocation <br/>";
@@ -46,12 +45,11 @@ function findnearbyplanes(){
 				// data comes back as an array of flight strings
 				if (JSON.stringify(data).indexOf('flight') == -1){ //if theres no substring flight, no flights found
 				//if (data == "{'error1'}" || data == "{'error2'}" || data == "{'error3'}" || data == "{'error4'}" || data == "[]" || data == "[ ]"){
-					document.getElementById("status").innerHTML += "Cound not find any flights above you";
+					document.getElementById("status").innerHTML += "Cound not find any flights around you";
 //					alert(data);
 				}
 				else{
 					// now split results into array of strings of flights
-
 					jsondata = JSON.parse(data);
 						
 					// now remove duplicate flights from the list; they sometimes show up twice
@@ -60,10 +58,17 @@ function findnearbyplanes(){
 						if($.inArray(el, cleanjsondata) === -1) cleanjsondata.push(el);
 					});
 
-					document.getElementById("status").innerHTML += "These planes are above you: <br/>";
-					for (var i = 0; i < cleanjsondata.length; i++){
-						document.getElementById("status").innerHTML += cleanjsondata[i] + "<br>";
+					document.getElementById("status").innerHTML += "These planes are near you: <br/>";
+					
+					//put all nearby planes in a drop down form
+					formstring = "<form action=''><select name='flights'>";
+					for (var j = 0; j < cleanjsondata.length; j++){
+						var formoption = "<option value = '" + cleanjsondata[j] + "'>" + cleanjsondata[j] + "</option>";     
+						formstring += formoption;
 					}
+					formstring += "</select></form>";
+					document.getElementById("status").innerHTML += formstring;
+					
 				}
 			});			
 		});	
@@ -71,5 +76,10 @@ function findnearbyplanes(){
 	else {
 		document.getElementById("status").innerHTML = "Geolocation not supported";
 	}
+}
 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+function hit(){
+	console.log("hit");
 }

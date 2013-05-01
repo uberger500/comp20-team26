@@ -108,7 +108,7 @@ app.get('/nearbyplanes.json', function(request, res) {
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
 
-function testflight(){
+function testflight(){ // QUERY ONLY WORKS SERVICE SIDE, CAN'T BE RUN IN JAVASCRIPT ALONE
 
 // CHANGE THIS QUERY FOR DIFFERENT FLIGHTS
 query = "spirit+airlines+flight+451";
