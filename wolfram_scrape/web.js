@@ -31,10 +31,66 @@ app.get('/', function(request, response) {
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
+// CHECK IF INPUT FLIGHT IS VALID AND ON WOLFRAM
+app.get('/checkflight', function(req, res) {
+	res.header("Access-Control-Allow-Origin", "*");		//fix this
+  	res.header("Access-Control-Allow-Headers", "X-Requested-With");
+	res.set('Content-Type', 'text/html');
+
+
+// ALSO NEED TO SANITIZE INPUT******
+
+
+	params = "format=plaintext";
+	var args = JSON.parse(JSON.stringify(req.query));
+	//query should be something like .../checkflight?flight=american+airlines+flight+1234
+	var flight = args.flight;
+	//flight will now be "american+airlines+flight+1234"
+	
+	var request = require('request');
+	request('http://api.wolframalpha.com/v2/query?input=' + flight + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
+		if (!error && response.statusCode == 200) {
+			if (response.body != null){
+				var parseString = require('xml2js').parseString; //parse xml string
+				parseString(body, function(err, result){
+					jsonresult = JSON.stringify(result);	//parsed xml to string
+//					console.dir(jsonresult);					
+					jsonobj = JSON.parse(jsonresult);		//parsed string to json
+					if (jsonobj.queryresult.$.success == 'true' && jsonobj.queryresult.$.error == 'false'){ //if successful query
+						// if the plantext contains (today) or (yesterday) or (tomorrow) 
+						// they will contain these if they are ongoing or just landed or about to depart
+						// therefore if the user makes a typo they won't get stuck with an old but valid flight
+						var responsestring = JSON.stringify(jsonobj.queryresult);
+						if (responsestring.indexOf("(today)") != -1 || responsestring.indexOf("(yesterday)") != -1 || responsestring.indexOf("(tomorrow)") != -1){
+							res.send("valid flight");
+						}
+						else res.send("invalid flight");
+					}
+					else res.send("invalid flight");
+				});
+			}
+			else res.send("invalid flight");			
+		}
+		else res.send("invalid flight");	
+	});
+});
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+
+
+
+// Next API to code: If the input flight or chosen flight is valid, it must be POSTed to the user's account and data needs to start being collected
+
+
+
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
 // FIND NEARBY PLANES, PASSED USER LOCATION
 app.get('/nearbyplanes.json', function(request, res) {
-	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Origin", "*");		//fix this
   	res.header("Access-Control-Allow-Headers", "X-Requested-With");
   	
 	res.set('Content-Type', 'text/json');
@@ -61,7 +117,7 @@ app.get('/nearbyplanes.json', function(request, res) {
 					jsonresult = JSON.stringify(result);	//parsed xml to string
 					console.dir(jsonresult);
 					jsonobj = JSON.parse(jsonresult);		//parsed string to json
-					if (jsonobj.queryresult.$.success == 'true'){ //if successful query
+					if (jsonobj.queryresult.$.success == 'true' && jsonobj.queryresult.$.error == 'false'){ //if successful query
 						if (jsonobj.queryresult.pod[0].subpod[0].plaintext != "" && jsonobj.queryresult.pod[0].subpod[0].plaintext != "(data not available)"){		//if not blank and if the "data not available" response isnt sent
 							console.dir("plaintext not blank and not unavailable");
 							//now parse the plantext for all the planes							
@@ -124,7 +180,7 @@ params = "includepodid=FlightProperties:FlightData&format=plaintext";
 			jsonobj = JSON.parse(jsonresult);
 
 			// need more if statements for responses with missing results
-			if (jsonobj.queryresult.$.success == 'true'){
+			if (jsonobj.queryresult.$.success == 'true' && jsonobj.queryresult.$.error == 'false'){
 		
 				var roughdata = JSON.stringify(jsonobj.queryresult.pod[0].subpod[0].plaintext[0]);
 				// currently format like 'altitude | 37000 feet  (7 miles)\nposition | 45.67°N, 64.72°W\nground speed | 541 mph  (miles per hour)\nheading | 54°  (degrees)  (NE)\ndistance traveled | 2692 miles'

@@ -79,7 +79,3 @@ function findnearbyplanes(){
 }
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
-
-function hit(){
-	console.log("hit");
-}
