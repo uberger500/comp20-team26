@@ -90,7 +90,7 @@ app.post(API_PREFIX + '/user/login', function(request, response) {
 									}
 							});
 						} else {
-							response.json({success: true, data: session.token});
+							response.json({success: true, user: user, token: session.token});
 						}
 					});
 				}
@@ -112,13 +112,45 @@ app.post(API_PREFIX + '/user/logout', function(request, response) {
 
 app.post(API_PREFIX + '/user/delete', function(request, response) {
 	var user_id = request.session.user;
-	models.User.findOneAndRemove({_id: user_id}, function(err, user) {
+	models.User.findById(user_id, function(err, user) {
 		if (err || !user) {
 			response.json({success: false, error: 'User not found for deletion'});
 		} else {
 			models.Session.remove({user: user_id}).exec();
 			response.json({success: true});
 		}
+	});
+});
+
+app.post(API_PREFIX + '/user/addflight', function(request, response) {
+	var flight = request.param('flight');
+	var user_id = request.session.user;
+	models.User.findByIdAndUpdate(user_id, {$addToSet: {flight_numbers: flight}}, function(err, user) {
+		if (err || !user) {
+			response.json({success: false, error: 'Error saving user data'});
+		} else {
+			response.json({success: true});
+		}
+	});
+});
+
+app.post(API_PREFIX + '/user/update', function(request, response) {
+	var user_id = request.session.user;
+	models.User.findById(user_id, function(err, user) {
+		var properties = ['total_flights', 'total_miles', 'average_speed', 'average_altitude', 'number_of_states'];
+		for (var i = 0; i < properties.length; i++) {
+			var new_val = request.param(properties[i]);
+			if (new_val) {
+				user[properties[i]] = new_val;
+			}
+		}
+		user.save(function(err) {
+			if (err) {
+				response.json({success: false, error: 'Error saving user data'});
+			} else {
+				response.json({success: true});
+			}
+		});
 	});
 });
 
