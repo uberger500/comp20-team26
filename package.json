@@ -2,8 +2,10 @@
   "name": "node-example",
   "version": "0.0.1",
   "dependencies": {
-    "express": "2.5.x",
-    "mongodb": "1.1.x"
+    "express": "3.x",
+    "mongodb": "1.1.x",
+    "mongoose": "3.6.x",
+    "bcrypt": "0.7.x"
   },
   "engines": {
     "node": "0.8.x",
