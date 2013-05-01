@@ -27,15 +27,15 @@ app.get('/secret', function(request, response) {
 
 // Start API endpoints
 
-var API_PREFIX = '/api';
+var API_PREFIX = '/api'; // Used so we don't accidentally get static resources (HTML, css, js, etc.)
 
 app.all(API_PREFIX + '/*', function(request, response, next) {
-	response.get("Access-Control-Allow-Origin", "*");
-	response.get("Access-Control-Allow-Headers", "X-Requested-With");
+	response.header("Access-Control-Allow-Origin", "*");
+	response.header("Access-Control-Allow-Headers", "X-Requested-With");
 
 	// Check for token
-	if (request.path == API_PREFIX + '/login' ||
-		request.path == API_PREFIX + '/create') {
+	if (request.path == API_PREFIX + '/user/login' ||
+		request.path == API_PREFIX + '/user/create') {
 		next();
 	} else {
 		models.Session.findOne({token: request.param('token')}, function(err, session) {
@@ -86,11 +86,11 @@ app.post(API_PREFIX + '/user/login', function(request, response) {
 									if (err || !session) {
 										response.json({success: false, error: 'Could not create token'});
 									} else {
-										response.json({success: true, data: session.token});
+										response.json({success: true, user: user, token: session.token});
 									}
 							});
 						} else {
-							response.json({success: true, data: session.token});
+							response.json({success: true, user: user, token: session.token});
 						}
 					});
 				}
@@ -112,7 +112,7 @@ app.post(API_PREFIX + '/user/logout', function(request, response) {
 
 app.post(API_PREFIX + '/user/delete', function(request, response) {
 	var user_id = request.session.user;
-	models.User.findOneAndRemove({_id: user_id}, function(err, user) {
+	models.User.findById(user_id, function(err, user) {
 		if (err || !user) {
 			response.json({success: false, error: 'User not found for deletion'});
 		} else {
@@ -122,13 +122,62 @@ app.post(API_PREFIX + '/user/delete', function(request, response) {
 	});
 });
 
+app.post(API_PREFIX + '/user/addflight', function(request, response) {
+	var flight = request.param('flight');
+	var user_id = request.session.user;
+	models.User.findByIdAndUpdate(user_id, {$addToSet: {flight_numbers: flight}}, function(err, user) {
+		if (err || !user) {
+			response.json({success: false, error: 'Error saving user data'});
+		} else {
+			response.json({success: true});
+		}
+	});
+});
 
+app.post(API_PREFIX + '/user/update', function(request, response) {
+	var user_id = request.session.user;
+	models.User.findById(user_id, function(err, user) {
+		var properties = ['total_flights', 'total_miles', 'average_speed', 'average_altitude', 'number_of_states'];
+		for (var i = 0; i < properties.length; i++) {
+			var new_val = request.param(properties[i]);
+			if (new_val) {
+				user[properties[i]] = new_val;
+			}
+		}
+		user.save(function(err) {
+			if (err) {
+				response.json({success: false, error: 'Error saving user data'});
+			} else {
+				response.json({success: true});
+			}
+		});
+	});
+});
+
+app.post(API_PREFIX + '/score/submit.json', function(request, response) {
+	var user_id = request.session.user;
+	models.User.findById(user_id, function(err, user) {
+		if (err || !user) {
+			response.json({success: false, error: "User could not be found"});
+		} else {
+			models.Score.create({
+				game_title: request.param('game_title'),
+				score: request.param('score')}, function(err, score) {
+				if (err || !score) {
+					response.json({success: false, error: "Score could not be saved"});
+				} else {
+					response.json({success: true});
+				}
+			});
+		}
+	});
+});
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
 
 // CHECK IF INPUT FLIGHT IS VALID AND ON WOLFRAM
-app.get('/checkflight', function(req, res) {
+app.get(API_PREFIX + '/checkflight', function(req, res) {
 	res.header("Access-Control-Allow-Origin", "*");		//fix this
   	res.header("Access-Control-Allow-Headers", "X-Requested-With");
 	res.set('Content-Type', 'text/html');
@@ -185,7 +234,7 @@ app.get('/checkflight', function(req, res) {
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
 // FIND NEARBY PLANES, PASSED USER LOCATION
-app.get('/nearbyplanes.json', function(request, res) {
+app.get(API_PREFIX + '/nearbyplanes.json', function(request, res) {
 	res.header("Access-Control-Allow-Origin", "*");		//fix this
   	res.header("Access-Control-Allow-Headers", "X-Requested-With");
   	
@@ -405,14 +454,6 @@ params = "includepodid=FlightProperties:FlightData&format=plaintext";
 		}
 	});
 }
-
-
-
-
-
-
-
-
 
 var port = process.env.PORT || 5000;
 app.listen(port, function() {

@@ -1,4 +1,41 @@
 /*
+
+
+
+
+
+
+
+
+NOW COMBINED WITH API.JS
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 https://github.com/macdonst/Ottawa-JavaScript-SpeechRec/blob/master/index.html
 http://planaheadonline.com/tester.html
 http://stackoverflow.com/questions/16268930/wolfram-api-javascript-cross-origin-sharing-issue
@@ -108,8 +145,8 @@ app.get('/nearbyplanes.json', function(request, res) {
 //	console.log(query + " - " + params);
 
 	var request = require('request');
-	request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
-//	request('http://api.wolframalpha.com/v2/query?input=' + "planes+above+los+angeles" + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
+//	request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
+	request('http://api.wolframalpha.com/v2/query?input=' + "planes+above+los+angeles" + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
 			if (response.body != null){
 				var parseString = require('xml2js').parseString; //parse xml string
@@ -309,9 +346,6 @@ params = "includepodid=FlightProperties:FlightData&format=plaintext";
 		}
 	});
 }
-
-
-
 
 var port = process.env.PORT || 5000;
 app.listen(port, function() {

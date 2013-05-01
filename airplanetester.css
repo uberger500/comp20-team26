@@ -1,0 +1,73 @@
+html {
+	height: 100%;
+	font-family: Helvetica, "Helvetica Neue", Arial, sans-serif;
+}
+
+body {
+	height: 100%;
+	margin: 0px;
+	padding: 0px;
+}
+
+#map_canvas {
+	width:50%;;
+	height: 85%;
+	padding:0;
+	margin:0;
+	border:0;	
+	margin-left:25%;
+	background-color:blue;
+}
+
+#header{
+	padding:5px;
+	margin:10px;
+	height:70px;
+	border:0;
+	background-color:#54C571;
+	text-align:center;
+}
+
+#leftbox{
+	width:20%;
+	padding:10px;
+	background-color:#54C571;
+	margin-right:10px;
+	float:left;
+	margin-left:10px;
+	height:85%;
+	width:300px;
+}
+
+#rightbox{
+	width:20%;
+	padding:10px;
+	background-color:#54C571;
+	float:right;
+	width:;
+	margin-right:10px;
+}
+
+.bold{
+	font-weight:bold;
+}
+
+button{
+	font-size:16px;
+}
+
+#status{
+	height:150px;
+}
+
+.italics{
+	font-style:italic;
+	font-size:14px;
+}
+
+h2{
+	padding:0;
+	margin:0;
+	padding-top:5px;
+	padding-bottom:5px;
+}
