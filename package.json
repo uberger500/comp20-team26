@@ -5,7 +5,10 @@
     "express": "3.x",
     "mongodb": "1.1.x",
     "mongoose": "3.6.x",
-    "bcrypt": "0.7.x"
+    "bcrypt": "0.7.x",
+    "request":"2.21.x",
+    "wolfram":"0.2.x",
+    "xml2js":"0.2.x"
   },
   "engines": {
     "node": "0.8.x",
