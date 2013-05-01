@@ -86,7 +86,7 @@ app.post(API_PREFIX + '/user/login', function(request, response) {
 									if (err || !session) {
 										response.json({success: false, error: 'Could not create token'});
 									} else {
-										response.json({success: true, data: session.token});
+										response.json({success: true, user: user, data: session.token});
 									}
 							});
 						} else {
