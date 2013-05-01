@@ -1,0 +1,44 @@
+html {
+	height: 100%;
+	font-family: Helvetica, "Helvetica Neue", Arial, sans-serif;
+}
+
+body {
+	height: 100%;
+	margin: 0px;
+	padding: 0px;
+}
+
+#map_canvas {
+	width:700px;;
+	height: 85%;
+	padding:0;
+	margin:0;
+	border:0;	
+	margin-left:25%;
+	background-color:blue;
+}
+
+#header{
+	padding:5px;
+	margin:10px;
+	height:70px;
+	border:0;
+	background-color:#54C571;
+	text-align:center;
+}
+
+#leftbox{
+	width:20%;
+	padding:10px;
+	background-color:#54C571;
+	margin-right:10px;
+	float:left;
+	margin-left:10px;
+	height:85%;
+	width:300px;
+}
+
+.bold{
+	font-weight:bold;
+}
