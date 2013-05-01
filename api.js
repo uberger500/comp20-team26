@@ -34,8 +34,8 @@ app.all(API_PREFIX + '/*', function(request, response, next) {
 	response.get("Access-Control-Allow-Headers", "X-Requested-With");
 
 	// Check for token
-	if (request.path == API_PREFIX + '/login' ||
-		request.path == API_PREFIX + '/create') {
+	if (request.path == API_PREFIX + '/user/login' ||
+		request.path == API_PREFIX + '/user/create') {
 		next();
 	} else {
 		models.Session.findOne({token: request.param('token')}, function(err, session) {
