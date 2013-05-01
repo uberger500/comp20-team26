@@ -42,7 +42,7 @@ function plane1(){
 //American Airlines 1885
 
 test_plane2 = [];
-test_plane2.push([30.2028, -97.6682]);	// 30.2028N, 97.6682W
+test_plane2.push([30.2028, -97.6682]);	// 30.2028N, 97.6682W //austin airport
 test_plane2.push([30.16, -97.75]);
 test_plane2.push([30.66, -97.94]);
 test_plane2.push([31.23, -98.07]);
@@ -211,3 +211,41 @@ function find_state(myLoc){
 
 }
 
+
+function geo(){
+
+	if (navigator.geolocation) {
+		console.log("yes1");
+		plane1();
+		navigator.geolocation.getCurrentPosition(function(position) {
+			console.log("yes");
+			geolat = position.coords.latitude;
+			geolng = position.coords.longitude;
+			geoloc = position.coords.latitude;
+			
+			myLoc = new google.maps.LatLng(geolat,geolng);
+			map.setCenter(myLoc);
+			
+			meMarker = new google.maps.Marker({
+				position: myLoc,
+			});
+			var infowindow = new google.maps.InfoWindow({
+				content: "<h3>You are here!</h3>",
+			});
+			google.maps.event.addListener(meMarker, 'click', function() {
+				infowindow.setContent(meMarker.title);			
+				infowindow.open(map, meMarker);	
+			});
+			meMarker.setMap(map);
+			infowindow.open(map,meMarker);
+			
+			
+//			content = findClosest(); //finds closest station (requires geolocation to be loaded)
+//			centerMe(content); //centers you on map and adds marker for you
+//			findCharacters(); //parses for chars, gives them markers, calculates distance
+		});	
+	}
+	else {
+		alert("Geolocation not supported");
+	}
+}
