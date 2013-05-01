@@ -128,7 +128,7 @@ app.post(API_PREFIX + '/user/delete', function(request, response) {
 
 
 // CHECK IF INPUT FLIGHT IS VALID AND ON WOLFRAM
-app.get('/checkflight', function(req, res) {
+app.get(API_PREFIX + '/checkflight', function(req, res) {
 	res.header("Access-Control-Allow-Origin", "*");		//fix this
   	res.header("Access-Control-Allow-Headers", "X-Requested-With");
 	res.set('Content-Type', 'text/html');
@@ -185,7 +185,7 @@ app.get('/checkflight', function(req, res) {
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
 // FIND NEARBY PLANES, PASSED USER LOCATION
-app.get('/nearbyplanes.json', function(request, res) {
+app.get(API_PREFIX + '/nearbyplanes.json', function(request, res) {
 	res.header("Access-Control-Allow-Origin", "*");		//fix this
   	res.header("Access-Control-Allow-Headers", "X-Requested-With");
   	

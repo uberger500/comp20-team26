@@ -39,7 +39,7 @@ function findnearbyplanes(){
 			// to a get request that respons with json planes
 			
 			//change this to wingmanapi.herokuapp whatever
-			var url = "http://localhost:5000/nearbyplanes.json?latitude=" + myLoc.lat() + "&longitude=" + myLoc.lng();
+			var url = "http://localhost:5000/api/nearbyplanes.json?latitude=" + myLoc.lat() + "&longitude=" + myLoc.lng() + "&token=7cb2c74a-f4ec-4691-a92b-540366f0db87";
 			
 			$.get(url, function(data){ 
 				// data comes back as an array of flight strings
