@@ -19,8 +19,15 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 
 var sessionSchema = new Schema({
-	user : ObjectId, // User object ID
-	token : String
+    user : ObjectId, // User object ID
+    token : String
+});
+
+var scoreSchema = new Schema({
+    user : ObjectId, // User object ID
+    game_title: String,
+    score: Number,
+    created_at: {type: Date, default: new Date()}
 });
 
 var userSchema = new Schema({
@@ -42,8 +49,10 @@ userSchema.set('toJSON', { transform: function (doc, ret, options) {
 }});
 
 var Session = mongoose.model('Session', sessionSchema);
+var Score = mongoose.model('Score', scoreSchema);
 var User = mongoose.model('User', userSchema);
 
 exports.Session = Session;
+exports.Score = Score;
 exports.User = User;
 exports.UUID = createUUID;

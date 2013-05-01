@@ -27,11 +27,11 @@ app.get('/secret', function(request, response) {
 
 // Start API endpoints
 
-var API_PREFIX = '/api';
+var API_PREFIX = '/api'; // Used so we don't accidentally get static resources (HTML, css, js, etc.)
 
 app.all(API_PREFIX + '/*', function(request, response, next) {
-	response.get("Access-Control-Allow-Origin", "*");
-	response.get("Access-Control-Allow-Headers", "X-Requested-With");
+	response.header("Access-Control-Allow-Origin", "*");
+	response.header("Access-Control-Allow-Headers", "X-Requested-With");
 
 	// Check for token
 	if (request.path == API_PREFIX + '/user/login' ||
@@ -154,6 +154,24 @@ app.post(API_PREFIX + '/user/update', function(request, response) {
 	});
 });
 
+app.post(API_PREFIX + '/score/submit.json', function(request, response) {
+	var user_id = request.session.user;
+	models.User.findById(user_id, function(err, user) {
+		if (err || !user) {
+			response.json({success: false, error: "User could not be found"});
+		} else {
+			models.Score.create({
+				game_title: request.param('game_title'),
+				score: request.param('score')}, function(err, score) {
+				if (err || !score) {
+					response.json({success: false, error: "Score could not be saved"});
+				} else {
+					response.json({success: true});
+				}
+			});
+		}
+	});
+});
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
