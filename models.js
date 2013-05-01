@@ -39,8 +39,7 @@ var userSchema = new Schema({
     total_miles: {type: Number, default: 0},
     average_speed: {type: Number, default: 0},
     average_altitude: {type: Number, default: 0},
-    number_of_states: {type: Number, default: 0},
-    has_seen_message: Boolean
+    number_of_states: {type: Number, default: 0}
 });
 
 userSchema.set('toJSON', { transform: function (doc, ret, options) {
