@@ -7,13 +7,13 @@ API calls are prefixed with '/api' currently (can be changed if we want). Curren
 API: /user/create
 Method: POST
 Input: email, password, name
-Output: (none)
+Output: user object
 Action: Creates a user with the associated information. Emails are unique and cannot be used more than once.
 
 API: /user/login
 Method: POST
 Input: email, password
-Output: session token
+Output: session token, user object
 Action: Creates a session for the user with email and password. Returns the token for additional calls.
 
 API: /user/logout
@@ -25,5 +25,17 @@ Action: Logs out the user currently logged in.
 API: /user/delete
 Method: POST
 Input: (none)
+Output: (none)
+Action: Deletes the user account associated with the logged in user. That email can be reused again.
+
+API: /user/update
+Method: POST
+Input: updateable fields for user
+Output: (none)
+Action: Updates the user data sent as POST data
+
+API: /user/addflight
+Method: POST
+Input: flight
 Output: (none)
 Action: Deletes the user account associated with the logged in user. That email can be reused again.
