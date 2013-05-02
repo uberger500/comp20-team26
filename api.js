@@ -138,7 +138,7 @@ app.post(API_PREFIX + '/user/delete', function(request, response) {
 app.post(API_PREFIX + '/user/addflight', function(request, response) {
 	var flight = request.param('flight');
 	var user_id = request.session.user;
-	models.User.findByIdAndUpdate(user_id, {$addToSet: {flight_numbers: flight}}, function(err, user) {
+	models.User.findByIdAndUpdate(user_id, {$addToSet: {flights: flight}}, function(err, user) {
 		if (err || !user) {
 			response.json({success: false, error: 'Error saving user data'});
 		} else {
@@ -289,7 +289,7 @@ app.get(API_PREFIX + '/checkflight', function(req, res) {
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
 // FIND NEARBY PLANES, PASSED USER LOCATION
-app.get(API_PREFIX + '/nearbyplanes.json', function(request, res) {
+app.get(API_PREFIX + '/nearbyplanes', function(request, res) {
 	res.header("Access-Control-Allow-Origin", "*");		//fix this
   	res.header("Access-Control-Allow-Headers", "X-Requested-With");
   	
@@ -309,8 +309,8 @@ app.get(API_PREFIX + '/nearbyplanes.json', function(request, res) {
 //HARDCODED WITH A TOKEN CURRENTLY
 
 	var request = require('request');
-//	request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
-	request('http://api.wolframalpha.com/v2/query?input=' + "planes+above+los+angeles" + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
+	request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
+//	request('http://api.wolframalpha.com/v2/query?input=' + "planes+above+los+angeles" + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
 			if (response.body != null){
 				var parseString = require('xml2js').parseString; //parse xml string
@@ -372,7 +372,7 @@ app.get(API_PREFIX + '/nearbyplanes.json', function(request, res) {
 //          (example2): {'errorA'}	
 //			(example3): {'landed'}
 //			(example4): {'Plane hasn't taken off yet or post-takeoff data not available yet'}
-app.get(API_PREFIX + '/currentdata.json', function(req, res) {
+app.get(API_PREFIX + '/currentdata', function(req, res) {
 	res.header("Access-Control-Allow-Origin", "*");		//fix this
   	res.header("Access-Control-Allow-Headers", "X-Requested-With");
 	res.set('Content-Type', 'text/json');

@@ -23,14 +23,10 @@
   text-align: center;
   cursor: pointer; }
 
-.closed-chat {
-  height: 20px;
-  font-size: 0px; }
-  .closed-chat:before {
-    content: "Click to chat!";
-    text-align: center;
-    font-size: 1rem;
-    display: block;
-    width: 100%;
-    line-height: 20px;
-    pointer-events: none; }
+.closed-chat #chatlines {
+  display: none;
+}
+
+.closed-chat input {
+  margin: 0 auto;
+}

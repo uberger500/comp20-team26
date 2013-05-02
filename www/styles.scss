@@ -29,16 +29,15 @@
 }
 
 .closed-chat {
-	height: 20px;
-	font-size: 0px;
-
-	&:before {
-		content: "Click to chat!";
-		text-align: center;
-		font-size: 1rem;
-		display: block;
-		width: 100%;
-		line-height: 20px;
-		pointer-events: none;
-	}
+	#chatlines { display: none; }
+	input { margin: 0 auto; }
+	// &:before {
+	// 	content: "Click to chat!";
+	// 	text-align: center;
+	// 	font-size: 1rem;
+	// 	display: block;
+	// 	width: 100%;
+	// 	line-height: 20px;
+	// 	pointer-events: none;
+	// }
 }
