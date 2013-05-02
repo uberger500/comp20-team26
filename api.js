@@ -138,7 +138,7 @@ app.post(API_PREFIX + '/user/delete', function(request, response) {
 app.post(API_PREFIX + '/user/addflight', function(request, response) {
 	var flight = request.param('flight');
 	var user_id = request.session.user;
-	models.User.findByIdAndUpdate(user_id, {$addToSet: {flight_numbers: flight}}, function(err, user) {
+	models.User.findByIdAndUpdate(user_id, {$addToSet: {flights: flight}}, function(err, user) {
 		if (err || !user) {
 			response.json({success: false, error: 'Error saving user data'});
 		} else {

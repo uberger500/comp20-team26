@@ -79,3 +79,26 @@ function findnearbyplanes(){
 }
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+function addflight(){
+	var paramobj = new Object;
+	paramobj.token = "7cb2c74a-f4ec-4691-a92b-540366f0db87";
+	flight = prompt("flight ex american airlines flight 123");
+	flight = encodeHTML(flight);
+	// now convert spaces to +
+	flight = flight.replace(/ /g, "+");
+	console.log(flight);
+	paramobj.flight = flight;
+	$.post("http://localhost:5000/api/user/addflight", paramobj);
+	
+}
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+function encodeHTML(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+}
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+
