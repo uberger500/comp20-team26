@@ -1,3 +1,7 @@
+function encodeHTML(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+}
+
 $(document).ready(function() { 
 	var reload = setInterval(getLastTenLines, 500);
 	User.prototype.update = function() {
@@ -74,7 +78,7 @@ $(document).ready(function() {
 	function submitChat()
 	{
 		console.log("chatting");
-	    chatmsg=document.getElementById("msg").value;
+	    chatmsg = encodeHTML(document.getElementById("msg").value);
 	    document.getElementById("msg").value = "";
 	    // Use the global user's username
 	    // http://wingmanapi.herokuapp.com/api/chat/submit
