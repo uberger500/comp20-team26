@@ -5,6 +5,7 @@ Application Flow:
 3. User enters flight:
 	a. Uses geolocation button to detect nearby flights
 		- Pass user coordinates to nearby planes API; response with array of planes
+			I. If array empty and error returned, no planes found, user can enter flight number
 		- Plane selected in drop down sent to /checkflight api; responds if valid on wolfram (double check)
 		- user/addflight API
 	b. Enters flight number
@@ -14,6 +15,8 @@ Application Flow:
 4. Main screen is populated with user's information
 5. User interacts with info
 6. User logs out and clears info
+
+
 
 In the refresh loop (~ 5 mins)
 
