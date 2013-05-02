@@ -2,17 +2,13 @@ var fieldscorner = new google.maps.LatLng(42.300093,-71.061667);
 var myOptions = {
 	zoom: 6, // The larger the zoom number, the bigger the zoom
 	center: fieldscorner,	// center south station while your location loads
-	mapTypeId: google.maps.MapTypeId.ROADMAP
+	mapTypeId: google.maps.MapTypeId.HYBRID
 	};
 var map;
 var myLat = 0;
 var myLng = 0;
 var myLoc = new google.maps.LatLng(0,0);
 var request = new XMLHttpRequest();
-
-
-
-
 
 
 var planepic = 'images/planesmall3.png';	
@@ -83,7 +79,6 @@ function refreshmap(planecoords){
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 
 
-
 	polyline = [];
 	markers = [];
 	var newMarker;
@@ -139,18 +134,10 @@ function drawlines(path){
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
-//REFRESHFACTS - finds facts for passed coords
+//REFRESHFACTS - finds facts for passed coords - update html
 // facts have variable length - scrollbar on display of them or what?
 function refreshfacts(coords){
 
-	var state = findstate(coords);
-
-}
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
-
-
-function findstate(coords){
 	var lat = coords.lat();
 	var lon = coords.lng();
 
@@ -192,6 +179,9 @@ function findstate(coords){
 				}
 				// now find facts for the state
 				var fivefacts = findfacts(state_simple);
+				// now delete past facts, then re-insert header, and facts
+				document.getElementById("facts").innerHTML = "";
+				$("#facts").append("<h3 id = 'curfacts'>Current facts...</h3>");				
 				$("#curfacts").append(" (" + state_regular + ")");
 				for (var i = 0; i < fivefacts.length; i++){
 					$("#facts").append("<p>" + (i+1) + ". " + fivefacts[i] + "</p>");
@@ -209,6 +199,9 @@ function findstate(coords){
 }
 
 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+
 function findfacts(state_simple){
 	
 	var statefacts = facts[state_simple];
@@ -222,6 +215,9 @@ function findfacts(state_simple){
 
 }
 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+
 function randOrd(){
 	return (Math.round(Math.random())-0.5);
 }
@@ -232,64 +228,9 @@ function randOrd(){
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
-/*
-function find_state(myLoc){
-	
-	var lat = myLoc.lat();
-	var lon = myLoc.lng();
-	
-	url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + lat + "," + lon + "&sensor=true";
-//	console.log(url);
- 
-    var request = new XMLHttpRequest();
-	request.open("GET", url, true);
-	request.send(null);
-	request.onreadystatechange = function(){
-		try{
-			if (this.status == 0){
-				//console.log("status code 0");
-			}
-			else if (this.readyState == 4 && this.status == 200){
-							
-				response = (this.responseText);
-				parsed_response = JSON.parse(response);
-				var myAddress = [];
-				var newLocation = "";
-// very messy country and address location; google returns arrays of many possible addresses for each request... need to parse better				
-				for (var i = 0; i < parsed_response.results.length; i++){
-					var z = parsed_response.results[i].address_components;
-					
-					for (var k = 0; k < z.length; k++){
-						var y = z[k];
-						var x = y.long_name;
-						if (x == "Canada"){
-							newLocation = "Canada";
-							document.getElementById("facts").innerHTML="<h3>Current facts:</h3><li>Cold</li><li>Maple Syrup</li><li>Lots of moose</li>";	
-						}					
-						else if (x == "United States"){
-							newLocation = "United States";
-							for (i = 0; i < parsed_response.results.length; i++) {
-								myAddress[i] = parsed_response.results[i].formatted_address;
-							}
-							newLocation = "USA: " + myAddress[0];	
-							document.getElementById("facts").innerHTML="<h3>Current facts:</h3><li>Lots of McDonalds</li><li>Lots of WalMarts</li>";														
-						}
-					}
-				
-				}
-				document.getElementById("locs").innerHTML+="<li>" + newLocation;	
-			}
-		}
-		catch(error) {
-			alert(error);
-		}
-	}
-
-}
-
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
-
+/*
 function loadpolygons(){
 
 	downloadUrl("http://pages.towson.edu/preese/av/polytest.xml", function(data) {

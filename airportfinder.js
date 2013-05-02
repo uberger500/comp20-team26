@@ -2,7 +2,7 @@ var fieldscorner = new google.maps.LatLng(42.300093,-71.061667);
 var myOptions = {
 	zoom: 6, // The larger the zoom number, the bigger the zoom
 	center: fieldscorner,	// center south station while your location loads
-	mapTypeId: google.maps.MapTypeId.ROADMAP
+	mapTypeId: google.maps.MapTypeId.HYBRID
 	};
 var map;
 var myLat = 0;
@@ -39,7 +39,7 @@ function findnearbyplanes(){
 			// to a get request that respons with json planes
 			
 			//change this to wingmanapi.herokuapp whatever
-			var url = "http://localhost:5000/api/nearbyplanes.json?latitude=" + myLoc.lat() + "&longitude=" + myLoc.lng() + "&token=7cb2c74a-f4ec-4691-a92b-540366f0db87";
+			var url = "http://localhost:5000/api/nearbyplanes?latitude=" + myLoc.lat() + "&longitude=" + myLoc.lng() + "&token=7cb2c74a-f4ec-4691-a92b-540366f0db87";
 			
 			$.get(url, function(data){ 
 				// data comes back as an array of flight strings
@@ -79,3 +79,26 @@ function findnearbyplanes(){
 }
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+function addflight(){
+	var paramobj = new Object;
+	paramobj.token = "7cb2c74a-f4ec-4691-a92b-540366f0db87";
+	flight = prompt("flight ex american airlines flight 123");
+	flight = encodeHTML(flight);
+	// now convert spaces to +
+	flight = flight.replace(/ /g, "+");
+	console.log(flight);
+	paramobj.flight = flight;
+	$.post("http://localhost:5000/api/user/addflight", paramobj);
+	
+}
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+function encodeHTML(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+}
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+

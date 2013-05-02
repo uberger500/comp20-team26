@@ -17,7 +17,7 @@
       }
     </style>
     <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
-
+    <link rel="stylesheet" type="text/css" href="styles.css">
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="/assets/js/html5shiv.js"> </script>
@@ -83,7 +83,7 @@
               
               
            
-           <li class="dropdown nobullet pull-right padleft">
+           <li id='create-form' class="dropdown nobullet pull-right padleft">
              <a class="btn btn-warning" data-toggle="dropdown" href="#menu1">
                Create
                 <b class="caret"></b>
@@ -94,7 +94,7 @@
                    <input style="margin-top: 8px" type="text" placeholder="Email" />
                    <input style="margin-top: 8px" type="password" placeholder="Password" />
                    <input style="margin-top: 8px" type="password" placeholder="Password Confirm" />
-                   <input class="btn-primary" name="commit" type="submit" value="Create" />
+                   <input class="btn-primary" name="commit" id='create-user' type="submit" value="Create" />
                  </fieldset>
                </form>
              </div>
@@ -102,7 +102,7 @@
              
              <!-- <a href="createuser.html" class="btn btn-warning">Create</a> -->
               
-       <li class="dropdown nobullet pull-right">
+       <li id='login-form' class="dropdown nobullet pull-right">
              <a class="btn btn-primary" data-toggle="dropdown" href="#menu1">
                Log In
                 <b class="caret"></b>
@@ -110,19 +110,13 @@
              <div class="dropdown-menu">
                <form style="margin: 0px" accept-charset="UTF-8" action="#" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /><input name="authenticity_token" type="hidden" value="4L/A2ZMYkhTD3IiNDMTuB/fhPRvyCNGEsaZocUUpw40=" /></div>
                  <fieldset class='textbox' style="padding:10px">
-                   <input style="margin-top: 8px" type="text" placeholder="Email" />
-                   <input style="margin-top: 8px" type="password" placeholder="Passsword" />
-                   <input class="btn-primary" name="commit" type="submit" value="Log In" />
+                   <input style="margin-top: 8px" value='samp' type="text" id='email-address' placeholder="Email" />
+                   <input style="margin-top: 8px" value='test' type="password" id='password' placeholder="Password" />
+                   <input class="btn-primary" name="commit" id='log-in' type="submit" value="Log In" />
                  </fieldset>
                </form>
              </div>
-           </li>   
-             
-             
-                 
-              
-             
-             
+           </li>       
           </div><!--/.nav-collapse -->
         </div>
       </div>
@@ -132,7 +126,7 @@
 
       <!-- Main hero unit for a primary marketing message or call to action -->
            
-      <div class="hero-unit">
+      <div class="hero-unit" id='lander'>
         <h1>We're your wingman, Maverick.</h1>
         <p>We'll plot out your trip, give you a live updated time of arrival, and we can even contact your loved ones to let them know exactly when you're arriving. We can c entertained with live information about the towns, cities, and landmarks over which you're flying.</p>
         <!--
@@ -182,8 +176,12 @@
       <hr>
       
       
-  
-
+      <div id='plane-chat'>
+        <div class='close-chat-btn'>X</div>
+        <div id="chatlines">
+        </div>
+        <input type="text" placeholder="chat"  id="msg" name="msg" size="80"/>
+      </div>
       <footer>
         <p>&copy; Wingman LLC 2013</p>
       </footer>

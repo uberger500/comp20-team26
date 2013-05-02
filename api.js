@@ -2,6 +2,7 @@ var express = require('express');
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
+var fs = require('fs');
 var models = require('./models.js');
 
 
@@ -21,8 +22,20 @@ app.use(express.bodyParser());
 
 // Main Pages
 
-app.get('/', function(request, response) {
-	response.send('Homepage');
+app.get(/(.+)\.(.+)/, function(request, response, next) {
+	var path = request.path;
+	if (path == '/') {
+		path = '/index.html';
+	}
+	if (path) {
+		response.sendfile('./www' + path);
+	} else {
+		next();
+	}
+});
+
+app.get('/', function(request, response, next) {
+	response.sendfile('./www/index.html');
 });
 
 // Start API endpoints
@@ -125,7 +138,7 @@ app.post(API_PREFIX + '/user/delete', function(request, response) {
 app.post(API_PREFIX + '/user/addflight', function(request, response) {
 	var flight = request.param('flight');
 	var user_id = request.session.user;
-	models.User.findByIdAndUpdate(user_id, {$addToSet: {flight_numbers: flight}}, function(err, user) {
+	models.User.findByIdAndUpdate(user_id, {$addToSet: {flights: flight}}, function(err, user) {
 		if (err || !user) {
 			response.json({success: false, error: 'Error saving user data'});
 		} else {
@@ -161,7 +174,7 @@ app.post(API_PREFIX + '/user/update', function(request, response) {
 	});
 });
 
-app.post(API_PREFIX + '/score/submit.json', function(request, response) {
+app.post(API_PREFIX + '/score/submit', function(request, response) {
 	var user_id = request.session.user;
 	models.User.findById(user_id, function(err, user) {
 		if (err || !user) {
@@ -194,8 +207,10 @@ app.get(API_PREFIX + '/score', function(request, response) {
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
 //CHAT FILES
-app.post(API_PREFIX + '/chat/submit.json', function(request, response) {
+app.post(API_PREFIX + '/chat/submit', function(request, response) {
+	console.log("HEY HEY HEY");
     console.log(request.body);
+    console.log(request.param('username'));
     db.collection('chat', function(err, collection) {
         collection.insert({username: request.body.username, chatline: request.body.chatline}, {safe:true}, function(err, result) {
           if (err) {
@@ -210,7 +225,7 @@ app.post(API_PREFIX + '/chat/submit.json', function(request, response) {
 });
 
 
-app.get(API_PREFIX + '/chat/chatlines.json', function(request, response) {
+app.get(API_PREFIX + '/chat/chatlines', function(request, response) {
         db.collection('chat', function(err, collection) {
         collection.find().sort({ _id : -1 }).limit(10).toArray(function(err, items){
 		chatlinesrev = [];
@@ -273,21 +288,8 @@ app.get(API_PREFIX + '/checkflight', function(req, res) {
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
-
-
-
-
-
-// Next API to code: If the input flight or chosen flight is valid, it must be POSTed to the user's account and data needs to start being collected
-
-
-
-
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
-
 // FIND NEARBY PLANES, PASSED USER LOCATION
-app.get(API_PREFIX + '/nearbyplanes.json', function(request, res) {
+app.get(API_PREFIX + '/nearbyplanes', function(request, res) {
 	res.header("Access-Control-Allow-Origin", "*");		//fix this
   	res.header("Access-Control-Allow-Headers", "X-Requested-With");
   	
@@ -307,45 +309,48 @@ app.get(API_PREFIX + '/nearbyplanes.json', function(request, res) {
 //HARDCODED WITH A TOKEN CURRENTLY
 
 	var request = require('request');
-//	request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
-	request('http://api.wolframalpha.com/v2/query?input=' + "planes+above+los+angeles" + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
+	request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
+//	request('http://api.wolframalpha.com/v2/query?input=' + "planes+above+los+angeles" + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
 			if (response.body != null){
 				var parseString = require('xml2js').parseString; //parse xml string
 				parseString(body, function(err, result){
 					jsonresult = JSON.stringify(result);	//parsed xml to string
-					console.dir(jsonresult);
+//					console.dir(jsonresult);
 					jsonobj = JSON.parse(jsonresult);		//parsed string to json
 					if (jsonobj.queryresult.$.success == 'true' && jsonobj.queryresult.$.error == 'false'){ //if successful query
-						if (jsonobj.queryresult.pod[0].subpod[0].plaintext != "" && jsonobj.queryresult.pod[0].subpod[0].plaintext != "(data not available)"){		//if not blank and if the "data not available" response isnt sent
-							console.dir("plaintext not blank and not unavailable");
-							//now parse the plantext for all the planes							
-							// multiple plane json response example: {"queryresult":{"$":{"success":"true","error":"false","numpods":"3","datatypes":"Flight","timedout":"","timedoutpods":"","timing":"1.86","parsetiming":"0.233","parsetimedout":"false","recalculate":"","id":"MSPa11591cf3abaef62e9ei500004agg6g7i9196bfc3","host":"http://www4b.wolframalpha.com","server":"38","related":"http://www4b.wolframalpha.com/api/v2/relatedQueries.jsp?id=MSPa11601cf3abaef62e9ei500001764dh078ghca005&s=38","version":"2.6"},"pod":[{"$":{"title":"Input interpretation","scanner":"Identity","id":"Input","position":"100","error":"false","numsubpods":"1"},"subpod":[{"$":{"title":""},"plaintext":["flights seen from Los Angeles, California"]}]},{"$":{"title":"Result","scanner":"Data","id":"Result","position":"200","error":"false","numsubpods":"1","primary":"true"},"subpod":[{"$":{"title":""},"plaintext":[" | altitude | angle\\nABX Air flight 1820 | 26800 feet | 12° up\\nHawaiian Airlines flight 36 | 37000 feet | 8.6° up\\nHawaiian Airlines flight 50 | 39000 feet | 7.2° up\\nAmerican Airlines flight 223 | 12300 feet | 6.9° up\\nAmerican Airlines flight 1035 | 5400 feet | 6.8° up\\n | type | slant distance\\nABX Air flight 1820 | Boeing 767-200 | 25 miles WNW\\nHawaiian Airlines flight 36 | Boeing 767-300 | 46 miles SSE\\nHawaiian Airlines flight 50 | Airbus A330-200 | 55 miles NW\\nAmerican Airlines flight 223 | Boeing 737-800 | 19 miles E\\nAmerican Airlines flight 1035 | Boeing 757-200 | 8.8 miles SE\\n(locations based on projections of delayed data)\\n(angles with respect to nominal horizon)"]}],"states":[{"$":{"count":"2"},"state":[{"$":{"name":"More","input":"Result__More"}},{"$":{"name":"Show metric","input":"Result__Show metric"}}]}]},{"$":{"title":"Sky map","scanner":"Data","id":"SkyMap:FlightData","position":"300","error":"false","numsubpods":"1"},"subpod":[{"$":{"title":""},"plaintext":[{}]}]}],"assumptions":[{"$":{"count":"1"},"assumption":[{"$":{"type":"SubCategory","word":"los angeles","template":"Assuming ${desc1}. Use ${desc2} instead","count":"4"},"value":[{"$":{"name":"{LosAngeles, California, UnitedStates}","desc":"Los Angeles (California, USA)","input":"*DPClash.CityE.los+angeles-_**LosAngeles.California.UnitedStates--"}},{"$":{"name":"{EastLosAngeles, California, UnitedStates}","desc":"East Los Angeles (California, USA)","input":"*DPClash.CityE.los+angeles-_**EastLosAngeles.California.UnitedStates--"}},{"$":{"name":"{LosAngeles, BioBio, Chile}","desc":"Los Angeles (Chile)","input":"*DPClash.CityE.los+angeles-_**LosAngeles.BioBio.Chile--"}},{"$":{"name":"{LosAngeles, Butuan, Philippines}","desc":"Los Angeles (Philippines)","input":"*DPClash.CityE.los+angeles-_**LosAngeles.Butuan.Philippines--"}}]}]}],"sources":[{"$":{"count":"2"},"source":[{"$":{"url":"http://www.wolframalpha.com/sources/CityDataSourceInformationNotes.html","text":"City data"}},{"$":{"url":"http://www.wolframalpha.com/sources/FlightDataSourceInformationNotes.html","text":"Flight data"}}]}]}}
-							var plainplanes = jsonobj.queryresult.pod[1].subpod[0].plaintext[0];
-							console.log(plainplanes);
-							if (plainplanes == "(data not available)"){
-								res.send("{'error0'}");
-								console.log("error 0");
-							}
-							else{
-							// an example plainplanes is ' | altitude | angle\nABX Air flight 1820 | 21100 feet | 9.2° up\nHawaiian Airlines flight 50 | 39000 feet | 7.8° up\nHawaiian Airlines flight 36 | 37000 feet | 7.5° up\nAmerican Airlines flight 223 | 8700 feet | 6° up\n | type | slant distance\nABX Air flight 1820 | Boeing 767-200 | 24 miles WNW\nHawaiian Airlines flight 50 | Airbus A330-200 | 51 miles NNW\nHawaiian Airlines flight 36 | Boeing 767-300 | 52 miles SSE\nAmerican Airlines flight 223 | Boeing 737-800 | 16 miles ESE\n(locations based on projections of delayed data)\n(angles with respect to nominal horizon)'
-							// now we clean it up removing the \n's and separating using the pipe delimiter then selecting only strings with "flight" in them
-
-								cleandata = plainplanes.replace(/(\r\n|\n|\r)/gm," | "); //make linebreaks into pipes
-								dataarray = cleandata.split(' | ');
-								flightsfound = []; // the flights found
-
-								for (var i = 0; i < dataarray.length; i++){
-									//indexOf returns the position of the string in the other string. If not found, it will return -1:
-									if (dataarray[i].indexOf("flight") != -1){
-										console.log("searching " + dataarray[i]);
-										flightsfound.push(dataarray[i]); //fill list of planes
-									}
+						if (jsonobj.queryresult.pod != undefined && jsonobj.queryresult.pod[0] != undefined && jsonobj.queryresult.pod[0].subpod != undefined && jsonobj.queryresult.pod[0].subpod[0] != undefined && jsonobj.queryresult.pod[0].subpod[0].plaintext != undefined){
+							if (jsonobj.queryresult.pod[0].subpod[0].plaintext != "" && jsonobj.queryresult.pod[0].subpod[0].plaintext != "(data not available)"){		//if not blank and if the "data not available" response isnt sent
+	//							console.dir("plaintext not blank and not unavailable");
+								//now parse the plantext for all the planes							
+								// multiple plane json response example: {"queryresult":{"$":{"success":"true","error":"false","numpods":"3","datatypes":"Flight","timedout":"","timedoutpods":"","timing":"1.86","parsetiming":"0.233","parsetimedout":"false","recalculate":"","id":"MSPa11591cf3abaef62e9ei500004agg6g7i9196bfc3","host":"http://www4b.wolframalpha.com","server":"38","related":"http://www4b.wolframalpha.com/api/v2/relatedQueries.jsp?id=MSPa11601cf3abaef62e9ei500001764dh078ghca005&s=38","version":"2.6"},"pod":[{"$":{"title":"Input interpretation","scanner":"Identity","id":"Input","position":"100","error":"false","numsubpods":"1"},"subpod":[{"$":{"title":""},"plaintext":["flights seen from Los Angeles, California"]}]},{"$":{"title":"Result","scanner":"Data","id":"Result","position":"200","error":"false","numsubpods":"1","primary":"true"},"subpod":[{"$":{"title":""},"plaintext":[" | altitude | angle\\nABX Air flight 1820 | 26800 feet | 12° up\\nHawaiian Airlines flight 36 | 37000 feet | 8.6° up\\nHawaiian Airlines flight 50 | 39000 feet | 7.2° up\\nAmerican Airlines flight 223 | 12300 feet | 6.9° up\\nAmerican Airlines flight 1035 | 5400 feet | 6.8° up\\n | type | slant distance\\nABX Air flight 1820 | Boeing 767-200 | 25 miles WNW\\nHawaiian Airlines flight 36 | Boeing 767-300 | 46 miles SSE\\nHawaiian Airlines flight 50 | Airbus A330-200 | 55 miles NW\\nAmerican Airlines flight 223 | Boeing 737-800 | 19 miles E\\nAmerican Airlines flight 1035 | Boeing 757-200 | 8.8 miles SE\\n(locations based on projections of delayed data)\\n(angles with respect to nominal horizon)"]}],"states":[{"$":{"count":"2"},"state":[{"$":{"name":"More","input":"Result__More"}},{"$":{"name":"Show metric","input":"Result__Show metric"}}]}]},{"$":{"title":"Sky map","scanner":"Data","id":"SkyMap:FlightData","position":"300","error":"false","numsubpods":"1"},"subpod":[{"$":{"title":""},"plaintext":[{}]}]}],"assumptions":[{"$":{"count":"1"},"assumption":[{"$":{"type":"SubCategory","word":"los angeles","template":"Assuming ${desc1}. Use ${desc2} instead","count":"4"},"value":[{"$":{"name":"{LosAngeles, California, UnitedStates}","desc":"Los Angeles (California, USA)","input":"*DPClash.CityE.los+angeles-_**LosAngeles.California.UnitedStates--"}},{"$":{"name":"{EastLosAngeles, California, UnitedStates}","desc":"East Los Angeles (California, USA)","input":"*DPClash.CityE.los+angeles-_**EastLosAngeles.California.UnitedStates--"}},{"$":{"name":"{LosAngeles, BioBio, Chile}","desc":"Los Angeles (Chile)","input":"*DPClash.CityE.los+angeles-_**LosAngeles.BioBio.Chile--"}},{"$":{"name":"{LosAngeles, Butuan, Philippines}","desc":"Los Angeles (Philippines)","input":"*DPClash.CityE.los+angeles-_**LosAngeles.Butuan.Philippines--"}}]}]}],"sources":[{"$":{"count":"2"},"source":[{"$":{"url":"http://www.wolframalpha.com/sources/CityDataSourceInformationNotes.html","text":"City data"}},{"$":{"url":"http://www.wolframalpha.com/sources/FlightDataSourceInformationNotes.html","text":"Flight data"}}]}]}}
+								var plainplanes = jsonobj.queryresult.pod[1].subpod[0].plaintext[0];
+	//							console.log(plainplanes);
+								if (plainplanes == "(data not available)"){
+									res.send("{'error0'}");
+									console.log("error 0");
 								}
-								// now flightsfound is like ["ABX Air flight 1820", "Hawaiian Airlines flight 50", "Hawaiian Airlines flight 36", "American Airlines flight 223", "ABX Air flight 1820", "Hawaiian Airlines flight 50", "Hawaiian Airlines flight 36", "American Airlines flight 223"]
-								flightsfoundstring = JSON.stringify(flightsfound);
-								res.send(flightsfoundstring);
+								else{
+								// an example plainplanes is ' | altitude | angle\nABX Air flight 1820 | 21100 feet | 9.2° up\nHawaiian Airlines flight 50 | 39000 feet | 7.8° up\nHawaiian Airlines flight 36 | 37000 feet | 7.5° up\nAmerican Airlines flight 223 | 8700 feet | 6° up\n | type | slant distance\nABX Air flight 1820 | Boeing 767-200 | 24 miles WNW\nHawaiian Airlines flight 50 | Airbus A330-200 | 51 miles NNW\nHawaiian Airlines flight 36 | Boeing 767-300 | 52 miles SSE\nAmerican Airlines flight 223 | Boeing 737-800 | 16 miles ESE\n(locations based on projections of delayed data)\n(angles with respect to nominal horizon)'
+								// now we clean it up removing the \n's and separating using the pipe delimiter then selecting only strings with "flight" in them
+
+									cleandata = plainplanes.replace(/(\r\n|\n|\r)/gm," | "); //make linebreaks into pipes
+									dataarray = cleandata.split(' | ');
+									flightsfound = []; // the flights found
+
+									for (var i = 0; i < dataarray.length; i++){
+										//indexOf returns the position of the string in the other string. If not found, it will return -1:
+										if (dataarray[i].indexOf("flight") != -1){
+	//										console.log("searching " + dataarray[i]);
+											flightsfound.push(dataarray[i]); //fill list of planes
+										}
+									}
+									// now flightsfound is like ["ABX Air flight 1820", "Hawaiian Airlines flight 50", "Hawaiian Airlines flight 36", "American Airlines flight 223", "ABX Air flight 1820", "Hawaiian Airlines flight 50", "Hawaiian Airlines flight 36", "American Airlines flight 223"]
+									flightsfoundstring = JSON.stringify(flightsfound);
+									res.send(flightsfoundstring);
+								}
 							}
+							else res.send("{error0'}");
 						}
 						else res.send("{'error1'}");
 					}
@@ -362,12 +367,12 @@ app.get(API_PREFIX + '/nearbyplanes.json', function(request, res) {
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
 // CURRENTDATA.JSON
-// REQUEST PARAMETER: &flight=company+flight+###
+// REQUEST PARAMETER: &flight+company+flight+###
 // RESPONSE (example): {"time": "Current information (10:20 pm EDT)", "altitude": 36900, "position": "44.52N, 87.53W", "speed": 519, "distance": 1816, "latitude": 44.52, "longitude": -87.53}
 //          (example2): {'errorA'}	
 //			(example3): {'landed'}
 //			(example4): {'Plane hasn't taken off yet or post-takeoff data not available yet'}
-app.get(API_PREFIX + '/currentdata.json', function(req, res) {
+app.get(API_PREFIX + '/currentdata', function(req, res) {
 	res.header("Access-Control-Allow-Origin", "*");		//fix this
   	res.header("Access-Control-Allow-Headers", "X-Requested-With");
 	res.set('Content-Type', 'text/json');
@@ -408,7 +413,7 @@ console.log(flight);
 							else{
 							
 								console.log("going to search for specific info now");
-								if (jsonobj.queryresult.pod != undefined && json.queryresult.pod[1] != undefined && json.queryresult.pod[1].subpod != undefined && json.queryresult.pod[1].subpod[0].plaintext != undefined ){
+								if (jsonobj.queryresult.pod != undefined && jsonobj.queryresult.pod[1] != undefined && jsonobj.queryresult.pod[1].subpod != undefined && jsonobj.queryresult.pod[1].subpod[0] != undefined && jsonobj.queryresult.pod[1].subpod[0].plaintext != undefined ){
 									var data = JSON.stringify(jsonobj.queryresult.pod[1].subpod[0].plaintext[0]);
 								
 									data = data.replace(/\\n/g, " || ");
