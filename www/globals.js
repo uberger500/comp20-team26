@@ -84,7 +84,7 @@ $(document).ready(function() {
 	    // http://wingmanapi.herokuapp.com/api/chat/submit
 	    $.post("http://127.0.0.1:5000/api/chat/submit", {username: "username", chatline: chatmsg, token: token});  
 	}
-
+	var chat_calls = 0;
 	function getLastTenLines() {
 	    var request = new XMLHttpRequest();
 		request.open("GET", "http://127.0.0.1:5000/api/chat/chatlines?token=" + token, true);
@@ -104,7 +104,9 @@ $(document).ready(function() {
 						output = output + "<p>" + parsed_response[chatline].username +": " + parsed_response[chatline].chatline + "</p>\n";
 					}
 					elem.innerHTML = output;
-					$('#chatlines').scrollTop($('#chatlines')[0].scrollHeight);
+					if (!chat_calls)
+						$('#chatlines').scrollTop($('#chatlines')[0].scrollHeight);
+					chat_calls++;
 				}
 			}				
 			catch(error) {
