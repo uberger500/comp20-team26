@@ -1,8 +1,9 @@
 <?php
 
-$number= $_GET['num'];
-$from= $_GET['name'];
-$msg= $_GET['msg'];
-$subj= $_GET['subj'];
+$email= $_GET['Email'];
+$msg= $_GET['smsMessage'];
+$subj= $_GET['Subj'];
 
-mail($number, $subj, $msg);
+mail($email, $subj, $msg);
+
+?>
