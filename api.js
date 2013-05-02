@@ -18,20 +18,16 @@ app.use(express.bodyParser());
 // Main Pages
 
 app.get('/', function(request, response) {
-	response.send('You\'re totally on a plane. It\'s in the sky. It\'s going fast.');
-});
-
-app.get('/secret', function(request, response) {
-	response.send('This is a secret.');
+	response.send('Homepage');
 });
 
 // Start API endpoints
 
-var API_PREFIX = '/api';
+var API_PREFIX = '/api'; // Used so we don't accidentally get static resources (HTML, css, js, etc.)
 
 app.all(API_PREFIX + '/*', function(request, response, next) {
-	response.get("Access-Control-Allow-Origin", "*");
-	response.get("Access-Control-Allow-Headers", "X-Requested-With");
+	response.header("Access-Control-Allow-Origin", "*");
+	response.header("Access-Control-Allow-Headers", "X-Requested-With");
 
 	// Check for token
 	if (request.path == API_PREFIX + '/user/login' ||
@@ -62,7 +58,7 @@ app.post(API_PREFIX + '/user/create', function(request, response) {
 			if (err || !user) {
 				response.json({success: false, error: 'Error creating new user'});
 			} else {
-				response.json({success: true, data: user});
+				response.json({success: true, user: user});
 			}
 		});
 	});
@@ -154,14 +150,43 @@ app.post(API_PREFIX + '/user/update', function(request, response) {
 	});
 });
 
+app.post(API_PREFIX + '/score/submit.json', function(request, response) {
+	var user_id = request.session.user;
+	models.User.findById(user_id, function(err, user) {
+		if (err || !user) {
+			response.json({success: false, error: "User could not be found"});
+		} else {
+			models.Score.create({
+				user: user_id,
+				game_title: request.param('game_title'),
+				score: request.param('score')}, function(err, score) {
+				if (err || !score) {
+					response.json({success: false, error: "Score could not be saved"});
+				} else {
+					response.json({success: true});
+				}
+			});
+		}
+	});
+});
+
+app.get(API_PREFIX + '/score', function(request, response) {
+	models.Score.find({user: request.session.user}, function(err, scores) {
+		if (err) {
+			response.json({success: false, error: "Scores could not be found for the user"});
+		} else {
+			response.json({success: true, data: scores});
+		}
+	});
+});
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
 
 // CHECK IF INPUT FLIGHT IS VALID AND ON WOLFRAM
 app.get(API_PREFIX + '/checkflight', function(req, res) {
-	res.header("Access-Control-Allow-Origin", "*");		//fix this
-  	res.header("Access-Control-Allow-Headers", "X-Requested-With");
+	res.header("Access-Control-Allow-Origin", "*"); // fix this
+ 	res.header("Access-Control-Allow-Headers", "X-Requested-With");
 	res.set('Content-Type', 'text/html');
 
 
@@ -173,7 +198,7 @@ app.get(API_PREFIX + '/checkflight', function(req, res) {
 	//query should be something like .../checkflight?flight=american+airlines+flight+1234
 	var flight = args.flight;
 	//flight will now be "american+airlines+flight+1234"
-	
+
 	var request = require('request');
 	request('http://api.wolframalpha.com/v2/query?input=' + flight + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
@@ -196,9 +221,9 @@ app.get(API_PREFIX + '/checkflight', function(req, res) {
 					else res.send("invalid flight");
 				});
 			}
-			else res.send("invalid flight");			
+			else res.send("invalid flight");
 		}
-		else res.send("invalid flight");	
+		else res.send("invalid flight");
 	});
 });
 
@@ -261,7 +286,7 @@ app.get(API_PREFIX + '/nearbyplanes.json', function(request, res) {
 							else{
 							// an example plainplanes is ' | altitude | angle\nABX Air flight 1820 | 21100 feet | 9.2° up\nHawaiian Airlines flight 50 | 39000 feet | 7.8° up\nHawaiian Airlines flight 36 | 37000 feet | 7.5° up\nAmerican Airlines flight 223 | 8700 feet | 6° up\n | type | slant distance\nABX Air flight 1820 | Boeing 767-200 | 24 miles WNW\nHawaiian Airlines flight 50 | Airbus A330-200 | 51 miles NNW\nHawaiian Airlines flight 36 | Boeing 767-300 | 52 miles SSE\nAmerican Airlines flight 223 | Boeing 737-800 | 16 miles ESE\n(locations based on projections of delayed data)\n(angles with respect to nominal horizon)'
 							// now we clean it up removing the \n's and separating using the pipe delimiter then selecting only strings with "flight" in them
-							
+
 								cleandata = plainplanes.replace(/(\r\n|\n|\r)/gm," | "); //make linebreaks into pipes
 								dataarray = cleandata.split(' | ');
 								flightsfound = []; // the flights found
@@ -370,7 +395,7 @@ params = "includepodid=FlightProperties:FlightData&format=plaintext";
 	var request = require('request');
 	request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
  	if (!error && response.statusCode == 200) {
-    
+ 		
 		var parseString = require('xml2js').parseString;
 		parseString(body, function(err, result){
 			jsonresult = JSON.stringify(result);
