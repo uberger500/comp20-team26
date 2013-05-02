@@ -317,29 +317,26 @@ app.get(API_PREFIX + '/nearbyplanes.json', function(request, res) {
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
-// Collect data bout the given flight
-// will call update user data api
-
+// CURRENTDATA.JSON
+// REQUEST PARAMETER: &flight=company+flight+###
+// RESPONSE (example): {"time": "Current information (10:20 pm EDT)", "altitude": 36900, "position": "44.52N, 87.53W", "speed": 519, "distance": 1816, "latitude": 44.52, "longitude": -87.53}
+//          (example2): {'errorA'}	
+//			(example3): {'landed'}
+//			(example4): {'Plane hasn't taken off yet or post-takeoff data not available yet'}
 app.get(API_PREFIX + '/currentdata.json', function(req, res) {
 	res.header("Access-Control-Allow-Origin", "*");		//fix this
   	res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  	
 	res.set('Content-Type', 'text/json');
 
 	//turn request into json and grab flight
 	var args = JSON.parse(JSON.stringify(req.query));
 	var flight = args.flight;
+	var params = "includepodid=FlightProperties:FlightData&includepodid=FlightSchedule:FlightData&format=plaintext";
+//	var params = "format=plaintext";
 
-
-//HARDCODED WITH TOKEN CURRENTLY
-	var params = "includepodid=FlightProperties:FlightData&format=plaintext";
-
-
-
-//test flight 
-	flight = "air+canada+flight+100";
-
-
+//test flight s
+//	flight = "air+canada+flight+100";
+//  flight = "united+airlines+flight+94";
 
 	var request = require('request');
 	request('http://api.wolframalpha.com/v2/query?input=' + flight + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
@@ -348,139 +345,137 @@ app.get(API_PREFIX + '/currentdata.json', function(req, res) {
 				var parseString = require('xml2js').parseString; //parse xml string
 				parseString(body, function(err, result){
 					jsonresult = JSON.stringify(result);	//parsed xml to string
-//					console.dir(jsonresult);
+					console.dir(jsonresult);
 					jsonobj = JSON.parse(jsonresult);		//parsed string to json
 					if (jsonobj.queryresult.$.success == 'true' && jsonobj.queryresult.$.error == 'false'){ //if successful query
-						if (jsonobj.queryresult.pod != null && jsonobj.queryresult.pod != "" && jsonobj.queryresult.pod != "[]"){
-
-								var data = JSON.stringify(jsonobj.queryresult.pod[0].subpod[0].plaintext[0]);
-								data = data.replace(/\\n/g, " || ");
-								data = data.replace("\"", ''); //remove double quotes
-								data = data.replace("°N", "N").replace("°S", "S").replace("°W", "W").replace("°E", "E");
-
-								var dataarray = data.split(' || ');
-
-								finaldata = [];
-
-								//5 indices, need to split into key value pairs
-								/*
-								altitude | 37000 feet (7 miles) 
-								position | 46.02N, 64W 
-								ground speed | 552 mph (miles per hour) 
-								heading | 70Â° (degrees) (ENE) 
-								distance traveled | 2735 miles
-								*/
-
-								for (var i = 0; i < dataarray.length; i++){
-		
-									var datumarray = dataarray[i].split(' | ');
+							
+					// check if entire string contains "actual landing time"
+						var responsestring = JSON.stringify(jsonobj.queryresult);
+						if (responsestring.indexOf("actual landing time") != -1){
+							res.send("{'landed'}");
+						}			
+						else{
 						
-									if (datumarray[0] == "altitude"){
-										finaldata['altitude'] = datumarray[1];
-									}
-									else if (datumarray[0] == "position"){
-										finaldata['position'] = datumarray[1];
-									}
-									else if (datumarray[0] == "ground speed"){
-										finaldata['speed'] = datumarray[1];
-									}
-									else if (datumarray[0] == "distance traveled"){
-										finaldata['distance'] = datumarray[1];
-									}
-								}
-										
-								finaldata['time'] = jsonobj.queryresult.pod[0].$.title;
-
-								//now finaldata is loaded with alt, pos, speed, distance:
-								//finaldata['altitude'] = 
-								//finaldata['distance'] = "2735 miles"
-								//finaldata['speed'] = "552 mpg (miles per hour)"
-								//finaldata['position'] = "46.02N, 64W" 
-								//finaldata['time'] = Current information (2:40 am EDT)
-			
-								// Still need to convert coordinates into google maps acceptible coords
-								// 		making the south and west degrees negative
-								// Still need to clean up distance & speed into pure numbers
-
-								finaldata['distance'] = parseInt(finaldata['distance']);
-								finaldata['speed'] = parseInt(finaldata['speed']);
-
-								// must clean up altitude before converting
-								// 		altitude | 37000 feet (7 miles) 
-								// the (x miles) messes up the parse int; must remove it
-		
-								var flagged = false;
-								var tally = 0;
-			
-				
-								while (flagged == false && tally < 20){
-									var alt = finaldata['altitude'];
-									var nummiles = "(" + tally + " miles)";
-									var cleanalt = alt.replace(nummiles, "");
-									if (cleanalt == alt){
-										//didn't change it; continue cycling
-										tally++;
-									}
-									else{ //did clean up the (x miles) in string; replace
-										finaldata['altitude'] = cleanalt;
-										tally = 0;
-										flagged = true; //end
-									}
-								}
-								finaldata['altitude'] = parseInt(finaldata['altitude']);
-
-						// does mph turn to kilometers when flying over canada? would mess up parseint
-						// also feet to meters in altitude
-						// standardize query ^^?
-
-								//Still need to turn coordinates like 46.02N, 64W to 4.02, -64
-			
-								var coords = finaldata['position'].split(', ');
-								var lat = coords[0];	
-								var lon = coords[1];
-
-								var directionindex = lat.indexOf("N");
-
-								//LATITUDE CONVERSION
-								if (directionindex != -1){ //if string contains letter N
-									//north: make it positive int
-									finaldata['latitude'] = parseFloat(lat);
-								}
-								else{ 
-									directionindex = lat.indexOf("S");
-									if (directionindex != -1){
-										//south: make it a negative integer
-										finaldata['latitude'] = parseFloat(lat)*-1;
-									}
-								}
-								// LONGITUDE CONVERSION
-								directionindex = lon.indexOf("W");
-								if (directionindex != -1){
-									//west: make it a negative integer
-									finaldata['longitude'] = parseFloat(lon)*-1;
-								}
-								else{
-									directionindex = lon.indexOf("E");
-									//east: positive integer
-									if (directionindex != -1){
-										finaldata['longitude'] = parseFloat(lon);
-									}
-								}
-																
-								dataobj = new Object;
-								dataobj.time = finaldata['time'];								
-								dataobj.altitude = finaldata['altitude'];
-								dataobj.position = finaldata['position'];
-								dataobj.speed = finaldata['speed'];
-								dataobj.distance = finaldata['distance'];
-								dataobj.latitude = finaldata['latitude'];
-								dataobj.longitude = finaldata['longitude'];
-
-								res.send(dataobj);
+							if (responsestring.indexOf("estimated takeoff") != -1){
+								res.send("{'Plane hasn't taken off yet or post-takeoff data not available yet'}");
 							}
-							else res.send("{'errorA'}");	
-						}
-						else res.send("{'errorB'}");	
+							else{
+							
+								console.log("going to search for specific info now");
+								if (jsonobj.queryresult.pod != undefined && json.queryresult.pod[1] != undefined && json.queryresult.pod[1].subpod != undefined && json.queryresult.pod[1].subpod[0].plaintext != undefined ){
+									var data = JSON.stringify(jsonobj.queryresult.pod[1].subpod[0].plaintext[0]);
+								
+									data = data.replace(/\\n/g, " || ");
+									data = data.replace("\"", ''); //remove double quotes
+									data = data.replace("°N", "N").replace("°S", "S").replace("°W", "W").replace("°E", "E");
+									var dataarray = data.split(' || ');
+						
+									finaldata = [];
+						
+									for (var i = 0; i < dataarray.length; i++){
+										var datumarray = dataarray[i].split(' | ');
+										if (datumarray[0] == "altitude"){
+											finaldata['altitude'] = datumarray[1];
+										}
+										else if (datumarray[0] == "position"){
+											finaldata['position'] = datumarray[1];
+										}
+										else if (datumarray[0] == "ground speed"){
+											finaldata['speed'] = datumarray[1];
+										}
+										else if (datumarray[0] == "distance traveled"){
+											finaldata['distance'] = datumarray[1];
+										}
+									}	
+						
+									var time = JSON.stringify(jsonobj.queryresult.pod[1].$.title);
+									time = time.replace(/["']/g, ""); //remove double quotes							
+									finaldata['time'] = time;
+						
+									//jsonobj.queryresult.pod[0].$.title;
+	
+									// Still need to convert coordinates into google maps acceptible coords
+									// 		making the south and west degrees negative
+									// Still need to clean up distance & speed into pure numbers
+
+									finaldata['distance'] = parseInt(finaldata['distance']);
+									finaldata['speed'] = parseInt(finaldata['speed']);
+
+									// must clean up altitude before converting
+									// 		altitude | 37000 feet (7 miles) 
+									// the (x miles) messes up the parse int; must remove it
+
+									var flagged = false;
+									var tally = 0;
+									while (flagged == false && tally < 20){
+										var alt = finaldata['altitude'];
+										var nummiles = "(" + tally + " miles)";
+										var cleanalt = alt.replace(nummiles, "");
+										if (cleanalt == alt){
+											//didn't change it; continue cycling
+											tally++;
+										}
+										else{ //did clean up the (x miles) in string; replace
+											finaldata['altitude'] = cleanalt;
+											tally = 0;
+											flagged = true; //end
+										}
+									}
+									finaldata['altitude'] = parseInt(finaldata['altitude']);
+
+							// does mph turn to kilometers when flying over canada? would mess up parseint
+							// also feet to meters in altitude
+							// standardize query ^^?
+
+									//Still need to turn coordinates like 46.02N, 64W to 4.02, -64
+			
+									var coords = finaldata['position'].split(', ');
+									var lat = coords[0];	
+									var lon = coords[1];
+						
+									//LATITUDE CONVERSION
+									var directionindex = lat.indexOf("N");
+									if (directionindex != -1){ //if string contains letter N
+										//north: make it positive int
+										finaldata['latitude'] = parseFloat(lat);
+									}
+									else{ 
+										directionindex = lat.indexOf("S");
+										if (directionindex != -1){
+											//south: make it a negative integer
+											finaldata['latitude'] = parseFloat(lat)*-1;
+										}
+									}
+						
+									// LONGITUDE CONVERSION
+									directionindex = lon.indexOf("W");
+									if (directionindex != -1){
+										//west: make it a negative integer
+										finaldata['longitude'] = parseFloat(lon)*-1;
+									}
+									else{
+										directionindex = lon.indexOf("E");
+										//east: positive integer
+										if (directionindex != -1){
+											finaldata['longitude'] = parseFloat(lon);
+										}
+									}							
+									dataobj = new Object;
+									dataobj.time = finaldata['time'];								
+									dataobj.altitude = finaldata['altitude'];
+									dataobj.position = finaldata['position'];
+									dataobj.speed = finaldata['speed'];
+									dataobj.distance = finaldata['distance'];
+									dataobj.latitude = finaldata['latitude'];
+									dataobj.longitude = finaldata['longitude'];
+
+									res.send(dataobj);
+								}
+								else res.send("{'errorA'}");
+							}	
+						}	
+					}
+					else res.send("{'errorB'}");	
 				});
 			}
 			else res.send("{'errorC'}");	
@@ -490,160 +485,7 @@ app.get(API_PREFIX + '/currentdata.json', function(req, res) {
 });
 
 
-
-
-
-
-
-
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
-
-
-function testflight(){ // QUERY ONLY WORKS SERVICE SIDE, CAN'T BE RUN IN JAVASCRIPT ALONE
-
-// CHANGE THIS QUERY FOR DIFFERENT FLIGHTS
-query = "spirit+airlines+flight+451";
-params = "includepodid=FlightProperties:FlightData&format=plaintext";
-
-	var request = require('request');
-	request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
- 	if (!error && response.statusCode == 200) {
- 		
-		var parseString = require('xml2js').parseString;
-		parseString(body, function(err, result){
-			jsonresult = JSON.stringify(result);
-			jsonobj = JSON.parse(jsonresult);
-
-			// need more if statements for responses with missing results
-			if (jsonobj.queryresult.$.success == 'true' && jsonobj.queryresult.$.error == 'false'){
-		
-				var roughdata = JSON.stringify(jsonobj.queryresult.pod[0].subpod[0].plaintext[0]);
-				// currently format like 'altitude | 37000 feet  (7 miles)\nposition | 45.67°N, 64.72°W\nground speed | 541 mph  (miles per hour)\nheading | 54°  (degrees)  (NE)\ndistance traveled | 2692 miles'
-				// ^ problem 1: pipe delimiter; problem 2: \n
-			
-		//		roughdata = 'altitude | 37000 feet  (7 miles)\\nposition | 46.02°N, 64°W\\nground speed | 552 mph  (miles per hour)\\nheading | 70°  (degrees)  (ENE)\\ndistance traveled | 2735 miles';
-
-				var cleandata = roughdata.replace(/\\n/g, " || ");
-				var cleandata2 = cleandata.replace("\"", ''); //remove double quotes
-				var cleanerdata = cleandata2.replace("°N", "N").replace("°S", "S").replace("°W", "W").replace("°E", "E");
-
-				var dataarray = cleanerdata.split(' || ');
-
-				finaldata = [];
-
-				//5 indices, need to split into key value pairs
-				/*
-				altitude | 37000 feet (7 miles) 
-				position | 46.02N, 64W 
-				ground speed | 552 mph (miles per hour) 
-				heading | 70Â° (degrees) (ENE) 
-				distance traveled | 2735 miles
-				*/
-
-				for (var i = 0; i < dataarray.length; i++){
-		
-					var datumarray = dataarray[i].split(' | ');
-						
-					if (datumarray[0] == "altitude"){
-						finaldata['altitude'] = datumarray[1];
-					}
-					else if (datumarray[0] == "position"){
-						finaldata['position'] = datumarray[1];
-					}
-					else if (datumarray[0] == "ground speed"){
-						finaldata['speed'] = datumarray[1];
-					}
-					else if (datumarray[0] == "distance traveled"){
-						finaldata['distance'] = datumarray[1];
-					}
-				}
-		
-				finaldata['time'] = jsonobj.queryresult.pod[0].$.title;
-
-				//now finaldata is loaded with alt, pos, speed, distance:
-				//finaldata['altitude'] = 
-				//finaldata['distance'] = "2735 miles"
-				//finaldata['speed'] = "552 mpg (miles per hour)"
-				//finaldata['position'] = "46.02N, 64W" 
-				//finaldata['time'] = Current information (2:40 am EDT)
-			
-				// Still need to convert coordinates into google maps acceptible coords
-				// 		making the south and west degrees negative
-				// Still need to clean up distance & speed into pure numbers
-
-				finaldata['distance'] = parseInt(finaldata['distance']);
-				finaldata['speed'] = parseInt(finaldata['speed']);
-
-				// must clean up altitude before converting
-				// 		altitude | 37000 feet (7 miles) 
-				// the (x miles) messes up the parse int; must remove it
-		
-				var flagged = false;
-				var tally = 0;
-				
-				while (flagged == false && tally < 20){
-					var alt = finaldata['altitude'];
-					var nummiles = "(" + tally + " miles)";
-					var cleanalt = alt.replace(nummiles, "");
-					if (cleanalt == alt){
-						//didn't change it; continue cycling
-						tally++;
-					}
-					else{ //did clean up the (x miles) in string; replace
-						finaldata['altitude'] = cleanalt;
-						tally = 0;
-						flagged = true; //end
-					}
-				}
-				finaldata['altitude'] = parseInt(finaldata['altitude']);
-
-		// does mph turn to kilometers when flying over canada? would mess up parseint
-		// also feet to meters in altitude
-		// standardize query ^^?
-
-				//Still need to turn coordinates like 46.02N, 64W to 4.02, -64
-			
-				var coords = finaldata['position'].split(', ');
-				var lat = coords[0];	
-				var lon = coords[1];
-
-				var directionindex = lat.indexOf("N");
-
-				//LATITUDE CONVERSION
-				if (directionindex != -1){ //if string contains letter N
-					//north: make it positive int
-					finaldata['latitude'] = parseFloat(lat);
-				}
-				else{ 
-					directionindex = lat.indexOf("S");
-					if (directionindex != -1){
-						//south: make it a negative integer
-						finaldata['latitude'] = parseFloat(lat)*-1;
-					}
-				}
-				// LONGITUDE CONVERSION
-				directionindex = lon.indexOf("W");
-				if (directionindex != -1){
-					//west: make it a negative integer
-					finaldata['longitude'] = parseFloat(lon)*-1;
-				}
-				else{
-					directionindex = lon.indexOf("E");
-					//east: positive integer
-					if (directionindex != -1){
-						finaldata['longitude'] = parseFloat(lon);
-					}
-				}
-
-					console.dir(finaldata);
-				}
-				else {
-					console.dir("FAILED RESPONSE");
-				}
-			});
-		}
-	});
-}
 
 var port = process.env.PORT || 5000;
 app.listen(port, function() {
