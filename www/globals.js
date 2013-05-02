@@ -1,5 +1,5 @@
 $(document).ready(function() { 
-	// var reload = setInterval(getLastTenLines, 500);
+	var reload = setInterval(getLastTenLines, 500);
 	User.prototype.update = function() {
 		var that = this;
 	 	$.post("http://wingmanapi.herokuapp.com/api/user/login",
@@ -56,18 +56,17 @@ $(document).ready(function() {
 
 	$("#msg").on("keydown", function(e) {
 		if (e.which == 13) {
-			console.log("hello!");
 			submitChat();
 		}
+
+		$("#plane-chat").removeClass("closed-chat");
+	}).on("focus", function() {
+		$("#plane-chat").removeClass("closed-chat");
 	});
+
 	$(".close-chat-btn").on("click", function() {
 		var $t = $(this);
 		$t.parent().addClass("closed-chat");
-	});
-
-	$(".closed-chat").on("click", function() {
-		console.log("click");
-		$(this).removeClass("closed-chat");
 	});
 
 	var token = "1f9355c9-13cf-47af-bce8-f6a7fd47e160";
@@ -106,7 +105,7 @@ $(document).ready(function() {
 					}				
 		catch(error) {
 	        if (error == "noresponse") {
-	            alert("no chat info returned");
+	            console.log("no chat info returned");
 	        }
 	    }
 	}
