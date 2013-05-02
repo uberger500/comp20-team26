@@ -24,9 +24,6 @@
   cursor: pointer; }
 
 .closed-chat #chatlines {
-  display: none;
-}
-
+  display: none; }
 .closed-chat input {
-  margin: 0 auto;
-}
+  margin: 0 auto; }
