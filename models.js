@@ -34,11 +34,13 @@ var userSchema = new Schema({
 	name : String,
 	email : {type: String, unique: true},
 	password : String, // bcrypt
-    total_flights: {type: Number, default: 0},
     flight_numbers: {type: [String], default: []},
+    total_flights: {type: Number, default: 0},
     total_miles: {type: Number, default: 0},
     average_speed: {type: Number, default: 0},
     average_altitude: {type: Number, default: 0},
+    all_speeds: {type: [Number], default: [0]},
+    all_altitudes: {type: [Number], default: [0]},
     number_of_states: {type: Number, default: 0}
 });
 

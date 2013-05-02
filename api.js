@@ -4,24 +4,20 @@ var mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
 var models = require('./models.js');
 
+
+var db = null;
 var mongoUri = process.env.MONGOHQ_URL || 'mongodb://heroku:84c7ca002fa6079a82bad84714a0beb7@linus.mongohq.com:10093/app14677217';
 mongoose.connect(mongoUri, function(err) {
 	if (err) {
 		console.log("Error connecting to DB: " + err);
+	} else {
+		db = mongoose.connection.db;
 	}
 });
 
 var app = express();
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
-
-var db = mongo.Db.connect(mongoUri, function (error, databaseConnection) {
-	db = databaseConnection;
-        if(!error) {
-            console.log("We are connected");
-        }
-    });
-
 
 // Main Pages
 
@@ -143,9 +139,16 @@ app.post(API_PREFIX + '/user/update', function(request, response) {
 	models.User.findById(user_id, function(err, user) {
 		var properties = ['total_flights', 'total_miles', 'average_speed', 'average_altitude', 'number_of_states'];
 		for (var i = 0; i < properties.length; i++) {
-			var new_val = request.param(properties[i]);
+			var prop = properties[i];
+			var new_val = request.param(prop);
 			if (new_val) {
-				user[properties[i]] = new_val;
+				user[prop] = new_val;
+			}
+			if (prop == 'average_speed') {
+				user.all_speeds.push(new_val);
+			}
+			if (prop == 'average_altitude') {
+				user.all_altitudes.push(new_val);
 			}
 		}
 		user.save(function(err) {
@@ -191,16 +194,15 @@ app.get(API_PREFIX + '/score', function(request, response) {
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
 //CHAT FILES
-app.post('/submit.json', function(request, response) {
+app.post(API_PREFIX + '/chat/submit.json', function(request, response) {
     console.log(request.body);
     db.collection('chat', function(err, collection) {
-        
         collection.insert({username: request.body.username, chatline: request.body.chatline}, {safe:true}, function(err, result) {
           if (err) {
               response.send({'error':'An error has occured'});
           } else {
             collection.find().toArray(function(err, items){
-            response.send(result[0]); 
+            response.send(result[0]);
 		});
        }
 });
@@ -208,17 +210,17 @@ app.post('/submit.json', function(request, response) {
 });
 
 
-app.get('/chatlines.json', function(request, response) {
+app.get(API_PREFIX + '/chat/chatlines.json', function(request, response) {
         db.collection('chat', function(err, collection) {
         collection.find().sort({ _id : -1 }).limit(10).toArray(function(err, items){
 		chatlinesrev = [];
 		size = items.length;
 		for (i=size;i>0; i--){
-		chatlinesrev.push(items[i-1]);  
-        }        
-       response.send(chatlinesrev); 
+			chatlinesrev.push(items[i-1]);
+      	}
+       response.send(chatlinesrev);
      });
-    });  
+    });
 });
 
 //= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
