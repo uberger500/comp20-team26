@@ -208,7 +208,9 @@ app.get(API_PREFIX + '/score', function(request, response) {
 
 //CHAT FILES
 app.post(API_PREFIX + '/chat/submit', function(request, response) {
+	console.log("HEY HEY HEY");
     console.log(request.body);
+    console.log(request.param('username'));
     db.collection('chat', function(err, collection) {
         collection.insert({username: request.body.username, chatline: request.body.chatline}, {safe:true}, function(err, result) {
           if (err) {
