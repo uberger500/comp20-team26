@@ -56,7 +56,6 @@ $(document).ready(function() {
 
 	$("#msg").on("keydown", function(e) {
 		if (e.which == 13) {
-			console.log("hello!");
 			submitChat();
 		}
 
@@ -108,7 +107,7 @@ $(document).ready(function() {
 					}				
 		catch(error) {
 	        if (error == "noresponse") {
-	            alert("no chat info returned");
+	            console.log("no chat info returned");
 	        }
 	    }
 	}
