@@ -2,7 +2,7 @@ var fieldscorner = new google.maps.LatLng(42.300093,-71.061667);
 var myOptions = {
 	zoom: 6, // The larger the zoom number, the bigger the zoom
 	center: fieldscorner,	// center south station while your location loads
-	mapTypeId: google.maps.MapTypeId.ROADMAP
+	mapTypeId: google.maps.MapTypeId.HYBRID
 	};
 var map;
 var myLat = 0;
