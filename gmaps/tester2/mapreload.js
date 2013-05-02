@@ -134,18 +134,10 @@ function drawlines(path){
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
-//REFRESHFACTS - finds facts for passed coords
+//REFRESHFACTS - finds facts for passed coords - update html
 // facts have variable length - scrollbar on display of them or what?
 function refreshfacts(coords){
 
-	var state = findstate(coords);
-
-}
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
-
-
-function findstate(coords){
 	var lat = coords.lat();
 	var lon = coords.lng();
 
@@ -207,6 +199,9 @@ function findstate(coords){
 }
 
 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+
 function findfacts(state_simple){
 	
 	var statefacts = facts[state_simple];
@@ -219,6 +214,9 @@ function findfacts(state_simple){
 	return fivefacts;
 
 }
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
 
 function randOrd(){
 	return (Math.round(Math.random())-0.5);
