@@ -11,7 +11,7 @@ function submitChat()
 {
     chatmsg=document.getElementById("msg").value;
     document.getElementById("msg").value = "";
-    $.post("http://localhost:5000/submit.json", {username:"username", chatline: chatmsg});  
+    $.post("http://wingmanapi.herokuapp.com/submit.json", {username:"username", chatline: chatmsg});  
 }
 function reload(){
     getLastTenLines();
@@ -21,7 +21,7 @@ function reload(){
 
 function getLastTenLines() {
     var request = new XMLHttpRequest();
-	request.open("GET", "http://localhost:5000/chatlines.json", true);
+	request.open("GET", "http://wingmanapi.herokuapp.com/chatlines.json", true);
 	request.send(null);
 	request.onreadystatechange = function(){
 		try{
