@@ -69,8 +69,6 @@ $(document).ready(function() {
 		$t.parent().addClass("closed-chat");
 	});
 
-
-
 	var token = "1f9355c9-13cf-47af-bce8-f6a7fd47e160";
 
 	function submitChat()
