@@ -15,6 +15,14 @@ var app = express();
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 
+var db = mongo.Db.connect(mongoUri, function (error, databaseConnection) {
+	db = databaseConnection;
+        if(!error) {
+            console.log("We are connected");
+        }
+    });
+
+
 // Main Pages
 
 app.get('/', function(request, response) {
