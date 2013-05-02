@@ -366,8 +366,8 @@ app.get(API_PREFIX + '/nearbyplanes', function(request, res) {
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
-// CURRENTDATA.JSON
-// REQUEST PARAMETER: &flight+company+flight+###
+// CURRENTDATA(.json)
+// REQUEST PARAMETER: &flight+company+flight+###&state=new_hampshire
 // RESPONSE (example): {"time": "Current information (10:20 pm EDT)", "altitude": 36900, "position": "44.52N, 87.53W", "speed": 519, "distance": 1816, "latitude": 44.52, "longitude": -87.53}
 //          (example2): {'errorA'}	
 //			(example3): {'landed'}
@@ -380,6 +380,7 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
 	//turn request into json and grab flight
 	var args = JSON.parse(JSON.stringify(req.query));
 	var flight = args.flight;
+	var state = args.state;
 	var params = "includepodid=FlightProperties:FlightData&includepodid=FlightSchedule:FlightData&format=plaintext";
 //	var params = "format=plaintext";
 
@@ -519,6 +520,8 @@ console.log(flight);
 									dataobj.distance = finaldata['distance'];
 									dataobj.latitude = finaldata['latitude'];
 									dataobj.longitude = finaldata['longitude'];
+									dataobj.state = state;
+									console.log(dataobj);
 
 									res.send(dataobj);
 								}
