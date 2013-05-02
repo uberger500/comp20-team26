@@ -11,7 +11,7 @@ var myLoc = new google.maps.LatLng(0,0);
 var request = new XMLHttpRequest();
 
 
-var planepic = 'images/planesmall3.png';	
+var planepic = 'imag/planesmall3.png';	
 
 // Arrays of google.maps.LatLng coordinates used to draw the polyline paths
 var polyline = [];
