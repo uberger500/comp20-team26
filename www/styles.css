@@ -31,3 +31,6 @@
   display: none; }
 .closed-chat input {
   margin: 0 auto; }
+
+.after-login {
+  display: none; }

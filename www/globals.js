@@ -25,9 +25,8 @@ $(document).ready(function() {
 	}
 
 	User.prototype.loginSuccess = function() {
-		$("#login-form").slideUp("fast");
-		$("#create-form").slideUp("fast");
-		$("#lander").animate({width: "hide", height: "hide"}, 200);
+		$(".before-login").animate({width: "hide", height: "hide"}, 200);
+		$(".after-login").fadeIn("slow");
 		return this;
 	}
 
