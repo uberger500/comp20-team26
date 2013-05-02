@@ -101,17 +101,17 @@ $(document).ready(function() {
 					elem=document.getElementById("chatlines");
 	                output = "";
 	            	for (chatline in parsed_response) {
-
-		output = output + "<p>" + parsed_response[chatline].username +": " + parsed_response[chatline].chatline + "</p>\n";
-			}
-		elem.innerHTML = output;
-						}
-					}				
-		catch(error) {
-	        if (error == "noresponse") {
-	            console.log("no chat info returned");
-	        }
-	    }
-	}
+						output = output + "<p>" + parsed_response[chatline].username +": " + parsed_response[chatline].chatline + "</p>\n";
+					}
+					elem.innerHTML = output;
+					$('#chatlines').scrollTop($('#chatlines')[0].scrollHeight);
+				}
+			}				
+			catch(error) {
+	        	if (error == "noresponse") {
+	            	console.log("no chat info returned");
+	        	}
+	    	}
+		}
 }
 });
