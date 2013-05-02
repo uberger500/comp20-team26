@@ -338,6 +338,8 @@ app.get(API_PREFIX + '/currentdata.json', function(req, res) {
 //	flight = "air+canada+flight+100";
 //  flight = "united+airlines+flight+94";
 
+console.log(flight);
+
 	var request = require('request');
 	request('http://api.wolframalpha.com/v2/query?input=' + flight + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
