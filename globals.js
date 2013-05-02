@@ -20,38 +20,67 @@ $(document).ready(function() {
 	 	return this;
 	}
 
+	User.prototype.create = function() {
+		var that = this;
+		$.post("http://wingmanapi.herokuapp.com/api/user/create",
+		   {
+		   		email: this.email,
+		   		name: this.name,
+		   		password: this.password
+		   }
+		).done(function(data) {
+			if (data.success) {
+				alert("Thanks " + that.name + ", You've created an account!");
+			}
+		});
+		return this;
+	};
+
 	User.prototype.loginSuccess = function() {
 		$("#login-form").slideUp("fast");
 		$("#create-form").slideUp("fast");
 		$("#lander").animate({width: "hide", height: "hide"}, 200);
 		return this;
-	}
+	};
+
+
 
 	function User(email, password) {
 		this.attempt = false;
 		this.email = email;
 		this.password = password;
 		return this.update();
-	}
+	};
 
 	function Graph() {
 		return this;
-	}
+	};
 	Graph.prototype.addNode = function() {
 		return this;
-	}
+	};
 
 	$("#log-in").on("click", function(e) {
 		e.preventDefault();
 		var pass = $("#password").val();
-		var email = $("#email-address").val();	
-		if (pass == "" || email == "") return;
+		var email = $("#email-address").val();
+		if (pass === "" || email === "") return;
 		logged_user = new User(email,pass);
 		var checkUser = window.setInterval(function() {
-			if (logged_user.attempt == true)
+			if (logged_user.attempt === true)
 				logged_user.update();
 			else window.clearInterval(checkUser);
 		}, 3000);
+	});
+
+	$("#create-user").on("hover", function(e) {
+		e.preventDefault();
+		var pass = $("#create-password").val();
+		var email = $("#create-email").val();
+		var name = $("#create-name").val();
+		if (pass === "" || email === "" || name === "") return;
+		logged_user = new User(email,pass);
+		logged_user.name = name;
+		logged_user.create();
 	});
 
 	$("#msg").on("keydown", function(e) {

@@ -5,7 +5,6 @@ var bcrypt = require('bcrypt');
 var fs = require('fs');
 var models = require('./models.js');
 
-
 var db = null;
 var mongoUri = process.env.MONGOHQ_URL || 'mongodb://heroku:84c7ca002fa6079a82bad84714a0beb7@linus.mongohq.com:10093/app14677217';
 mongoose.connect(mongoUri, function(err) {
@@ -67,17 +66,21 @@ app.all(API_PREFIX + '/*', function(request, response, next) {
 app.post(API_PREFIX + '/user/create', function(request, response) {
 	var pass = request.param('password');
 	bcrypt.hash(pass, 10, function(err, hash) {
-		models.User.create({
-			name : request.param('name'),
-			email : request.param('email'),
-			password : hash
-		}, function(err, user) {
-			if (err || !user) {
-				response.json({success: false, error: 'Error creating new user'});
-			} else {
-				response.json({success: true, user: user});
-			}
-		});
+		if (err || !hash) {
+			response.json({success: false, error: 'Password could not be hashed'});
+		} else {
+			models.User.create({
+				name : request.param('name'),
+				email : request.param('email'),
+				password : hash
+			}, function(err, user) {
+				if (err || !user) {
+					response.json({success: false, error: 'Error creating new user'});
+				} else {
+					response.json({success: true, user: user});
+				}
+			});
+		}
 	});
 });
 
@@ -208,30 +211,33 @@ app.get(API_PREFIX + '/score', function(request, response) {
 
 //CHAT FILES
 app.post(API_PREFIX + '/chat/submit', function(request, response) {
-    db.collection('chat', function(err, collection) {
-        collection.insert({username: request.body.username, chatline: request.body.chatline}, {safe:true}, function(err, result) {
-          if (err) {
-              response.send({'error':'An error has occured'});
-          } else {
-            collection.find().toArray(function(err, items){
-            response.send(result[0]);
+	var user_id = request.session.user;
+	models.User.findById(user_id, function(err, user) {
+		db.collection('chat', function(err, collection) {
+			collection.insert({username: user.name, chatline: request.body.chatline}, {safe:true}, function(err, result) {
+		          if (err) {
+		              response.send({'error':'An error has occured'});
+		          } else {
+		            collection.find().toArray(function(err, items){
+		            response.send(result[0]);
+				});
+		       }
+			});
 		});
-       }
-});
-});
+	});
 });
 
 
 app.get(API_PREFIX + '/chat/chatlines', function(request, response) {
-        db.collection('chat', function(err, collection) {
-        collection.find().sort({ _id : -1 }).limit(10).toArray(function(err, items){
-		chatlinesrev = [];
-		size = items.length;
-		for (i=size;i>0; i--){
-			chatlinesrev.push(items[i-1]);
-      	}
-       response.send(chatlinesrev);
-     });
+    db.collection('chat', function(err, collection) {
+        collection.find().sort({ _id : -1 }).limit(10).toArray(function(err, items) {
+			chatlinesrev = [];
+			size = items.length;
+			for (i=size;i>0; i--){
+				chatlinesrev.push(items[i-1]);
+	      	}
+	       response.send(chatlinesrev);
+	    });
     });
 });
 

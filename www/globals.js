@@ -1,9 +1,20 @@
 function encodeHTML(s) {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
-}
+};
 
 $(document).ready(function() { 
 	var reload = setInterval(getLastTenLines, 500);
+
+	function createUser(name, email, password) {
+		$.post("http://wingmanapi.herokuapp.com/api/user/create", { name: name, email: email, password: password }, function(data) {
+			if (data.success) {
+				alert("Thanks " + name + ", you've created an account!");
+			} else {
+				alert("Sorry, the email " + email + " is already in use!");
+			}
+		});
+	}
+
 	User.prototype.update = function() {
 		var that = this;
 	 	$.post("http://wingmanapi.herokuapp.com/api/user/login",
@@ -22,13 +33,13 @@ $(document).ready(function() {
 	 		that.attempt = true;
 	 	});
 	 	return this;
-	}
+	};
 
 	User.prototype.loginSuccess = function() {
 		$(".before-login").animate({width: "hide", height: "hide"}, 200);
 		$(".after-login").fadeIn("slow");
 		return this;
-	}
+	};
 
 	function User(email, password) {
 		this.attempt = false;
@@ -40,21 +51,32 @@ $(document).ready(function() {
 	function Graph() {
 		return this;
 	}
+
 	Graph.prototype.addNode = function() {
 		return this;
-	}
+	};
 
 	$("#log-in").on("click", function(e) {
 		e.preventDefault();
 		var pass = $("#password").val();
-		var email = $("#email-address").val();	
-		if (pass == "" || email == "") return;
+		var email = $("#email-address").val();
+		if (pass === "" || email === "") return;
 		logged_user = new User(email,pass);
 		var checkUser = window.setInterval(function() {
-			if (logged_user.attempt == true)
+			if (logged_user.attempt === true)
 				logged_user.update();
 			else window.clearInterval(checkUser);
 		}, 3000);
+	});
+
+	$("#create-user").on("click", function(e) {
+		e.preventDefault();
+		console.log("Creating user..." + email);
+		var pass = $("#create-password").val();
+		var email = $("#create-email").val();
+		var name = $("#create-name").val();
+		if (pass === "" || email === "" || name === "") return;
+		createUser(name, email, password);
 	});
 
 	$("#msg").on("keydown", function(e) {
