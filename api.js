@@ -22,7 +22,7 @@ app.use(express.bodyParser());
 
 // Main Pages
 
-app.get('/*', function(request, response, next) {
+app.get(/(.+)\.(.+)/, function(request, response, next) {
 	var path = request.path;
 	if (path == '/') {
 		path = '/index.html';
@@ -32,6 +32,10 @@ app.get('/*', function(request, response, next) {
 	} else {
 		next();
 	}
+});
+
+app.get('/', function(request, response, next) {
+	response.sendfile('./www/index.html');
 });
 
 // Start API endpoints
@@ -170,7 +174,7 @@ app.post(API_PREFIX + '/user/update', function(request, response) {
 	});
 });
 
-app.post(API_PREFIX + '/score/submit.json', function(request, response) {
+app.post(API_PREFIX + '/score/submit', function(request, response) {
 	var user_id = request.session.user;
 	models.User.findById(user_id, function(err, user) {
 		if (err || !user) {
@@ -203,7 +207,7 @@ app.get(API_PREFIX + '/score', function(request, response) {
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
 //CHAT FILES
-app.post(API_PREFIX + '/chat/submit.json', function(request, response) {
+app.post(API_PREFIX + '/chat/submit', function(request, response) {
     console.log(request.body);
     db.collection('chat', function(err, collection) {
         collection.insert({username: request.body.username, chatline: request.body.chatline}, {safe:true}, function(err, result) {
@@ -219,7 +223,7 @@ app.post(API_PREFIX + '/chat/submit.json', function(request, response) {
 });
 
 
-app.get(API_PREFIX + '/chat/chatlines.json', function(request, response) {
+app.get(API_PREFIX + '/chat/chatlines', function(request, response) {
         db.collection('chat', function(err, collection) {
         collection.find().sort({ _id : -1 }).limit(10).toArray(function(err, items){
 		chatlinesrev = [];

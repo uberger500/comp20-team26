@@ -11,7 +11,7 @@ function submitChat()
 {
     chatmsg=document.getElementById("msg").value;
     document.getElementById("msg").value = "";
-    $.post("http://wingmanapi.herokuapp.com/submit.json", {username:"username", chatline: chatmsg});  
+    $.post("http://wingmanapi.herokuapp.com/api/chat/submit", {username:"username", chatline: chatmsg});  
 }
 function reload(){
     getLastTenLines();
@@ -20,7 +20,7 @@ function reload(){
 
 function getLastTenLines() {
     var request = new XMLHttpRequest();
-	request.open("GET", "http://wingmanapi.herokuapp.com/chatlines.json", true);
+	request.open("GET", "http://wingmanapi.herokuapp.com/api/chat/chatlines", true);
 	request.send(null);
 	request.onreadystatechange = function(){
 		try{
