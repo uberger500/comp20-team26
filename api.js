@@ -2,6 +2,7 @@ var express = require('express');
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
+var fs = require('fs');
 var models = require('./models.js');
 
 
@@ -21,8 +22,16 @@ app.use(express.bodyParser());
 
 // Main Pages
 
-app.get('/', function(request, response) {
-	response.send('Homepage');
+app.get('/*', function(request, response, next) {
+	var path = request.path;
+	if (path == '/') {
+		path = '/index.html';
+	}
+	if (path) {
+		response.sendfile('./www' + path);
+	} else {
+		next();
+	}
 });
 
 // Start API endpoints
