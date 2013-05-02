@@ -182,6 +182,40 @@ app.get(API_PREFIX + '/score', function(request, response) {
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
+//CHAT FILES
+app.post('/submit.json', function(request, response) {
+    console.log(request.body);
+    db.collection('chat', function(err, collection) {
+        
+        collection.insert({username: request.body.username, chatline: request.body.chatline}, {safe:true}, function(err, result) {
+          if (err) {
+              response.send({'error':'An error has occured'});
+          } else {
+            collection.find().toArray(function(err, items){
+            response.send(result[0]); 
+		});
+       }
+});
+});
+});
+
+
+app.get('/chatlines.json', function(request, response) {
+        db.collection('chat', function(err, collection) {
+        collection.find().sort({ _id : -1 }).limit(10).toArray(function(err, items){
+		chatlinesrev = [];
+		size = items.length;
+		for (i=size;i>0; i--){
+		chatlinesrev.push(items[i-1]);  
+        }        
+       response.send(chatlinesrev); 
+     });
+    });  
+});
+
+//= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+
 
 // CHECK IF INPUT FLIGHT IS VALID AND ON WOLFRAM
 app.get(API_PREFIX + '/checkflight', function(req, res) {
