@@ -158,10 +158,9 @@ function gameloop(){
 		var username = prompt("Score: " + score + ". Please enter a username");
 		var scoreobj = new Object;
 		scoreobj.game_title = "frogger";
-		// scoreobj.username = username;
+		scoreobj.username = username;
 		scoreobj.score = score;
 //		console.log(scoreobj);
-		//change this to my url!!!!!!!!!!! 
 
 		$.post("http://wingmanapi.herokuapp.com/api/score/submit.json", scoreobj);
 //		$.post("http://localhost:3000/submit.json", scoreobj);
