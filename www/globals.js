@@ -3,8 +3,8 @@ function encodeHTML(s) {
 };
 
 $(document).ready(function() { 
-	var reload = null;
-
+	refreshmap(planecoords);
+	start_game();
 	function createUser(name, email, password) {
 		$.post("http://wingmanapi.herokuapp.com/api/user/create", { name: name, email: email, password: password }).done(function(data) {
 			if (data.success) {
@@ -15,7 +15,6 @@ $(document).ready(function() {
 		});
 	}
 
-	refreshmap(planecoords);
 	User.prototype.update = function() {
 		var that = this;
 	 	$.post("http://wingmanapi.herokuapp.com/api/user/login",
@@ -40,7 +39,6 @@ $(document).ready(function() {
 	};
 
 	User.prototype.loginSuccess = function() {
-		console.log(callct);
 		if (!callct)
 			reload = setInterval(getLastTenLines, 500);
 		$(".before-login").animate({width: "hide", height: "hide"}, 200);

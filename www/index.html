@@ -34,6 +34,8 @@
     <script type="text/javascript" src="facts.js"></script>
     <script type="text/javascript" src='mapreload.js'></script>
     <script type="text/javascript" src="globals.js"></script>
+    <script type="text/javascript" src='game.js'></script>
+    <script type="text/javascript" src='arrayData.js'></script>
   </head>
 
   <body>
@@ -50,8 +52,8 @@
           <div class="nav-collapse collapse">
             <ul class="nav">
               <li class="active"><a href="#">Home</a></li>
-              <li><a href="#about">My Info</a></li>
-              <li class="dropdown">
+              <li  class='after-login'><a href="#about">My Info</a></li>
+              <li class="dropdown after-login">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Flight<b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <li class="nav-header">Interact</li>
@@ -63,11 +65,11 @@
                            
                 </ul>
               </li>
-              <li class="dropdown">
+              <li class="dropdown after-login">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Entertainment <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <li class="nav-header">Games</li>
-                  <li><a href="#">Frogger</a></li>
+                  <li><a href="#frogger" data-toggle="modal">Frogger</a></li>
                   <li><a href="#">Galaga</a></li>
                   <li><a href="#">Snake</a></li>
                   <li class="divider"></li>
@@ -133,21 +135,23 @@
       </div>
 
       <div class='after-login'>
-   <div id="example" class="modal hide fade in" style="display: none; ">  
-        <div class="modal-header">  
-        <a class="close" data-dismiss="modal">×</a>  
-        <h3>This is a Modal Heading</h3>  
+        <div id="frogger" class="modal hide fade in" style="display: none; ">  
+          <div class="modal-header">  
+            <a class="close" data-dismiss="modal">×</a>  
+            <h3>This is a Modal Heading</h3>  
+          </div>  
+          <div class="modal-body">  
+          <div id="game_div">
+            <canvas id="game" height="565" width="399"></canvas><br/>
+            <p><a href = "http://score-center.herokuapp.com/">Highscores</a></p>
+            <p id = 'btns'>Buttons for mobile play:</p>
+            <img src = "assets/up1.png" alt = "upkey" onclick = "trigger_move(undefined, 'up')"><br/>
+            <img src = "assets/left1.png" alt = "leftkey" onclick = "trigger_move(undefined, 'left')"><img src = "assets/blank.png" alt = "blank image"><img src = "assets/right1.png" alt = "rightkey" onclick = "trigger_move(undefined, 'right')"><br/>
+            <img src = "assets/down1.png" alt = "downkey" onclick = "trigger_move(undefined, 'down')"><br/><br/><br/>
+            <img id = "spacebar" src = "assets/spacebar.png" alt = "spacebar reset" onclick = "trigger_move(undefined, 'restart')">
+          </div>                    
         </div>  
-        <div class="modal-body">  
-        <h4>Text in a modal</h4>  
-        <p>You can add some text here.</p>                
         </div>  
-        <div class="modal-footer">  
-        <a href="#" class="btn btn-success">Call to action</a>  
-        <a href="#" class="btn" data-dismiss="modal">Close</a>  
-        </div>  
-        </div>  
-        <p><a data-toggle="modal" href="#example" class="btn btn-primary btn-large">Launch demo modal</a></p> 
 
       <div id="map_canvas"></div>
       <div class='navbar'>

@@ -10,26 +10,14 @@
   position: fixed;
   bottom: 0;
   right: 0; }
-
-#header {
-  font-size: 2.5em;
-  margin-bottom: .5em;
-}
-
-#plane-chat input {
-  margin: 10px auto;
-  width: 91%;
-  display: block;
-}
+  #plane-chat input {
+    margin: 10px auto;
+    width: 91%;
+    display: block; }
 
 #chatlines {
   overflow-y: scroll;
   height: 300px; }
-
-#wingmanlogo {
-  padding-top: 3em;
-  padding-bottom: 3em;
-}
 
 .close-chat-btn {
   display: block;
@@ -41,13 +29,11 @@
 
 .closed-chat #chatlines {
   display: none; }
-
 .closed-chat input {
   margin: 0 auto; }
 
 .after-login {
-  display: none;
-}
+  display: none; }
 
 #map_canvas {
   width: 95%;
@@ -55,5 +41,16 @@
   margin: 10px auto;
   padding: 0;
   display: block;
-  border: 0;
-}
+  border: 0; }
+
+#game_div {
+  display: block;
+  background: red;
+  width: 399px;
+  height: 565px;
+  margin: 0 auto; }
+
+.modal-body {
+  max-height: 800px;
+  margin-top: -30px;
+  top: 10px; }

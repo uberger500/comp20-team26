@@ -49,3 +49,17 @@
 	display: block;
 	border:0;	
 }
+
+#game_div {
+	display: block;
+	background: red;
+	width: 399px;
+	height: 565px;
+	margin: 0 auto;
+}
+
+.modal-body {
+	max-height: 800px;
+	margin-top: -30px;
+	top: 10px;
+}
