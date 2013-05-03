@@ -71,7 +71,7 @@ $(document).ready(function() {
 				//send email
 				$.ajax({
 					 type: "POST",
-					 url: "http://wingmanapi.herokuapp.com/sendmail.php",
+					 url: "http://planaheadonline.com/sendmail.php",
 					 data: "address=" + email + "&title=" + "WingMan Registration" + "&name=" + name + "&mail=" + "WingManNoReply@gmail.com" + "&message=" + "Welcome!",
 				});
 				alert("Thanks " + name + ", you've created an account!");
