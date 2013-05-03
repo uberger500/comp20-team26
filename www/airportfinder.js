@@ -39,7 +39,8 @@ function findnearbyplanes(){
 			// to a get request that respons with json planes
 			
 			//change this to wingmanapi.herokuapp whatever
-			var url = "http://localhost:5000/api/nearbyplanes?latitude=" + myLoc.lat() + "&longitude=" + myLoc.lng() + "&token=7cb2c74a-f4ec-4691-a92b-540366f0db87";
+
+			var url = "http://wingmanapi.herokuapp.com/api/nearbyplanes?latitude=" + myLoc.lat() + "&longitude=" + myLoc.lng() + "&token=" + logged_user.token;
 			console.log(url);
 			$.get(url, function(data){ 
 				// data comes back as an array of flight strings
@@ -82,7 +83,7 @@ function findnearbyplanes(){
 
 function addflight(){
 	var paramobj = new Object;
-	paramobj.token = "7cb2c74a-f4ec-4691-a92b-540366f0db87";
+	paramobj.token = logged_user.token;
 	flight = prompt("flight ex american airlines flight 123");
 	if (flight != null && flight != ""){
 		flight = encodeHTML(flight);
@@ -90,7 +91,7 @@ function addflight(){
 		flight = flight.replace(/ /g, "+");
 		console.log(flight);
 		paramobj.flight = flight;
-		$.post("http://localhost:5000/api/user/addflight", paramobj);	
+		$.post("http://wingmanapi.herokuapp.com/api/user/addflight", paramobj);	
 	}
 }
 

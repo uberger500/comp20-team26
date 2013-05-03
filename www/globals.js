@@ -43,21 +43,21 @@ $(document).ready(function() {
 		var lat = this.currentFlight[len].latitude;
 		var lon = this.currentFlight[len].longitude;
 		var coords = new google.maps.LatLng(lat,lon);
-		var location = new google.maps.Marker({		
+		var location = new google.maps.Marker({
 			position: coords
 		});
 		location.setMap(null);
 		location.setMap(map);
 		map.setCenter(coords);
-	}
+	};
 
 	User.prototype.Set = function(prop, val) {
 		this[prop] = val;
-	}
+	};
 
 	User.prototype.Get = function(prop) {
 		return this[prop];
-	}
+	};
 
 	User.prototype.populateFields = function() {
 		$("#username-p").html(this.name);
