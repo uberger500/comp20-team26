@@ -11,13 +11,6 @@ function initializeSnake() {
 	});
 }
 
-// function speedGraph(){
-	// var myData = new Array([10, 20], [15, 10], [20, 30], [25, 10], [30, 5]);
-	// var myChart = new JSChart('chartcontainer', 'line');
-	// myChart.setDataArray(myData);
-	// myChart.draw();
-// }
-
 function logoutUser() {
 	$.post("http://wingmanapi.herokuapp.com/api/user/logout", {token: logged_user.token}, function(data) {
 		if (data.success) {
@@ -61,7 +54,7 @@ $(document).ready(function() {
 
 	User.prototype.populateFields = function() {
 		$("#username-p").html(this.name);
-		$("#flights-p").html(this.total_flights);
+		$("#flights-p").html(this.total_flights + "3");
 		$("#miles-p").html(this.total_miles + "3247");
 	};
 
@@ -124,13 +117,27 @@ $(document).ready(function() {
 		console.log(logged_user.flightnum);
 		$.get("http://127.0.0.1:5000/api/currentdata", { 
 			flight: logged_user.Get("flightnum"),
-			token: "cc2224c4-fa58-4cec-8dfd-8ec3b2077286"
+			token: "7cb2c74a-f4ec-4691-a92b-540366f0db87"
 		}, function(data) {
 			console.log(data);
 			if (typeof data.altitude !== "undefined") {
 				logged_user.currentFlight.push(data);
 				logged_user.placeLoc();
 			}
+			var alt = [], spd = [];
+			var altChart = new JSChart('chartcontainer2', 'line');
+			var spdChart = new JSChart('chartcontainer', 'line');
+			var speed = new Array();
+			if (logged_user.currentFlight.length < 4)
+				return;
+			for (var i = 0; i < logged_user.currentFlight.length; i++) {
+				alt.push([i,parseInt(logged_user.currentFlight[i].altitude) ]);
+				spd.push([i,parseInt(logged_user.currentFlight[i].speed) ]);
+			}
+			altChart.setDataArray(alt);
+			altChart.draw();
+			spdChart.setDataArray(spd);
+			spdChart.draw();
 		});
 	}
 
@@ -159,11 +166,11 @@ $(document).ready(function() {
 		if (pass === "" || email === "") return;
 		logged_user = new User(email,pass);
 		callct = 0;
-		var checkUser = window.setInterval(function() {
-			if (logged_user.attempt === true)
-				logged_user.update();
-			else window.clearInterval(checkUser);
-		}, 3000);
+		// var checkUser = window.setInterval(function() {
+		// 	if (logged_user.attempt === true)
+		// 		logged_user.update();
+		// 	else window.clearInterval(checkUser);
+		// }, 3000);
 	});
 
 	$("#create-user").on("click", function(e) {
@@ -274,4 +281,6 @@ $(document).ready(function() {
 		$g.children(":gt(0)").hide();
 		$g.children().first().addClass("active-page");
 	});
+
+
 });
