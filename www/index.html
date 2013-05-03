@@ -101,7 +101,7 @@
     <br/><br/><br/>
 
     <div class="container">
-
+    <a id='trigger-input' href="#input-flight" data-toggle="modal"></a>
       <!-- Main hero unit for a primary marketing message or call to action -->
            
       <div class="hero-unit before-login">
@@ -111,15 +111,13 @@
           </div>
         </div>
         <h1 id="header">We're your wingman, Maverick.</h1>
+        <br/>
         <p>We'll plot out your trip, give you a live updated time of arrival, and we can even contact your loved ones to let them know exactly when you're arriving. We can keep you entertained with live information about the towns, cities, and landmarks over which you're flying.</p>
-        <!--
-        <form>
-        <input type="text" placeholder="Flight Number ex. AA 1111" name="flightnumber"><br>
-        </form> -->
-        
       </div>
 
       <div class='after-login' style='position: relative;'>
+
+        <!-- FroggerModal -->
         <div id="frogger" class="modal hide fade in" style="display: none; ">  
           <div class="modal-body">  
           <div id="game_div">
@@ -127,23 +125,26 @@
           </div>                    
         </div>  
         </div>  
+        <!-- Input modal -->
        <div id="input-flight" class="modal hide fade in" style="display: none; ">  
-            <div class="modal-header">  
-            <a class="close" data-dismiss="modal">×</a>  
-            <h3>Input your flight number!</h3>  
+            <div class="modal-header">
+            <h3>Please enter your flight number:</h3>
             </div>  
-            <div class="modal-body">  
-            <input type='text' id='flight-number' />
+            <div class="modal-body"> 
+            <br/> 
+            <p>Enter in this format <em>exactly</em>: &lt;airline&gt; flight &lt;flightnumber&gt; </p>
+            <input type='text' id='flight-number' placeholder='eg. delta flight 9991' />
             </div>  
             <div class="modal-footer">  
-            <a href="#" id='submit-flight' class="btn btn-success">Go!</a>  
-            </div>  
-        </div>  
+            <a href="#" id='submit-flight' data-dismiss='input-flight' class="btn btn-success">Go!</a>  
+            </div>
+        </div>
 
       <div id="map_canvas"></div>
       <ul class='tabs' data-group='dashboard'>
         <li data-transition='fade'>Speed</li>
         <li data-transition='fade'>Altitude</li>
+        <li data-transition='fade'>State Facts</li>
         <li data-transition='fade'>Your Account</li>
       </ul>
 
@@ -155,9 +156,24 @@
             </canvas>
         </div>
         <div>hello</div>
-        <div>yolo</div>
+        <div id = "facts">
+          <h3 id = "curfacts"></h3>
+        </div>
+          <div id="account-tab">
+            <p>
+              <h2>Name:</h2>
+              <p class="account-text" id="username-p">Name</p>
+            </p>
+            <p>
+              <h2>Flights Traveled:</h2>
+              <p class="account-text" id="flights-p">0</p>
+            </p>
+            <p>
+              <h2>Total Miles:</h2>
+              <p class="account-text" id="miles-p">0</p>
+            </p>
+        </div>
       </div>
-      <!-- <div id = "facts"><h3 id = "curfacts"></h3></div><br/> -->
       <div id='plane-chat' class='closed-chat'>
         <div class='close-chat-btn'>X</div>
         <div id="chatlines">

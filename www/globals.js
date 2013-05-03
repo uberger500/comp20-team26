@@ -30,6 +30,12 @@ $(document).ready(function() {
 		return this.update();
 	}
 
+	User.prototype.populateFields = function() {
+		$("#username-p").html(this.name);
+		$("#flights-p").html(this.total_flights);
+		$("#miles-p").html(this.total_miles);
+	};
+
 	function createUser(name, email, password) {
 		$.post("http://wingmanapi.herokuapp.com/api/user/create", { name: name, email: email, password: password }).done(function(data) {
 			if (data.success) {
@@ -49,7 +55,6 @@ $(document).ready(function() {
 	 	   		password: this.password
 	 	   }
 	 	).done(function(data) {
-	 		console.log(data);
 	 		$.extend(true,logged_user,data.user);
 	 		logged_user.token = data.token;
 	 		if (data.success === false){ 
@@ -60,13 +65,16 @@ $(document).ready(function() {
 	 		that.loginSuccess();
 	 		callct++;
 	 		that.attempt = true;
+	 		that.populateFields();
 	 	});
 	 	return this;
 	};
 
 	User.prototype.loginSuccess = function() {
-		if (!callct)
+		if (!callct){
 			reload = setInterval(getLastTenLines, 500);
+			$("#trigger-input").trigger("click");
+		}
 		$(".before-login").animate({width: "hide", height: "hide"}, 200);
 		$(".after-login").fadeIn("slow");
 		$(".drop-down").fadeIn("slow");
@@ -152,13 +160,30 @@ $(document).ready(function() {
 		$t.parent().addClass("closed-chat");
 	});
 
+	$("#submit-flight").on("click", function(e) {
+		var flightnum = $("#flight-number").val();
+		console.log(flightnum);
+		if (flightnum === "") {
+			e.preventDefault();
+			e.stopPropagation();
+			return;
+		}
+		$.get("http://127.0.0.1:5000/api/currentdata", { 
+			flight: flightnum,
+			token: logged_user.token
+		}, function(data) {
+			console.log(data);
+			if 
+		});
+	});
+
 	function submitChat()
 	{
-	    chatmsg = encodeHTML(document.getElementById("msg").value);
-	    document.getElementById("msg").value = "";
-	    // Use the global user's username
-	    // http://wingmanapi.herokuapp.com/api/chat/submit
-	    $.post("http://wingmanapi.herokuapp.com/api/chat/submit", {username: logged_user.email, chatline: chatmsg, token: logged_user.token});  
+		chatmsg = encodeHTML(document.getElementById("msg").value);
+		document.getElementById("msg").value = "";
+		// Use the global user's username
+		// http://wingmanapi.herokuapp.com/api/chat/submit
+		$.post("http://wingmanapi.herokuapp.com/api/chat/submit", {username: logged_user.email, chatline: chatmsg, token: logged_user.token});
 	}
 	var chat_calls = 0;
 	function getLastTenLines() {
@@ -202,7 +227,7 @@ $(document).ready(function() {
 		var $link = $("[data-tabname=" + $t.attr("rel") + "]");
 		if ($t.hasClass("slider")) return;
 		if ($link.hasClass("active-page")) return;
-		console.log($g);
+		// console.log($g);
 		$g.children().hide().removeClass("active-page");
 		if (typeof $t.attr("rel") === "undefined") {
 			var i = $t.index();

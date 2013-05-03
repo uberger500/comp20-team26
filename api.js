@@ -419,12 +419,12 @@ console.log(flight);
 					// check if entire string contains "actual landing time"
 						var responsestring = JSON.stringify(jsonobj.queryresult);
 						if (responsestring.indexOf("actual landing time") != -1){
-							res.send("{'landed'}");
+							res.send('{"status":"landed"}');
 						}			
 						else{
 						
 							if (responsestring.indexOf("estimated takeoff") != -1){
-								res.send("{'Plane hasn't taken off yet or post-takeoff data not available yet'}");
+								res.send('{"status":"Plane hasn\'t taken off yet or post-takeoff data not available yet"}');
 							}
 							else{
 							
@@ -537,9 +537,9 @@ console.log(flight);
 									dataobj.longitude = finaldata['longitude'];
 									console.log(dataobj);
 
-									res.send(dataobj);
+									res.send(JSON.stringify(dataobj));
 								}
-								else res.send("{'errorA'}");
+								else res.send('{"status":"errorA"}');
 							}	
 						}	
 					}
