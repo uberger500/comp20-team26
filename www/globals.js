@@ -71,7 +71,7 @@ $(document).ready(function() {
 				//send email
 				$.ajax({
 					 type: "POST",
-					 url: "sendmail.php",
+					 url: "http://wingmanapi.herokuapp.com/sendmail.php",
 					 data: "address=" + email + "&title=" + "WingMan Registration" + "&name=" + name + "&mail=" + "WingManNoReply@gmail.com" + "&message=" + "Welcome!",
 				});
 				alert("Thanks " + name + ", you've created an account!");
@@ -122,9 +122,9 @@ $(document).ready(function() {
 	User.prototype.updateFlight = function() {
 		var that = this;
 		console.log(logged_user.flightnum);
-		$.get("http://127.0.0.1:5000/api/currentdata", { 
+		$.get("http://wingmanapi.herokuapp.com/api/currentdata", {
 			flight: logged_user.Get("flightnum"),
-			token: "cc2224c4-fa58-4cec-8dfd-8ec3b2077286"
+			token: logged_user.token
 		}, function(data) {
 			console.log(data);
 			if (typeof data.altitude !== "undefined") {
@@ -132,7 +132,7 @@ $(document).ready(function() {
 				logged_user.placeLoc();
 			}
 		});
-	}
+	};
 
 	// Load saved user if there is one
 	if (localStorage.savedUser) {
