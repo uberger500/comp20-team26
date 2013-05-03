@@ -151,7 +151,6 @@ $(document).ready(function() {
 
 	refreshmap(planecoords);
 	start_game();
-<<<<<<< HEAD
 		
 
 	$("#snake-button").on("click", function(e) {
@@ -174,8 +173,7 @@ $(document).ready(function() {
 
     drawMyChart();
    
-=======
->>>>>>> b38b47381906f8a71e90a083f606238dcfb43d8e
+
 
 	$("#log-in").on("click", function(e) {
 		e.preventDefault();
