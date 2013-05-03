@@ -18,7 +18,7 @@
     <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
     <link rel="shortcut icon" href="assets/ico/favicon.png">
     <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-    <script type="text/javascript" src='https://raw.github.com/cyberpython/AwesomeChartJS/master/awesomechart.js'></script>
+<!-- <script type="text/javascript" src='https://raw.github.com/cyberpython/AwesomeChartJS/master/awesomechart.js'></script> -->
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true&amp;libraries=places"></script>
     <script type="text/javascript" src="facts.js"></script>
     <script type="text/javascript" src='mapreload.js'></script>
@@ -26,7 +26,8 @@
     <script type="text/javascript" src='game.js'></script>
     <script type="text/javascript" src='assets/js/snake.js'></script>
     <script type="text/javascript" src='arrayData.js'></script>
-	<script type="text/javascript" src="jscharts.js"></script>
+	 <script type="text/javascript" src="jscharts.js"></script>
+	 <script type="text/javascript" src="displaynearbyplanes.js"></script>
   </head>
 
   <body>
@@ -196,6 +197,8 @@
             <h3>Please enter your flight number:</h3>
             </div>  
             <div class="modal-body"> 
+            <button type = "button" onclick = "displaynearbyplanes()">Find nearby flights</button><br/><br/>
+            <div id = "nearbyplanes"></div>
             <p>Enter in this format <em>exactly</em>: &lt;airline&gt; flight &lt;flightnumber&gt; </p>
             <input type='text' id='flight-number' placeholder='eg. delta flight 9991' />
             </div>  

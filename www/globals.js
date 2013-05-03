@@ -36,21 +36,21 @@ $(document).ready(function() {
 		var lat = this.currentFlight[len].latitude;
 		var lon = this.currentFlight[len].longitude;
 		var coords = new google.maps.LatLng(lat,lon);
-		var location = new google.maps.Marker({		
+		var location = new google.maps.Marker({
 			position: coords
 		});
 		location.setMap(null);
 		location.setMap(map);
 		map.setCenter(coords);
-	}
+	};
 
 	User.prototype.Set = function(prop, val) {
 		this[prop] = val;
-	}
+	};
 
 	User.prototype.Get = function(prop) {
 		return this[prop];
-	}
+	};
 
 	User.prototype.populateFields = function() {
 		$("#username-p").html(this.name);
@@ -64,7 +64,7 @@ $(document).ready(function() {
 				//send email
 				$.ajax({
 					 type: "POST",
-					 url: "sendmail.php",
+					 url: "http://planaheadonline.com/sendmail.php",
 					 data: "address=" + email + "&title=" + "WingMan Registration" + "&name=" + name + "&mail=" + "WingManNoReply@gmail.com" + "&message=" + "Welcome!",
 				});
 				alert("Thanks " + name + ", you've created an account!");
@@ -104,7 +104,7 @@ $(document).ready(function() {
 			reload = window.setInterval(getLastTenLines, 500);
 			$("#trigger-input").trigger("click");
 		}
-		$(".before-login").animate({width: "hide", height: "hide"}, 200);
+		$(".before-login").animate({height: "hide"}, 400);
 		$(".after-login").fadeIn("slow");
 		$(".drop-down").fadeIn("slow");
 		reload = setInterval(getLastTenLines, 500);
@@ -115,7 +115,7 @@ $(document).ready(function() {
 	User.prototype.updateFlight = function() {
 		var that = this;
 		console.log(logged_user.flightnum);
-		$.get("http://127.0.0.1:5000/api/currentdata", { 
+		$.get("http://wingmanapi.herokuapp.com/api/currentdata", {
 			flight: logged_user.Get("flightnum"),
 			token: "7cb2c74a-f4ec-4691-a92b-540366f0db87"
 		}, function(data) {
@@ -139,7 +139,7 @@ $(document).ready(function() {
 			spdChart.setDataArray(spd);
 			spdChart.draw();
 		});
-	}
+	};
 
 	// Load saved user if there is one
 	if (localStorage.savedUser) {
@@ -158,6 +158,13 @@ $(document).ready(function() {
 
 	refreshmap(planecoords);
 	start_game();
+		
+
+	$("#snake-button").on("click", function(e) {
+		initializeSnake();
+		$("#snake-board").focus();
+	});
+
 
 	$("#log-in").on("click", function(e) {
 		e.preventDefault();
@@ -218,39 +225,24 @@ $(document).ready(function() {
 		document.getElementById("msg").value = "";
 		$.post("http://wingmanapi.herokuapp.com/api/chat/submit", {username: logged_user.email, chatline: chatmsg, token: logged_user.token});
 	}
+
 	var chat_calls = 0;
 	function getLastTenLines() {
-	    var request = new XMLHttpRequest();
-		request.open("GET", "http://wingmanapi.herokuapp.com/api/chat/chatlines?token=" + logged_user.token, true);
-		//request.send(null);
-		request.onreadystatechange = function(){
-			try{
-				if (this.readyState ==4 && this.status == 0){
-				console.log("status code 0");
-				throw "noresponse";
-				}
-				else if (this.readyState == 4 && this.status == 200){				
-					response = (this.responseText);
-					parsed_response = JSON.parse(response);
-					elem=document.getElementById("chatlines");
-	                output = "";
-	            	for (chatline in parsed_response) {
-	            		if (typeof parsed_response[chatline].username === "undefined")
-	            			continue;
-						output = output + "<p>" + parsed_response[chatline].username +": " + parsed_response[chatline].chatline + "</p>\n";
-					}
-					elem.innerHTML = output;
-					if (!chat_calls)
-						$('#chatlines').scrollTop($('#chatlines')[0].scrollHeight);
-					chat_calls++;
-				}
-			}				
-			catch(error) {
-	        	if (error == "noresponse") {
-	            	console.log("no chat info returned");
-	        	}
-	    	}
-		}
+		$.get("http://wingmanapi.herokuapp.com/api/chat/chatlines?token=" + logged_user.token, function(data) {
+			parsed_response = data;
+			elem = document.getElementById("chatlines");
+	        output = "";
+	        console.log(parsed_response);
+	    	for (chatline in parsed_response) {
+	    		if (typeof parsed_response[chatline].username === "undefined")
+	    			continue;
+				output = output + "<p>" + parsed_response[chatline].username +": " + parsed_response[chatline].chatline + "</p>\n";
+			}
+			elem.innerHTML = output;
+			if (!chat_calls)
+				$('#chatlines').scrollTop($('#chatlines')[0].scrollHeight);
+			chat_calls++;
+		});
 	}
 
 	//tabbing functionality for dashboard
