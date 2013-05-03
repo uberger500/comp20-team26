@@ -321,6 +321,8 @@ app.get(API_PREFIX + '/nearbyplanes', function(request, res) {
 	query = "planes+above+" + mylat + "," + mylon;
 	params = "format=plaintext";
 
+var errorobj = new Object;
+errorobj.status = "Error finding nearby flights";
 
 //HARDCODED WITH A TOKEN CURRENTLY
 
@@ -343,7 +345,7 @@ app.get(API_PREFIX + '/nearbyplanes', function(request, res) {
 								var plainplanes = jsonobj.queryresult.pod[1].subpod[0].plaintext[0];
 	//							console.log(plainplanes);
 								if (plainplanes == "(data not available)"){
-									res.send('{"status":"cannot determine flight information based on loaction"}');
+									res.send('{"status":"cannot determine flight information based on location"}');
 									console.log('{"status":"cannot determine flight information based on loaction"}');
 								}
 								else{
@@ -366,16 +368,16 @@ app.get(API_PREFIX + '/nearbyplanes', function(request, res) {
 									res.send(flightsfoundstring);
 								}
 							}
-							else res.send("{error0'}");
+							else res.send(errorobj);
 						}
-						else res.send("{'error1'}");
+						else res.send(errorobj);
 					}
-					else res.send("{'error2'}");
+					else res.send(errorobj);
 				});
 			}
-			else res.send("{'error3'}");	
+			else res.send(errorobj);
 		}
-		else res.send("{'error4'}");
+		else res.send(errorobj);
 	});
 //	res.send("{'end'}");
 });
@@ -562,6 +564,8 @@ errorobj.status = "Error finding flight info";
 										if (finaldata['longitude'] != undefined){
 										dataobj.longitude = finaldata['longitude'];								
 									}		
+									
+									dataobj.status = 1;
 																	
 									console.log(dataobj);
 
