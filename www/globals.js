@@ -42,6 +42,7 @@ $(document).ready(function() {
 		location.setMap(null);
 		location.setMap(map);
 		map.setCenter(coords);
+		refreshfacts(coords);
 	};
 
 	User.prototype.Set = function(prop, val) {

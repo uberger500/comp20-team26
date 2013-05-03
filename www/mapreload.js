@@ -148,7 +148,7 @@ function refreshfacts(coords){
 	request.send(null);
 	request.onreadystatechange = function(){
 		if (this.status == 0){
-			console.log("status code 0");
+//			console.log("status code 0");
 		}
 		else if (this.readyState == 4 && this.status == 200){			
 			response = (this.responseText);
@@ -174,17 +174,21 @@ function refreshfacts(coords){
 					state_simple = "ocean";
 					state_regular = "Ocean";
 				}
+//				console.log("adding facts for " + state_regular);
+					
 				// now find facts for the state
 				var fivefacts = findfacts(state_simple);
+
 				// now delete past facts, then re-insert header, and facts
-				// document.getElementById("facts").innerHTML = "";			
-				$("#curfacts").append(state_regular + " Facts");
+				// document.getElementById("facts").innerHTML = "";	
+				$("#facts").empty();
+				$("#facts").append("<h3>" + state_regular + " Facts</h3>");		
 				for (var i = 0; i < fivefacts.length; i++){
 					$("#facts").append("<p>" + (i+1) + ". " + fivefacts[i] + "</p>");
 				}
 			}
 			else{
-				console.log("gmaps api failed request");
+		//		console.log("gmaps api failed request");
 			}
 		}
 	}
