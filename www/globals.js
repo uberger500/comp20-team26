@@ -159,7 +159,7 @@ $(document).ready(function() {
 		$("#snake-board").focus();
 	});
 
-/*
+
 	function drawMyChart() {
         if(!!document.createElement('canvas').getContext){ //check that the canvas
                                                            // element is supported
@@ -173,7 +173,7 @@ $(document).ready(function() {
     }
 
     drawMyChart();
-*/    
+   
 =======
 >>>>>>> b38b47381906f8a71e90a083f606238dcfb43d8e
 
