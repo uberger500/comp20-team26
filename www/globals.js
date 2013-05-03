@@ -15,6 +15,7 @@ $(document).ready(function() {
 		});
 	}
 
+	refreshmap(planecoords);
 	User.prototype.update = function() {
 		var that = this;
 	 	$.post("http://127.0.0.1:5000/api/user/login",
@@ -23,22 +24,29 @@ $(document).ready(function() {
 	 	   		password: this.password
 	 	   }
 	 	).done(function(data) {
-	 		console.log(data.success);
+	 		console.log(data);
 	 		$.extend(true,logged_user,data.user);
-	 		if (data.success === false){
+	 		logged_user.token = data.token;
+	 		if (data.success === false){ 
+	 			callct = 0;
 	 			that.attempt = false;
 	 			return;
 	 		}
 	 		that.loginSuccess();
+	 		callct++;
 	 		that.attempt = true;
 	 	});
 	 	return this;
 	};
 
 	User.prototype.loginSuccess = function() {
+		console.log(callct);
+		if (!callct)
+			reload = setInterval(getLastTenLines, 500);
 		$(".before-login").animate({width: "hide", height: "hide"}, 200);
 		$(".after-login").fadeIn("slow");
 		reload = setInterval(getLastTenLines, 500);
+		google.maps.event.trigger(map, 'resize');
 		return this;
 	};
 
@@ -63,6 +71,7 @@ $(document).ready(function() {
 		var email = $("#email-address").val();
 		if (pass === "" || email === "") return;
 		logged_user = new User(email,pass);
+		callct = 0;
 		var checkUser = window.setInterval(function() {
 			if (logged_user.attempt === true)
 				logged_user.update();
@@ -94,7 +103,6 @@ $(document).ready(function() {
 		$t.parent().addClass("closed-chat");
 	});
 
-	var token = "1f9355c9-13cf-47af-bce8-f6a7fd47e160";
 
 	function submitChat()
 	{
@@ -103,12 +111,12 @@ $(document).ready(function() {
 	    document.getElementById("msg").value = "";
 	    // Use the global user's username
 	    // http://wingmanapi.herokuapp.com/api/chat/submit
-	    $.post("http://127.0.0.1:5000/api/chat/submit", {username: "username", chatline: chatmsg, token: token});  
+	    $.post("http://127.0.0.1:5000/api/chat/submit", {username: logged_user.email, chatline: chatmsg, token: logged_user.token});  
 	}
 	var chat_calls = 0;
 	function getLastTenLines() {
 	    var request = new XMLHttpRequest();
-		request.open("GET", "http://127.0.0.1:5000/api/chat/chatlines?token=" + token, true);
+		request.open("GET", "http://127.0.0.1:5000/api/chat/chatlines?token=" + logged_user.token, true);
 		request.send(null);
 		request.onreadystatechange = function(){
 			try{

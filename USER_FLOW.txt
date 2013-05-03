@@ -2,14 +2,34 @@ Application Flow:
 
 1. User is presented with login modal page
 2. User creates/logins in and script receives user info
+3. User enters flight:
+	a. Uses geolocation button to detect nearby flights
+		- Pass user coordinates to nearby planes API; response with array of planes
+			I. If array empty and error returned, no planes found, user can enter flight number
+		- Plane selected in drop down sent to /checkflight api; responds if valid on wolfram (double check)
+		- user/addflight API
+	b. Enters flight number
+		- Sent to /checkflight api; responds if valid on wolfram
+		- user/addflight API
 3. User enters flight number for current flight (if none, default to previous flight)
 4. Main screen is populated with user's information
 5. User interacts with info
 6. User logs out and clears info
 
-In the refresh loop
 
-1. User info will be pulled (using currentData.json)
-2. Altitude and speed graphs will be updated, info will be pushed to user
-3. Map (and facts) will be updated with new coordinates
-4. Chat box will be updated
+
+In the refresh loop (~ 5 mins)
+
+1. Query current data API with flight number
+	a. Response contains time, altitude, position, speed, distance, latitude, longitude
+		--> Continue normally; use user/update API with new data
+	b. Response contains error
+		--> Skip updating user info
+	c. Response contains landed
+		--> Send text/email, stop refreshing every 5 mins?
+	d. Response contains plane hasn't taken off or data not available
+		--> Don't update user info but continue in loop
+2. Update map and facts with refreshmap(planecoords) passing an array of the coordinates stored by user; returns state
+3. State returned by refresh map is added to user's data; /user/update API?
+4. Update altitude and speed graphs, saving averages under user data
+5. Chat box will be updated
