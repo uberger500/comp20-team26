@@ -151,6 +151,13 @@ $(document).ready(function() {
 
 	refreshmap(planecoords);
 	start_game();
+		
+
+	$("#snake-button").on("click", function(e) {
+		initializeSnake();
+		$("#snake-board").focus();
+	});
+
 
 	$("#log-in").on("click", function(e) {
 		e.preventDefault();
