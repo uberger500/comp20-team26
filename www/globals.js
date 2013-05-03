@@ -5,6 +5,7 @@ function encodeHTML(s) {
 $(document).ready(function() { 
 	refreshmap(planecoords);
 	start_game();
+
 	function createUser(name, email, password) {
 		$.post("http://wingmanapi.herokuapp.com/api/user/create", { name: name, email: email, password: password }).done(function(data) {
 			if (data.success) {
@@ -43,6 +44,7 @@ $(document).ready(function() {
 			reload = setInterval(getLastTenLines, 500);
 		$(".before-login").animate({width: "hide", height: "hide"}, 200);
 		$(".after-login").fadeIn("slow");
+		$(".drop-down").fadeIn("slow");
 		reload = setInterval(getLastTenLines, 500);
 		google.maps.event.trigger(map, 'resize');
 		return this;
@@ -104,7 +106,6 @@ $(document).ready(function() {
 
 	function submitChat()
 	{
-		console.log("chatting");
 	    chatmsg = encodeHTML(document.getElementById("msg").value);
 	    document.getElementById("msg").value = "";
 	    // Use the global user's username
