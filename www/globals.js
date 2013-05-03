@@ -65,8 +65,10 @@ $(document).ready(function() {
 	};
 
 	User.prototype.loginSuccess = function() {
-		if (!callct)
+		if (!callct){
 			reload = setInterval(getLastTenLines, 500);
+			$("#trigger-input").trigger("click");
+		}
 		$(".before-login").animate({width: "hide", height: "hide"}, 200);
 		$(".after-login").fadeIn("slow");
 		$(".drop-down").fadeIn("slow");
@@ -150,6 +152,21 @@ $(document).ready(function() {
 	$(".close-chat-btn").on("click", function() {
 		var $t = $(this);
 		$t.parent().addClass("closed-chat");
+	});
+
+	$("#submit-flight").on("click", function(e) {
+		var flightnum = $("#flight-number").val();
+		if (flightnum === "") {
+			e.preventDefault();
+			e.stopPropagation();
+			return;
+		}
+		$.get("http://127.0.0.1:5000/api/currentdata", { 
+			flight: flightnum,
+			token: logged_user.token
+		}).done(function(data) {
+			console.log(data);
+		});
 	});
 
 	function submitChat()

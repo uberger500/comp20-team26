@@ -36,6 +36,10 @@
   display: none;
   position: relative; }
 
+#game, #game_div {
+  display: block;
+  margin: 0 auto; }
+
 #map_canvas {
   width: 95%;
   height: 300px;
@@ -43,12 +47,19 @@
   padding: 0;
   display: block;
   border: 0;
-  position: relative; }
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden; }
 
-.modal-body {
+.modal, .modal-body {
   max-height: 800px;
   margin-top: -30px;
-  top: 10px; }
+  top: 10px;
+  color: #313131; }
+  .modal input, .modal-body input {
+    width: 95%;
+    display: block;
+    margin: 10px auto; }
 
 #chart {
   display: block;
@@ -83,7 +94,7 @@
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     display: inline-block;
-    width: 33%;
+    width: 25%;
     margin: 0 -2px;
     padding: 7px 4px;
     text-align: center;
