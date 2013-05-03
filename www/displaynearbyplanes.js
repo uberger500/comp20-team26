@@ -18,7 +18,7 @@ function displaynearbyplanes(){
 			
 			//change this to wingmanapi.herokuapp whatever
 			var url = "http://wingmanapi.herokuapp.com/api/nearbyplanes?latitude=" + myLoc.lat() + "&longitude=" + myLoc.lng() + "&token=" + logged_user.token;
-			console.log(url);
+			// console.log(url);
 			$.get(url, function(data){ 
 				// data comes back as an array of flight strings
 				if (JSON.stringify(data).indexOf('flight') == -1){ //if theres no substring flight, no flights found
@@ -47,7 +47,7 @@ function displaynearbyplanes(){
 					
 				}
 			}).done(function(data) {
-				console.log(data);
+				// console.log(data);
 			});			
 		});	
 	}
