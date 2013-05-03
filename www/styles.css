@@ -47,8 +47,15 @@
   display: block;
   background: red;
   width: 399px;
-  height: 565px;
+  height: 600px;
   margin: 0 auto; }
+
+#snake-board {
+  width: 500px;
+  height: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
 
 .modal-body {
   max-height: 800px;

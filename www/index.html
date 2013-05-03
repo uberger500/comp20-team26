@@ -18,6 +18,7 @@
     </style>
     <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/snake.css">
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="/assets/js/html5shiv.js"> </script>
@@ -35,6 +36,7 @@
     <script type="text/javascript" src='mapreload.js'></script>
     <script type="text/javascript" src="globals.js"></script>
     <script type="text/javascript" src='game.js'></script>
+    <script type="text/javascript" src='assets/js/snake.js'></script>
     <script type="text/javascript" src='arrayData.js'></script>
   </head>
 
@@ -43,15 +45,9 @@
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
-          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
           <a class="brand" href="#">Wingman</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle drop-down" data-toggle="dropdown">Flight<b class="caret"></b></a>
                 <ul class="dropdown-menu">
@@ -69,16 +65,14 @@
                 <ul class="dropdown-menu">
                   <li class="nav-header">Games</li>
                   <li><a href="#frogger" data-toggle="modal">Frogger</a></li>
-                  <li><a href="#">Snake</a></li>
+                  <li><a href="#snake" data-toggle="modal" id="snake-button">Snake</a></li>
                   <li class="divider"></li>
                   <li class="nav-header">Movies</li>
                   <li><a href="http://www.youtube.com/watch?v=qaXvFT_UyI8">Airplane</a></li>
                   <li><a href="http://www.youtube.com/watch?v=nA9Q_hEDne8">Up in the Air</a></li>
                 </ul>
               </li>
-          
             </ul>
-           
            <li class="dropdown nobullet pull-right padleft before-login">
              <a class="btn btn-warning" data-toggle="dropdown" href="#menu1">
                Create
@@ -134,36 +128,20 @@
 
       <div class='after-login'>
         <div id="frogger" class="modal hide fade in" style="display: none; ">  
-          <div class="modal-header">  
-            <a class="close" data-dismiss="modal">×</a>  
-            <h3>This is a Modal Heading</h3>  
-          </div>  
           <div class="modal-body">  
-          <div id="game_div">
-            <canvas id="game" height="565" width="399"></canvas><br/>
-            <p><a href = "http://score-center.herokuapp.com/">Highscores</a></p>
-            <p id = 'btns'>Buttons for mobile play:</p>
-            <img src = "assets/up1.png" alt = "upkey" onclick = "trigger_move(undefined, 'up')"><br/>
-            <img src = "assets/left1.png" alt = "leftkey" onclick = "trigger_move(undefined, 'left')"><img src = "assets/blank.png" alt = "blank image"><img src = "assets/right1.png" alt = "rightkey" onclick = "trigger_move(undefined, 'right')"><br/>
-            <img src = "assets/down1.png" alt = "downkey" onclick = "trigger_move(undefined, 'down')"><br/><br/><br/>
-            <img id = "spacebar" src = "assets/spacebar.png" alt = "spacebar reset" onclick = "trigger_move(undefined, 'restart')">
-          </div>                    
-        </div>  
-        </div>  
-       <div id="example" class="modal hide fade in" style="display: none; ">  
-            <div class="modal-header">  
-            <a class="close" data-dismiss="modal">×</a>  
-            <h3>This is a Modal Heading</h3>  
-            </div>  
-            <div class="modal-body">  
-            <h4>Text in a modal</h4>  
-            <p>You can add some text here.</p>                
-            </div>  
-            <div class="modal-footer">  
-            <a href="#" class="btn btn-success">Call to action</a>  
-            <a href="#" class="btn" data-dismiss="modal">Close</a>  
-            </div>  
+            <div id="game_div">
+              <br/>
+              <canvas id="game" height="565" width="399"></canvas><br/>
+            </div>                    
+          </div>  
+        </div>
+       <div id="snake" class="modal hide fade in" style="display: none; ">  
+         <div class="modal-body">  
+           <div id="snake-board">
+             <!-- Snake goes here -->
+           </div>
          </div>  
+       </div>
 
       <div id="map_canvas"></div>
       <div class='navbar'>
@@ -171,19 +149,17 @@
           <li>Facts</li>
         </ul>
       </div>
-      <div id = "facts"><h3 id = "curfacts"></h3></div><br/>
+      <div id = "facts" class="row-fluid"><h3 id = "curfacts"></h3></div><br/>
 
       <div id='plane-chat' class='closed-chat'>
         <div class='close-chat-btn'>X</div>
         <div id="chatlines">
         </div>
-        <input type="text" placeholder="Send chat message..."  id="msg" name="msg" size="80"/>
+        <input type="text" placeholder="Send chat message..." id="msg" name="msg" size="80"/>
       </div>
 
     </div>
       <hr>
-      
-      
       
       <footer>
         <p>&copy; Wingman LLC 2013</p>
