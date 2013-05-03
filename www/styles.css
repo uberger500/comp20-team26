@@ -9,7 +9,7 @@
   box-shadow: 0px 0px 10px #212121;
   position: fixed;
   bottom: 0;
-  left: 0; }
+  right: 0; }
   #plane-chat input {
     margin: 10px auto;
     width: 91%;
@@ -34,3 +34,11 @@
 
 .after-login {
   display: none; }
+
+#map_canvas {
+  width: 95%;
+  height: 300px;
+  margin: 10px auto;
+  padding: 0;
+  display: block;
+  border: 0; }

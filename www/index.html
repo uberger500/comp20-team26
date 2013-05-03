@@ -30,6 +30,9 @@
                     <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
                                    <link rel="shortcut icon" href="assets/ico/favicon.png">
     <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true&amp;libraries=places"></script>
+    <script type="text/javascript" src="facts.js"></script>
+    <script type="text/javascript" src='mapreload.js'></script>
     <script type="text/javascript" src="globals.js"></script>
   </head>
 
@@ -92,10 +95,7 @@
                </form>
              </div>
            </li>                          
-             
-             <!-- <a href="createuser.html" class="btn btn-warning">Create</a> -->
-              
-       <li class="dropdown nobullet pull-right before-login">
+           <li class="dropdown nobullet pull-right before-login">
              <a class="btn btn-primary" data-toggle="dropdown" href="#menu1">
                Log In
                 <b class="caret"></b>
@@ -109,7 +109,7 @@
                  </fieldset>
                </form>
              </div>
-           </li>       
+          </li>       
           </div><!--/.nav-collapse -->
         </div>
       </div>
@@ -166,8 +166,15 @@
       
       </div>
   -->
-  
-      <div id='plane-chat'>
+      <div id="map_canvas"></div>
+      <div class='navbar'>
+        <ul class="nav">
+          <li>Facts</li>
+        </ul>
+      </div>
+      <div id = "facts"><h3 id = "curfacts"></h3></div><br/>
+
+      <div id='plane-chat' class='closed-chat'>
         <div class='close-chat-btn'>X</div>
         <div id="chatlines">
         </div>

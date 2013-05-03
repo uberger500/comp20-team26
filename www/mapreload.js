@@ -1,8 +1,8 @@
 var fieldscorner = new google.maps.LatLng(42.300093,-71.061667);
 var myOptions = {
-	zoom: 6, // The larger the zoom number, the bigger the zoom
+	zoom: 10, // The larger the zoom number, the bigger the zoom
 	center: fieldscorner,	// center south station while your location loads
-	mapTypeId: google.maps.MapTypeId.HYBRID
+	mapTypeId: google.maps.MapTypeId.ROADMAP
 	};
 var map;
 var myLat = 0;
@@ -11,7 +11,7 @@ var myLoc = new google.maps.LatLng(0,0);
 var request = new XMLHttpRequest();
 
 
-var planepic = 'imag/planesmall3.png';	
+var planepic = 'img/planesmall3.png';	
 
 // Arrays of google.maps.LatLng coordinates used to draw the polyline paths
 var polyline = [];
@@ -182,9 +182,8 @@ function refreshfacts(coords){
 				// now find facts for the state
 				var fivefacts = findfacts(state_simple);
 				// now delete past facts, then re-insert header, and facts
-				document.getElementById("facts").innerHTML = "";
-				$("#facts").append("<h3 id = 'curfacts'>Current facts...</h3>");				
-				$("#curfacts").append(" (" + state_regular + ")");
+				// document.getElementById("facts").innerHTML = "";			
+				$("#curfacts").append(state_regular + " Facts");
 				for (var i = 0; i < fivefacts.length; i++){
 					$("#facts").append("<p>" + (i+1) + ". " + fivefacts[i] + "</p>");
 				}
@@ -226,105 +225,3 @@ function randOrd(){
 }
 
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
-
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
-/*
-function loadpolygons(){
-
-	downloadUrl("http://pages.towson.edu/preese/av/polytest.xml", function(data) {
-	  var polygons = data.documentElement.getElementsByTagName("polygon");
-	  for (var a = 0; a < polygons.length; a++) {
-	    var name = polygons[a].getAttribute("name");
-		var color = polygons[a].getAttribute("color");
-		var strokecolor = polygons[a].getAttribute("strokecolor");
-		var pts = [];
-		var points = polygons[a].getElementsByTagName("point");
-		for (var i = 0; i < points.length; i++) {
-			pts[i] = new google.maps.LatLng(parseFloat(points[i].getAttribute("lat")),
-								parseFloat(points[i].getAttribute("lng")));
-	  }
-      
-	  var polyOptions = {
-		paths: pts,
-		strokeColor: strokecolor,
-		strokeOpacity: 0.8,
-		strokeWeight: 0.5,
-		fillColor: color,
-		fillOpacity: 0.4
-	  }
-	  
-	  states = new google.maps.Polygon(polyOptions);
-	  
-	  states.setMap(map);
-
-      google.maps.event.addListener(states, 'click', showArrays);
-    
-      infowindow = new google.maps.InfoWindow({content: name});
-
-	  }		  
-
-	  function showArrays(event) {
-        infowindow.setPosition(event.latLng);  
-        infowindow.open(map);
-      }  
-
-	});
-	
-	//test if within a polygone
-	
-	
-	
-	google.maps.Polygon.prototype.Contains = function(point) { var crossings = 0, path = this.getPath();
-
-		// for each edge
-		for (var i=0; i < path.getLength(); i++) {
-			var a = path.getAt(i),
-				j = i + 1;
-			if (j >= path.getLength()) {
-				j = 0;
-			}
-			var b = path.getAt(j);
-			if (rayCrossesSegment(point, a, b)) {
-				crossings++;
-			}
-		}
-
-		// odd number of crossings?
-		return (crossings % 2 == 1);
-
-		function rayCrossesSegment(point, a, b) {
-			var px = point.lng(),
-				py = point.lat(),
-				ax = a.lng(),
-				ay = a.lat(),
-				bx = b.lng(),
-				by = b.lat();
-			if (ay > by) {
-				ax = b.lng();
-				ay = b.lat();
-				bx = a.lng();
-				by = a.lat();
-			}
-			// alter longitude to cater for 180 degree crossings
-			if (px < 0) { px += 360 };
-			if (ax < 0) { ax += 360 };
-			if (bx < 0) { bx += 360 };
-
-			if (py == ay || py == by) py += 0.00000001;
-			if ((py > by || py < ay) || (px > Math.max(ax, bx))) return false;
-			if (px < Math.min(ax, bx)) return true;
-
-			var red = (ax != bx) ? ((by - ay) / (bx - ax)) : Infinity;
-			var blue = (ax != px) ? ((py - ay) / (px - ax)) : Infinity;
-			return (blue >= red);
-
-		}
-	};
-
-}
-*/
