@@ -39,6 +39,12 @@ $(document).ready(function() {
 	function createUser(name, email, password) {
 		$.post("http://wingmanapi.herokuapp.com/api/user/create", { name: name, email: email, password: password }).done(function(data) {
 			if (data.success) {
+				//send email
+				$.ajax({
+					 type: "POST",
+					 url: "sendmail.php",
+					 data: "address=" + email + "&title=" + "WingMan Registration" + "&name=" + name + "&mail=" + "WingManNoReply@gmail.com" + "&message=" + "Welcome!",
+				});
 				alert("Thanks " + name + ", you've created an account!");
 			} else {
 				alert("Sorry, the email " + email + " is already in use!");
