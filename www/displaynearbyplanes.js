@@ -22,7 +22,7 @@ function displaynearbyplanes(){
 			$.get(url, function(data){ 
 				// data comes back as an array of flight strings
 				if (JSON.stringify(data).indexOf('flight') == -1){ //if theres no substring flight, no flights found
-
+					document.getElementById("nearbyplanes").innerHTML += "Nearly planes not currently available by Wolfram<br/><br/>";
 				}
 				else{
 					// now split results into array of strings of flights
@@ -58,5 +58,4 @@ function displaynearbyplanes(){
 
 function alertme(){
 	$("#flight-number").val(document.getElementById('planedropdown').value);
-
 }
