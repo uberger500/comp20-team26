@@ -112,6 +112,7 @@ $(document).ready(function() {
 
 	refreshmap(planecoords);
 	start_game();
+		
 
 	$("#snake-button").on("click", function(e) {
 		initializeSnake();
@@ -182,7 +183,10 @@ $(document).ready(function() {
 		}
 		logged_user.updateFlight(flightnum);
 		flightupdate = window.setInterval(logged_user.updateFlight, 200000);
-
+		
+		//fix map
+		fixbounds();
+		
 	});
 
 	function submitChat()

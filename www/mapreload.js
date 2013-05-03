@@ -2,7 +2,7 @@ var fieldscorner = new google.maps.LatLng(42.300093,-71.061667);
 var myOptions = {
 	zoom: 10, // The larger the zoom number, the bigger the zoom
 	center: fieldscorner,	// center south station while your location loads
-	mapTypeId: google.maps.MapTypeId.ROADMAP
+	mapTypeId: google.maps.MapTypeId.HYBRID
 	};
 var map;
 var myLat = 0;
@@ -108,12 +108,7 @@ function refreshmap(planecoords){
 		map.setCenter(coords);
 	}
 	else{	
-		//center middle of polyline; zoom to show whole path
-		var bounds = new google.maps.LatLngBounds();
-		for (var i = 0; i < polyline.length; i++){
-			bounds.extend(polyline[i]);
-		}
-		map.fitBounds(bounds);
+		fixbounds();
 	}
 
 	var state = refreshfacts(coords); // pass final coords; the most recent coords
@@ -224,4 +219,11 @@ function randOrd(){
 	return (Math.round(Math.random())-0.5);
 }
 
+function fixbounds(){
+	var bounds = new google.maps.LatLngBounds();
+	for (var i = 0; i < polyline.length; i++){
+		bounds.extend(polyline[i]);
+	}
+	map.fitBounds(bounds);
+}
 
