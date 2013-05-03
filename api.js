@@ -65,13 +65,21 @@ app.all(API_PREFIX + '/*', function(request, response, next) {
 
 app.post(API_PREFIX + '/user/create', function(request, response) {
 	var pass = request.param('password');
+	var name = request.param('name');
+	var email = request.param('email');
+	if (!pass || !name || !email) {
+		response.json({success: false, error: 'Invalid input'});
+		return;
+	}
+	console.log("Email: " + email);
+	console.log("Pass: " + pass);
 	bcrypt.hash(pass, 10, function(err, hash) {
 		if (err || !hash) {
 			response.json({success: false, error: 'Password could not be hashed'});
 		} else {
 			models.User.create({
-				name : request.param('name'),
-				email : request.param('email'),
+				name : name,
+				email : email,
 				password : hash
 			}, function(err, user) {
 				if (err || !user) {
@@ -85,15 +93,19 @@ app.post(API_PREFIX + '/user/create', function(request, response) {
 });
 
 app.post(API_PREFIX + '/user/login', function(request, response) {
-	var email = request.param('email');
 	var pass = request.param('password');
+	var email = request.param('email');
+	if (!pass || !email) {
+		response.json({success: false, error: 'Invalid input'});
+		return;
+	}
 	models.User.findOne({email: email}, function(err, user) {
 		if (err || !user) {
 			response.json({success: false, error: 'That user does not exist'});
 		} else {
 			bcrypt.compare(pass, user.password, function(err, match) {
 				if (err || !match) {
-					response.json({success: false, error: 'Incorrect password for user ' + user.email});
+					response.json({success: false, error: 'Incorrect password for user ' + user.email + " error: " + err});
 				} else {
 					models.Session.findOne({user: user.id}, function(err, session) {
 						if (err || !session) {
@@ -213,17 +225,21 @@ app.get(API_PREFIX + '/score', function(request, response) {
 app.post(API_PREFIX + '/chat/submit', function(request, response) {
 	var user_id = request.session.user;
 	models.User.findById(user_id, function(err, user) {
-		db.collection('chat', function(err, collection) {
-			collection.insert({username: user.name, chatline: request.body.chatline}, {safe:true}, function(err, result) {
-		          if (err) {
-		              response.send({'error':'An error has occured'});
-		          } else {
-		            collection.find().toArray(function(err, items){
-		            response.send(result[0]);
+		if (err || !user) {
+			response.send("User not found");
+		} else {
+			db.collection('chat', function(err, collection) {
+				collection.insert({username: user.name, chatline: request.body.chatline}, {safe:true}, function(err, result) {
+			          if (err) {
+			              response.send({'error':'An error has occured'});
+			          } else {
+			            collection.find().toArray(function(err, items){
+			            response.send(result[0]);
+					});
+			       }
 				});
-		       }
 			});
-		});
+		}
 	});
 });
 

@@ -17,7 +17,7 @@ $(document).ready(function() {
 
 	User.prototype.update = function() {
 		var that = this;
-	 	$.post("http://wingmanapi.herokuapp.com/api/user/login",
+	 	$.post("http://127.0.0.1:5000/api/user/login",
 	 	   {
 	 	   		email: this.email,
 	 	   		password: this.password
@@ -44,8 +44,8 @@ $(document).ready(function() {
 
 	function User(email, password) {
 		this.attempt = false;
-		this.email = email;
-		this.password = password;
+		this.email = email.toString();
+		this.password = password.toString();
 		return this.update();
 	}
 
@@ -73,11 +73,10 @@ $(document).ready(function() {
 	$("#create-user").on("click", function(e) {
 		e.preventDefault();
 		var pass = $("#create-password").val();
-		console.log(pass, pass.toString());
 		var email = $("#create-email").val();
 		var name = $("#create-name").val();
 		if (pass === "" || email === "" || name === "") return;
-		createUser(name.toString(), email.toString(), password.toString());
+		createUser(name.toString(), email.toString(), pass.toString());
 	});
 
 	$("#msg").on("keydown", function(e) {
