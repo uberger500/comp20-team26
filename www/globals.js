@@ -159,22 +159,6 @@ $(document).ready(function() {
 	});
 
 
-	function drawMyChart() {
-        if(!!document.createElement('canvas').getContext){ //check that the canvas
-                                                           // element is supported
-            var mychart = new AwesomeChart('canvas1');
-            mychart.title = "Product Sales - 2010";
-            mychart.data = [1532, 3251, 3460, 1180, 6543];
-            mychart.labels = ["Desktops", "Laptops", "Netbooks", "Tablets", "Smartphones"];
-            mychart.chartType = 'doughnut';
-            mychart.draw();
-        }
-    }
-
-    drawMyChart();
-   
-
-
 	$("#log-in").on("click", function(e) {
 		e.preventDefault();
 		var pass = $("#password").val();
