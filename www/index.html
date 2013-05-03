@@ -18,7 +18,7 @@
     <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
     <link rel="shortcut icon" href="assets/ico/favicon.png">
     <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-<!--    <script type="text/javascript" src='https://raw.github.com/cyberpython/AwesomeChartJS/master/awesomechart.js'></script> -->
+ <script type="text/javascript" src='https://raw.github.com/cyberpython/AwesomeChartJS/master/awesomechart.js'></script>
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true&amp;libraries=places"></script>
     <script type="text/javascript" src="facts.js"></script>
     <script type="text/javascript" src='mapreload.js'></script>
@@ -27,9 +27,12 @@
     <script type="text/javascript" src='assets/js/snake.js'></script>
     <script type="text/javascript" src='arrayData.js'></script>
 	<script type="text/javascript" src="jscharts.js"></script>
+<<<<<<< HEAD
 	<script type="text/javascript" src="displaynearbyplanes.js"></script>
 	
 	
+=======
+>>>>>>> b38b47381906f8a71e90a083f606238dcfb43d8e
   </head>
 
   <body>
@@ -218,6 +221,7 @@
       </ul>
 
       <div id="dashboard">
+<<<<<<< HEAD
         <div>
           <h2>Speed</h2>
 			<div id="chartcontainer">This is just a replacement in case Javascript is not
@@ -227,6 +231,10 @@
             </canvas> -->
         </div>
         <div>hello</div>
+=======
+        <div id="chartcontainer"></div>
+        <div id="chartcontainer2">alt</div>
+>>>>>>> b38b47381906f8a71e90a083f606238dcfb43d8e
         <div id = "facts">
           <h3 id = "curfacts"></h3>
         </div>
@@ -252,10 +260,19 @@
         <input type="text" placeholder="Send chat message..." id="msg" name="msg" size="80"/>
       </div>
 
+	  
+	  
+	  
     </div>
-      <hr>
+      
+	  
+	  <hr>
       
       <footer>
+		<div id="chartcontainer">This is just a replacement in case Javascript is not
+				available or used for SEO purposes</div>
+	  
+	  
         <p>&copy; Wingman LLC 2013</p>
       </footer>
 
@@ -277,6 +294,22 @@
     <script src="assets/js/bootstrap-collapse.js"></script>
     <script src="assets/js/bootstrap-carousel.js"></script>
     <script src="assets/js/bootstrap-typeahead.js"></script>
+
+<script type="text/javascript">
+var myData = new Array([10, 20], [15, 10], [20, 30], [25, 10], [30, 5]);
+var myChart = new JSChart('chartcontainer', 'line');
+myChart.setDataArray(myData);
+myChart.draw();
+</script>
+
+<script type="text/javascript">
+var myData = new Array([10, 20], [15, 10], [20, 30], [25, 10], [30, 5]);
+var myChart = new JSChart('chartcontainer2', 'line');
+myChart.setDataArray(myData);
+myChart.draw();
+</script>
+
+
 
   </body>
 </html>

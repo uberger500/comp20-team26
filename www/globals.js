@@ -33,14 +33,36 @@ $(document).ready(function() {
 	function User(email, password) {
 		this.attempt = false;
 		this.email = email.toString();
+		this.currentFlight = [];
 		this.password = password.toString();
 		return this.update();
+	}
+
+	User.prototype.placeLoc = function() {
+		var len = this.currentFlight.length - 1;
+		var lat = this.currentFlight[len].latitude;
+		var lon = this.currentFlight[len].longitude;
+		var coords = new google.maps.LatLng(lat,lon);
+		var location = new google.maps.Marker({		
+			position: coords
+		});
+		location.setMap(null);
+		location.setMap(map);
+		map.setCenter(coords);
+	}
+
+	User.prototype.Set = function(prop, val) {
+		this[prop] = val;
+	}
+
+	User.prototype.Get = function(prop) {
+		return this[prop];
 	}
 
 	User.prototype.populateFields = function() {
 		$("#username-p").html(this.name);
 		$("#flights-p").html(this.total_flights);
-		$("#miles-p").html(this.total_miles);
+		$("#miles-p").html(this.total_miles + "3247");
 	};
 
 	function createUser(name, email, password) {
@@ -75,6 +97,7 @@ $(document).ready(function() {
 	 			that.attempt = false;
 	 			return;
 	 		}
+	 		console.log(logged_user);
 	 		that.loginSuccess();
 	 		callct++;
 	 		that.attempt = true;
@@ -96,15 +119,17 @@ $(document).ready(function() {
 		return this;
 	};
 
-	User.prototype.updateFlight = function(flightnum) {
+	User.prototype.updateFlight = function() {
+		var that = this;
+		console.log(logged_user.flightnum);
 		$.get("http://127.0.0.1:5000/api/currentdata", { 
-			flight: logged_user.flightnum || flightnum,
-			token: logged_user.token
+			flight: logged_user.Get("flightnum"),
+			token: "cc2224c4-fa58-4cec-8dfd-8ec3b2077286"
 		}, function(data) {
 			console.log(data);
 			if (typeof data.altitude !== "undefined") {
-				logged_user.curr_flight = data;
-				logged_user.flightnum = flightnum;
+				logged_user.currentFlight.push(data);
+				logged_user.placeLoc();
 			}
 		});
 	}
@@ -114,11 +139,19 @@ $(document).ready(function() {
 		var saved = JSON.parse(localStorage.savedUser);
 		if (saved) {
 			logged_user = new User(saved.email, saved.password);
+			callct = 0;
+			var checkUser = window.setInterval(function() {
+				console.log("set");
+			if (logged_user.attempt === true)
+				logged_user.update();
+			else window.clearInterval(checkUser);
+			}, 3000);
 		}
 	}
 
 	refreshmap(planecoords);
 	start_game();
+<<<<<<< HEAD
 		
 
 	$("#snake-button").on("click", function(e) {
@@ -141,6 +174,8 @@ $(document).ready(function() {
 
     drawMyChart();
 */    
+=======
+>>>>>>> b38b47381906f8a71e90a083f606238dcfb43d8e
 
 	$("#log-in").on("click", function(e) {
 		e.preventDefault();
@@ -182,33 +217,30 @@ $(document).ready(function() {
 
 	$("#submit-flight").on("click", function(e) {
 		var flightnum = $("#flight-number").val();
-		console.log(flightnum);
 		if (flightnum === "") {
 			e.preventDefault();
-			e.stopPropagation();
 			return;
 		}
-		logged_user.updateFlight(flightnum);
-		flightupdate = window.setInterval(logged_user.updateFlight, 200000);
-		
-		//fix map
+		logged_user.Set("flightnum",flightnum);
+		logged_user.updateFlight();
+		flightupdate = window.setInterval(logged_user.updateFlight, 20000);
+		//fix map rendering zoom
 		fixbounds();
-		
 	});
 
+
+	// chat api 
 	function submitChat()
 	{
 		chatmsg = encodeHTML(document.getElementById("msg").value);
 		document.getElementById("msg").value = "";
-		// Use the global user's username
-		// http://wingmanapi.herokuapp.com/api/chat/submit
 		$.post("http://wingmanapi.herokuapp.com/api/chat/submit", {username: logged_user.email, chatline: chatmsg, token: logged_user.token});
 	}
 	var chat_calls = 0;
 	function getLastTenLines() {
 	    var request = new XMLHttpRequest();
 		request.open("GET", "http://wingmanapi.herokuapp.com/api/chat/chatlines?token=" + logged_user.token, true);
-		request.send(null);
+		//request.send(null);
 		request.onreadystatechange = function(){
 			try{
 				if (this.readyState ==4 && this.status == 0){
@@ -239,6 +271,7 @@ $(document).ready(function() {
 		}
 	}
 
+	//tabbing functionality for dashboard
 	$(".tabs").find("li").on("click", function() {
 		$(".opener").hide();
 		var $t = $(this);
