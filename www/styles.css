@@ -10,6 +10,8 @@
   position: fixed;
   bottom: 0;
   right: 0; }
+
+
   #plane-chat input {
     margin: 10px auto;
     width: 91%;
@@ -29,6 +31,7 @@
 
 .closed-chat #chatlines {
   display: none; }
+
 .closed-chat input {
   margin: 0 auto; }
 
@@ -53,12 +56,11 @@
 #snake-board {
   width: 500px;
   height: 500px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0px auto;
 }
 
 .modal-body {
-  max-height: 800px;
+  max-height: 600px;
   margin-top: 0px;
   top: 10px; }
 

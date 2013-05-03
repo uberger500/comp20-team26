@@ -11,6 +11,15 @@ function initializeSnake() {
 	});
 }
 
+function logoutUser() {
+	$.post("http://wingmanapi.herokuapp.com/api/user/logout", {token: logged_user.token}, function(data) {
+		if (data.success) {
+			localStorage.savedUser = null;
+			window.location.reload();
+		}
+	});
+}
+
 $(document).ready(function() {
 	var callct = 0;
 
@@ -70,12 +79,8 @@ $(document).ready(function() {
 	if (localStorage.savedUser) {
 		var saved = JSON.parse(localStorage.savedUser);
 		if (saved) {
-			// logged_user = new User(saved.email, saved.password);
+			logged_user = new User(saved.email, saved.password);
 		}
-	}
-
-	function logoutUser() {
-
 	}
 
 	refreshmap(planecoords);
@@ -94,7 +99,7 @@ $(document).ready(function() {
 		return this;
 	};
 
-function drawMyChart(){
+	function drawMyChart() {
         if(!!document.createElement('canvas').getContext){ //check that the canvas
                                                            // element is supported
             var mychart = new AwesomeChart('canvas1');
@@ -105,8 +110,9 @@ function drawMyChart(){
             mychart.chartType = 'doughnut';
             mychart.draw();
         }
-      }
-      drawMyChart();
+    }
+
+    drawMyChart();
     
 
 	$("#log-in").on("click", function(e) {

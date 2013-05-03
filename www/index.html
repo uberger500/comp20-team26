@@ -33,11 +33,6 @@
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
-          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
           <a class="brand" href="#">Wingman</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
@@ -65,7 +60,7 @@
               </li>
             </ul>
             <li class="nobullet pull-right padleft after-login">
-              <button class="btn btn-warning" type="button">Logout</button>
+              <button class="btn btn-warning" type="button" onclick="logoutUser();">Logout</button>
             </li>
            <li class="dropdown nobullet pull-right padleft before-login">
              <a class="btn btn-warning" data-toggle="dropdown" href="#menu1">
@@ -103,13 +98,15 @@
       </div>
     </div>
 
+    <br/><br/><br/>
+
     <div class="container">
 
       <!-- Main hero unit for a primary marketing message or call to action -->
            
       <div class="hero-unit before-login">
         <div class="row-fluid">
-          <div class="span12 pagination-centered">
+          <div class="pagination-centered">
             <img src="img/wingman.png" alt="Wingman Logo" id="wingmanlogo"/>
           </div>
         </div>
