@@ -90,7 +90,6 @@ $(document).ready(function() {
 	 			that.attempt = false;
 	 			return;
 	 		}
-	 		console.log(logged_user);
 	 		that.loginSuccess();
 	 		callct++;
 	 		that.attempt = true;
@@ -114,12 +113,10 @@ $(document).ready(function() {
 
 	User.prototype.updateFlight = function() {
 		var that = this;
-		console.log(logged_user.flightnum);
 		$.get("http://wingmanapi.herokuapp.com/api/currentdata", {
 			flight: logged_user.Get("flightnum"),
 			token: "7cb2c74a-f4ec-4691-a92b-540366f0db87"
 		}, function(data) {
-			console.log(data);
 			if (typeof data.altitude !== "undefined") {
 				logged_user.currentFlight.push(data);
 				logged_user.placeLoc();
@@ -148,7 +145,6 @@ $(document).ready(function() {
 			logged_user = new User(saved.email, saved.password);
 			callct = 0;
 			var checkUser = window.setInterval(function() {
-				console.log("set");
 			if (logged_user.attempt === true)
 				logged_user.update();
 			else window.clearInterval(checkUser);
@@ -232,7 +228,6 @@ $(document).ready(function() {
 			parsed_response = data;
 			elem = document.getElementById("chatlines");
 	        output = "";
-	        console.log(parsed_response);
 	    	for (chatline in parsed_response) {
 	    		if (typeof parsed_response[chatline].username === "undefined")
 	    			continue;
@@ -253,7 +248,6 @@ $(document).ready(function() {
 		var $link = $("[data-tabname=" + $t.attr("rel") + "]");
 		if ($t.hasClass("slider")) return;
 		if ($link.hasClass("active-page")) return;
-		// console.log($g);
 		$g.children().hide().removeClass("active-page");
 		if (typeof $t.attr("rel") === "undefined") {
 			var i = $t.index();
