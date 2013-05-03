@@ -6,7 +6,7 @@ $(document).ready(function() {
 	var reload = null;
 
 	function createUser(name, email, password) {
-		$.post("http://127.0.0.1:5000/api/user/create", { name: name, email: email, password: password }).done(function(data) {
+		$.post("http://wingmanapi.herokuapp.com/api/user/create", { name: name, email: email, password: password }).done(function(data) {
 			if (data.success) {
 				alert("Thanks " + name + ", you've created an account!");
 			} else {
@@ -18,7 +18,7 @@ $(document).ready(function() {
 	refreshmap(planecoords);
 	User.prototype.update = function() {
 		var that = this;
-	 	$.post("http://127.0.0.1:5000/api/user/login",
+	 	$.post("http://wingmanapi.herokuapp.com/api/user/login",
 	 	   {
 	 	   		email: this.email,
 	 	   		password: this.password
@@ -111,12 +111,12 @@ $(document).ready(function() {
 	    document.getElementById("msg").value = "";
 	    // Use the global user's username
 	    // http://wingmanapi.herokuapp.com/api/chat/submit
-	    $.post("http://127.0.0.1:5000/api/chat/submit", {username: logged_user.email, chatline: chatmsg, token: logged_user.token});  
+	    $.post("http://wingmanapi.herokuapp.com/api/chat/submit", {username: logged_user.email, chatline: chatmsg, token: logged_user.token});  
 	}
 	var chat_calls = 0;
 	function getLastTenLines() {
 	    var request = new XMLHttpRequest();
-		request.open("GET", "http://127.0.0.1:5000/api/chat/chatlines?token=" + logged_user.token, true);
+		request.open("GET", "http://wingmanapi.herokuapp.com/api/chat/chatlines?token=" + logged_user.token, true);
 		request.send(null);
 		request.onreadystatechange = function(){
 			try{
