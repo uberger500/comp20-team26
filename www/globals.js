@@ -67,18 +67,17 @@ $(document).ready(function() {
 		return this;
 	};
 
-function drawMyChart(){
+	function drawMyChart(){
         if(!!document.createElement('canvas').getContext){ //check that the canvas
                                                            // element is supported
             var mychart = new AwesomeChart('canvas1');
             mychart.title = "Product Sales - 2010";
             mychart.data = [1532, 3251, 3460, 1180, 6543];
             mychart.labels = ["Desktops", "Laptops", "Netbooks", "Tablets", "Smartphones"];
-            mychart.fontSize = "200px";
             mychart.chartType = 'doughnut';
             mychart.draw();
         }
-      }
+    }
       drawMyChart();
     
 
@@ -146,6 +145,8 @@ function drawMyChart(){
 					elem=document.getElementById("chatlines");
 	                output = "";
 	            	for (chatline in parsed_response) {
+	            		if (typeof parsed_response[chatline].username === "undefined")
+	            			continue;
 						output = output + "<p>" + parsed_response[chatline].username +": " + parsed_response[chatline].chatline + "</p>\n";
 					}
 					elem.innerHTML = output;
