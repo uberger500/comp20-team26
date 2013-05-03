@@ -11,12 +11,12 @@ function initializeSnake() {
 	});
 }
 
-function speedGraph(){
-	var myData = new Array([10, 20], [15, 10], [20, 30], [25, 10], [30, 5]);
-	var myChart = new JSChart('chartcontainer', 'line');
-	myChart.setDataArray(myData);
-	myChart.draw();
-}
+// function speedGraph(){
+	// var myData = new Array([10, 20], [15, 10], [20, 30], [25, 10], [30, 5]);
+	// var myChart = new JSChart('chartcontainer', 'line');
+	// myChart.setDataArray(myData);
+	// myChart.draw();
+// }
 
 function logoutUser() {
 	$.post("http://wingmanapi.herokuapp.com/api/user/logout", {token: logged_user.token}, function(data) {
