@@ -321,14 +321,14 @@ app.get(API_PREFIX + '/nearbyplanes', function(request, res) {
 	query = "planes+above+" + mylat + "," + mylon;
 	params = "format=plaintext";
 
-var errorobj = new Object;
-errorobj.status = "Error finding nearby flights";
+	var errorobj = new Object;
+	errorobj.status = "Error finding nearby flights";
 
 //HARDCODED WITH A TOKEN CURRENTLY
 
 	var request = require('request');
 	request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
-	// request('http://api.wolframalpha.com/v2/query?input=' + "planes+above+los+angeles" + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
+//    request('http://api.wolframalpha.com/v2/query?input=' + "planes+above+boston" + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
 			if (response.body != null){
 				var parseString = require('xml2js').parseString; //parse xml string
@@ -345,8 +345,8 @@ errorobj.status = "Error finding nearby flights";
 								var plainplanes = jsonobj.queryresult.pod[1].subpod[0].plaintext[0];
 	//							console.log(plainplanes);
 								if (plainplanes == "(data not available)"){
-									res.send('{"status":"cannot determine flight information based on location"}');
-									console.log('{"status":"cannot determine flight information based on loaction"}');
+									res.send('{"status":"Data not available from wolfram"}');
+									console.log('{"status":"Data not available from wolfram"}');
 								}
 								else{
 								// an example plainplanes is ' | altitude | angle\nABX Air flight 1820 | 21100 feet | 9.2° up\nHawaiian Airlines flight 50 | 39000 feet | 7.8° up\nHawaiian Airlines flight 36 | 37000 feet | 7.5° up\nAmerican Airlines flight 223 | 8700 feet | 6° up\n | type | slant distance\nABX Air flight 1820 | Boeing 767-200 | 24 miles WNW\nHawaiian Airlines flight 50 | Airbus A330-200 | 51 miles NNW\nHawaiian Airlines flight 36 | Boeing 767-300 | 52 miles SSE\nAmerican Airlines flight 223 | Boeing 737-800 | 16 miles ESE\n(locations based on projections of delayed data)\n(angles with respect to nominal horizon)'

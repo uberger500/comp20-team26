@@ -126,7 +126,7 @@ $(document).ready(function() {
 		$("#snake-board").focus();
 	});
 
-
+/*
 	function drawMyChart() {
         if(!!document.createElement('canvas').getContext){ //check that the canvas
                                                            // element is supported
@@ -140,7 +140,7 @@ $(document).ready(function() {
     }
 
     drawMyChart();
-    
+*/    
 
 	$("#log-in").on("click", function(e) {
 		e.preventDefault();
