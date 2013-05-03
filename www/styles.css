@@ -48,19 +48,14 @@ h2 {
   display: none;
   position: relative; }
 
-<<<<<<< HEAD
 #game, #game_div {
   display: block;
   margin: 0 auto; }
-=======
-#game {
-  margin: 0 auto;
-}
->>>>>>> 0faf36be67ca81e581cadb220bc2a7da0265ae1d
+
 
 #map_canvas {
   width: 95%;
-  height: 300px;
+  height: 350px;
   margin: 10px auto;
   padding: 0;
   display: block;
@@ -71,7 +66,7 @@ h2 {
 
 .modal, .modal-body {
   max-height: 800px;
-  margin-top: -30px;
+  margin-top: 0px;
   top: 10px;
   color: #313131; }
   .modal input, .modal-body input {

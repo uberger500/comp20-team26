@@ -51,7 +51,7 @@
                 <ul class="dropdown-menu">
                   <li class="nav-header">Games</li>
                   <li><a href="#frogger" data-toggle="modal">Frogger</a></li>
-                  <li><a href="#snake" data-toggle="modal" id="snake-button">Snake</a></li>
+                  <li><a href="http://patorjk.com/games/snake/" id="snake-button">Snake</a></li>
                   <li class="divider"></li>
                   <li class="nav-header">Movies</li>
                   <li><a href="http://www.youtube.com/watch?v=qaXvFT_UyI8">Airplane</a></li>
@@ -86,8 +86,8 @@
              <div class="dropdown-menu">
                <form style="margin: 0px" accept-charset="UTF-8" action="#" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /><input name="authenticity_token" type="hidden" value="4L/A2ZMYkhTD3IiNDMTuB/fhPRvyCNGEsaZocUUpw40=" /></div>
                  <fieldset class='textbox' style="padding:10px">
-                   <input style="margin-top: 8px" value='samp' type="text" id='email-address' placeholder="Email" />
-                   <input style="margin-top: 8px" value='test' type="password" id='password' placeholder="Password" />
+                   <input style="margin-top: 8px" type="text" id='email-address' placeholder="Email" />
+                   <input style="margin-top: 8px" type="password" id='password' placeholder="Password" />
                    <input class="btn-primary" name="commit" id='log-in' type="submit" value="Log In" />
                  </fieldset>
                </form>
@@ -104,12 +104,18 @@
     <a id='trigger-input' href="#input-flight" data-toggle="modal"></a>
       <!-- Main hero unit for a primary marketing message or call to action -->
            
-      <div class="hero-unit before-login">
+      <div class="hero-unit before-login pagination-centered">
+        <br/>
+        <br/>
         <div class="row-fluid">
           <div class="pagination-centered">
             <img src="img/wingman.png" alt="Wingman Logo" id="wingmanlogo"/>
           </div>
         </div>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
         <h1 id="header">We're your wingman, Maverick.</h1>
         <br/>
         <p>We'll plot out your trip, give you a live updated time of arrival, and we can even contact your loved ones to let them know exactly when you're arriving. We can keep you entertained with live information about the towns, cities, and landmarks over which you're flying.</p>
@@ -131,7 +137,6 @@
             <h3>Please enter your flight number:</h3>
             </div>  
             <div class="modal-body"> 
-            <br/> 
             <p>Enter in this format <em>exactly</em>: &lt;airline&gt; flight &lt;flightnumber&gt; </p>
             <input type='text' id='flight-number' placeholder='eg. delta flight 9991' />
             </div>  

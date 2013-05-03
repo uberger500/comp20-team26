@@ -72,7 +72,7 @@ $(document).ready(function() {
 
 	User.prototype.loginSuccess = function() {
 		if (!callct){
-			reload = setInterval(getLastTenLines, 500);
+			reload = window.setInterval(getLastTenLines, 500);
 			$("#trigger-input").trigger("click");
 		}
 		$(".before-login").animate({width: "hide", height: "hide"}, 200);
@@ -82,6 +82,19 @@ $(document).ready(function() {
 		google.maps.event.trigger(map, 'resize');
 		return this;
 	};
+
+	User.prototype.updateFlight = function(flightnum) {
+		$.get("http://127.0.0.1:5000/api/currentdata", { 
+			flight: logged_user.flightnum || flightnum,
+			token: logged_user.token
+		}, function(data) {
+			console.log(data);
+			if (typeof data.altitude !== "undefined") {
+				logged_user.curr_flight = data;
+				logged_user.flightnum = flightnum;
+			}
+		});
+	}
 
 	// Load saved user if there is one
 	if (localStorage.savedUser) {
@@ -99,13 +112,6 @@ $(document).ready(function() {
 		$("#snake-board").focus();
 	});
 
-	function Graph() {
-		return this;
-	}
-
-	Graph.prototype.addNode = function() {
-		return this;
-	};
 
 	function drawMyChart() {
         if(!!document.createElement('canvas').getContext){ //check that the canvas
@@ -168,13 +174,9 @@ $(document).ready(function() {
 			e.stopPropagation();
 			return;
 		}
-		$.get("http://127.0.0.1:5000/api/currentdata", { 
-			flight: flightnum,
-			token: logged_user.token
-		}, function(data) {
-			console.log(data);
-			if 
-		});
+		logged_user.updateFlight(flightnum);
+		flightupdate = window.setInterval(logged_user.updateFlight, 200000);
+
 	});
 
 	function submitChat()
