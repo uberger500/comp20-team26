@@ -1,12 +1,34 @@
 function encodeHTML(s) {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
-};
+}
 
-$(document).ready(function() { 
-	refreshmap(planecoords);
-	start_game();
+function initializeSnake() {
+	var mySnakeBoard = new SNAKE.Board({
+		boardContainer: "snake-board",
+		fullScreen: false,
+		width: 500,
+		height: 500
+	});
+}
 
-	$(".drop-down").hide();
+function logoutUser() {
+	$.post("http://wingmanapi.herokuapp.com/api/user/logout", {token: logged_user.token}, function(data) {
+		if (data.success) {
+			localStorage.savedUser = null;
+			window.location.reload();
+		}
+	});
+}
+
+$(document).ready(function() {
+	var callct = 0;
+
+	function User(email, password) {
+		this.attempt = false;
+		this.email = email.toString();
+		this.password = password.toString();
+		return this.update();
+	}
 
 	function createUser(name, email, password) {
 		$.post("http://wingmanapi.herokuapp.com/api/user/create", { name: name, email: email, password: password }).done(function(data) {
@@ -20,6 +42,7 @@ $(document).ready(function() {
 
 	User.prototype.update = function() {
 		var that = this;
+		localStorage.savedUser = JSON.stringify(that);
 	 	$.post("http://wingmanapi.herokuapp.com/api/user/login",
 	 	   {
 	 	   		email: this.email,
@@ -52,12 +75,21 @@ $(document).ready(function() {
 		return this;
 	};
 
-	function User(email, password) {
-		this.attempt = false;
-		this.email = email.toString();
-		this.password = password.toString();
-		return this.update();
+	// Load saved user if there is one
+	if (localStorage.savedUser) {
+		var saved = JSON.parse(localStorage.savedUser);
+		if (saved) {
+			logged_user = new User(saved.email, saved.password);
+		}
 	}
+
+	refreshmap(planecoords);
+	start_game();
+
+	$("#snake-button").on("click", function(e) {
+		initializeSnake();
+		$("#snake-board").focus();
+	});
 
 	function Graph() {
 		return this;
@@ -67,7 +99,7 @@ $(document).ready(function() {
 		return this;
 	};
 
-	function drawMyChart(){
+	function drawMyChart() {
         if(!!document.createElement('canvas').getContext){ //check that the canvas
                                                            // element is supported
             var mychart = new AwesomeChart('canvas1');
@@ -78,7 +110,8 @@ $(document).ready(function() {
             mychart.draw();
         }
     }
-      drawMyChart();
+
+    drawMyChart();
     
 
 	$("#log-in").on("click", function(e) {
@@ -118,7 +151,6 @@ $(document).ready(function() {
 		var $t = $(this);
 		$t.parent().addClass("closed-chat");
 	});
-
 
 	function submitChat()
 	{
