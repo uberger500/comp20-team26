@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+ <head>
+   <meta charset="utf-8" />
+   <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+   <div id="container">
+    <h1>Sending SMS with PHP</h1>
+    <form action="mobile.php" method="get">
+     <ul>
+	  <li>
+       <label for="Subj">Subject</label>
+       <input type="text" name="Subj" id="Subj" placeholder="Flight 1080" /></li>
+      <li>
+       <label for="Email">Email</label>
+       <input type="text" name="Email" id="Email" placeholder="jsmith@gmail.com" /></li>
+      <li>
+       <label for="smsMessage">Message</label>
+       <textarea name="smsMessage" id="smsMessage" cols="45" rows="15"></textarea>
+      </li>
+     <li><input type="submit" name="sendMessage" id="sendMessage" value="Send Message" /></li>
+    </ul>
+   </form>
+  </div>
+ </body>
+</html>
