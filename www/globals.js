@@ -67,6 +67,21 @@ $(document).ready(function() {
 		return this;
 	};
 
+function drawMyChart(){
+        if(!!document.createElement('canvas').getContext){ //check that the canvas
+                                                           // element is supported
+            var mychart = new AwesomeChart('canvas1');
+            mychart.title = "Product Sales - 2010";
+            mychart.data = [1532, 3251, 3460, 1180, 6543];
+            mychart.labels = ["Desktops", "Laptops", "Netbooks", "Tablets", "Smartphones"];
+            mychart.fontSize = "200px";
+            mychart.chartType = 'doughnut';
+            mychart.draw();
+        }
+      }
+      drawMyChart();
+    
+
 	$("#log-in").on("click", function(e) {
 		e.preventDefault();
 		var pass = $("#password").val();
@@ -145,5 +160,33 @@ $(document).ready(function() {
 	        	}
 	    	}
 		}
-}
+	}
+
+	$(".tabs").find("li").on("click", function() {
+		$(".opener").hide();
+		var $t = $(this);
+		var $g = $("#" + $t.parent().data().group);
+		var $link = $("[data-tabname=" + $t.attr("rel") + "]");
+		if ($t.hasClass("slider")) return;
+		if ($link.hasClass("active-page")) return;
+		console.log($g);
+		$g.children().hide().removeClass("active-page");
+		if (typeof $t.attr("rel") === "undefined") {
+			var i = $t.index();
+			$g.children().eq(i).fadeIn("fast").addClass("active-page");
+		}
+		$g.find("[data-tabname]").removeClass("active-page");
+		if (typeof $t.data("transition") === "undefined")
+			$link.slideDown("fast");
+		else 
+			$link.fadeIn("fast");
+		$link.addClass("active-page");
+		$t.addClass("selected-tab").siblings().removeClass("selected-tab");
+	}).each(function() {
+		var $t = $(this);
+		if (!$t.index()) $t.addClass('selected-tab');
+		var $g = $("#" + $t.parent().data('group'));
+		$g.children(":gt(0)").hide();
+		$g.children().first().addClass("active-page");
+	});
 });
