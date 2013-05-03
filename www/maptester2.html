@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Map Tester</title>
+	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true&amp;libraries=places"></script>
+	<script src="gmap2.js"></script>
+	<script src="mapreload.js"></script>
+	<link rel="stylesheet" href="maptester2.css" />
+	<script type="text/javascript" src="facts.js"></script>
+	<script src="jquery-1.9.1.min.js" ></script>
+
+
+</head>
+<!-- <body onload="init()"> -->
+<body onload = "refreshmap(planecoords)">
+	<div id="header"><h2>Refresh Timer</h2><span id = "timer"></span>
+	</div>	
+	<div id = "leftbox">
+	
+		<div id = "facts"><h3 id = "curfacts">Current facts...</h3></div><br/>
+	</div>
+		
+	<div id="map_canvas"></div>
+</body>
+</html>

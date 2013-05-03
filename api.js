@@ -5,7 +5,6 @@ var bcrypt = require('bcrypt');
 var fs = require('fs');
 var models = require('./models.js');
 
-
 var db = null;
 var mongoUri = process.env.MONGOHQ_URL || 'mongodb://heroku:84c7ca002fa6079a82bad84714a0beb7@linus.mongohq.com:10093/app14677217';
 mongoose.connect(mongoUri, function(err) {
@@ -66,31 +65,47 @@ app.all(API_PREFIX + '/*', function(request, response, next) {
 
 app.post(API_PREFIX + '/user/create', function(request, response) {
 	var pass = request.param('password');
+	var name = request.param('name');
+	var email = request.param('email');
+	if (!pass || !name || !email) {
+		response.json({success: false, error: 'Invalid input'});
+		return;
+	}
+	console.log("Email: " + email);
+	console.log("Pass: " + pass);
 	bcrypt.hash(pass, 10, function(err, hash) {
-		models.User.create({
-			name : request.param('name'),
-			email : request.param('email'),
-			password : hash
-		}, function(err, user) {
-			if (err || !user) {
-				response.json({success: false, error: 'Error creating new user'});
-			} else {
-				response.json({success: true, user: user});
-			}
-		});
+		if (err || !hash) {
+			response.json({success: false, error: 'Password could not be hashed'});
+		} else {
+			models.User.create({
+				name : name,
+				email : email,
+				password : hash
+			}, function(err, user) {
+				if (err || !user) {
+					response.json({success: false, error: 'Error creating new user'});
+				} else {
+					response.json({success: true, user: user});
+				}
+			});
+		}
 	});
 });
 
 app.post(API_PREFIX + '/user/login', function(request, response) {
-	var email = request.param('email');
 	var pass = request.param('password');
+	var email = request.param('email');
+	if (!pass || !email) {
+		response.json({success: false, error: 'Invalid input'});
+		return;
+	}
 	models.User.findOne({email: email}, function(err, user) {
 		if (err || !user) {
 			response.json({success: false, error: 'That user does not exist'});
 		} else {
 			bcrypt.compare(pass, user.password, function(err, match) {
 				if (err || !match) {
-					response.json({success: false, error: 'Incorrect password for user ' + user.email});
+					response.json({success: false, error: 'Incorrect password for user ' + user.email + " error: " + err});
 				} else {
 					models.Session.findOne({user: user.id}, function(err, session) {
 						if (err || !session) {
@@ -138,7 +153,7 @@ app.post(API_PREFIX + '/user/delete', function(request, response) {
 app.post(API_PREFIX + '/user/addflight', function(request, response) {
 	var flight = request.param('flight');
 	var user_id = request.session.user;
-	models.User.findByIdAndUpdate(user_id, {$addToSet: {flight_numbers: flight}}, function(err, user) {
+	models.User.findByIdAndUpdate(user_id, {$addToSet: {flights: flight}}, function(err, user) {
 		if (err || !user) {
 			response.json({success: false, error: 'Error saving user data'});
 		} else {
@@ -208,33 +223,37 @@ app.get(API_PREFIX + '/score', function(request, response) {
 
 //CHAT FILES
 app.post(API_PREFIX + '/chat/submit', function(request, response) {
-	console.log("HEY HEY HEY");
-    console.log(request.body);
-    console.log(request.param('username'));
-    db.collection('chat', function(err, collection) {
-        collection.insert({username: request.body.username, chatline: request.body.chatline}, {safe:true}, function(err, result) {
-          if (err) {
-              response.send({'error':'An error has occured'});
-          } else {
-            collection.find().toArray(function(err, items){
-            response.send(result[0]);
-		});
-       }
-});
-});
+	var user_id = request.session.user;
+	models.User.findById(user_id, function(err, user) {
+		if (err || !user) {
+			response.send("User not found");
+		} else {
+			db.collection('chat', function(err, collection) {
+				collection.insert({username: user.name, chatline: request.body.chatline}, {safe:true}, function(err, result) {
+			          if (err) {
+			              response.send({'error':'An error has occured'});
+			          } else {
+			            collection.find().toArray(function(err, items){
+			            response.send(result[0]);
+					});
+			       }
+				});
+			});
+		}
+	});
 });
 
 
 app.get(API_PREFIX + '/chat/chatlines', function(request, response) {
-        db.collection('chat', function(err, collection) {
-        collection.find().sort({ _id : -1 }).limit(10).toArray(function(err, items){
-		chatlinesrev = [];
-		size = items.length;
-		for (i=size;i>0; i--){
-			chatlinesrev.push(items[i-1]);
-      	}
-       response.send(chatlinesrev);
-     });
+    db.collection('chat', function(err, collection) {
+        collection.find().sort({ _id : -1 }).limit(10).toArray(function(err, items) {
+			chatlinesrev = [];
+			size = items.length;
+			for (i=size;i>0; i--){
+				chatlinesrev.push(items[i-1]);
+	      	}
+	       response.send(chatlinesrev);
+	    });
     });
 });
 
@@ -248,14 +267,11 @@ app.get(API_PREFIX + '/checkflight', function(req, res) {
  	res.header("Access-Control-Allow-Headers", "X-Requested-With");
 	res.set('Content-Type', 'text/html');
 
-
-// ALSO NEED TO SANITIZE INPUT******
-
-
 	params = "format=plaintext";
 	var args = JSON.parse(JSON.stringify(req.query));
 	//query should be something like .../checkflight?flight=american+airlines+flight+1234
 	var flight = args.flight;
+	flight = encodeHTML(flight); //sanitize for scripts etc
 	//flight will now be "american+airlines+flight+1234"
 
 	var request = require('request');
@@ -289,7 +305,7 @@ app.get(API_PREFIX + '/checkflight', function(req, res) {
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
 // FIND NEARBY PLANES, PASSED USER LOCATION
-app.get(API_PREFIX + '/nearbyplanes.json', function(request, res) {
+app.get(API_PREFIX + '/nearbyplanes', function(request, res) {
 	res.header("Access-Control-Allow-Origin", "*");		//fix this
   	res.header("Access-Control-Allow-Headers", "X-Requested-With");
   	
@@ -309,8 +325,8 @@ app.get(API_PREFIX + '/nearbyplanes.json', function(request, res) {
 //HARDCODED WITH A TOKEN CURRENTLY
 
 	var request = require('request');
-//	request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
-	request('http://api.wolframalpha.com/v2/query?input=' + "planes+above+los+angeles" + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
+	request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
+	// request('http://api.wolframalpha.com/v2/query?input=' + "planes+above+los+angeles" + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
 			if (response.body != null){
 				var parseString = require('xml2js').parseString; //parse xml string
@@ -327,8 +343,8 @@ app.get(API_PREFIX + '/nearbyplanes.json', function(request, res) {
 								var plainplanes = jsonobj.queryresult.pod[1].subpod[0].plaintext[0];
 	//							console.log(plainplanes);
 								if (plainplanes == "(data not available)"){
-									res.send("{'error0'}");
-									console.log("error 0");
+									res.send('{"status":"cannot determine flight information based on loaction"}');
+									console.log('{"status":"cannot determine flight information based on loaction"}');
 								}
 								else{
 								// an example plainplanes is ' | altitude | angle\nABX Air flight 1820 | 21100 feet | 9.2° up\nHawaiian Airlines flight 50 | 39000 feet | 7.8° up\nHawaiian Airlines flight 36 | 37000 feet | 7.5° up\nAmerican Airlines flight 223 | 8700 feet | 6° up\n | type | slant distance\nABX Air flight 1820 | Boeing 767-200 | 24 miles WNW\nHawaiian Airlines flight 50 | Airbus A330-200 | 51 miles NNW\nHawaiian Airlines flight 36 | Boeing 767-300 | 52 miles SSE\nAmerican Airlines flight 223 | Boeing 737-800 | 16 miles ESE\n(locations based on projections of delayed data)\n(angles with respect to nominal horizon)'
@@ -366,13 +382,13 @@ app.get(API_PREFIX + '/nearbyplanes.json', function(request, res) {
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
-// CURRENTDATA.JSON
+// CURRENTDATA(.json)
 // REQUEST PARAMETER: &flight+company+flight+###
 // RESPONSE (example): {"time": "Current information (10:20 pm EDT)", "altitude": 36900, "position": "44.52N, 87.53W", "speed": 519, "distance": 1816, "latitude": 44.52, "longitude": -87.53}
 //          (example2): {'errorA'}	
 //			(example3): {'landed'}
 //			(example4): {'Plane hasn't taken off yet or post-takeoff data not available yet'}
-app.get(API_PREFIX + '/currentdata.json', function(req, res) {
+app.get(API_PREFIX + '/currentdata', function(req, res) {
 	res.header("Access-Control-Allow-Origin", "*");		//fix this
   	res.header("Access-Control-Allow-Headers", "X-Requested-With");
 	res.set('Content-Type', 'text/json');
@@ -519,6 +535,7 @@ console.log(flight);
 									dataobj.distance = finaldata['distance'];
 									dataobj.latitude = finaldata['latitude'];
 									dataobj.longitude = finaldata['longitude'];
+									console.log(dataobj);
 
 									res.send(dataobj);
 								}
@@ -542,3 +559,9 @@ var port = process.env.PORT || 5000;
 app.listen(port, function() {
 	console.log("Listening on " + port);
 });
+
+//
+
+function encodeHTML(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+}
