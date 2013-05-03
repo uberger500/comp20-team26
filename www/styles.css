@@ -10,14 +10,25 @@
   position: fixed;
   bottom: 0;
   right: 0; }
-  #plane-chat input {
-    margin: 10px auto;
-    width: 91%;
-    display: block; }
+
+#plane-chat input {
+  margin: 10px auto;
+  width: 91%;
+  display: block; }
 
 #chatlines {
   overflow-y: scroll;
   height: 300px; }
+
+h2 {
+  text-shadow: 0px 1px 4px rgba(0,0,0,0.3);
+}
+
+.account-text {
+  padding-left: 40px;
+  font-size: 24px;
+  padding-bottom: 20px;
+}
 
 .close-chat-btn {
   display: block;
@@ -29,12 +40,17 @@
 
 .closed-chat #chatlines {
   display: none; }
+
 .closed-chat input {
   margin: 0 auto; }
 
 .after-login {
   display: none;
   position: relative; }
+
+#game {
+  margin: 0 auto;
+}
 
 #map_canvas {
   width: 95%;
