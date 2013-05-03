@@ -3,10 +3,10 @@ function encodeHTML(s) {
 };
 
 $(document).ready(function() { 
-	var reload = setInterval(getLastTenLines, 500);
+	var reload = null;
 
 	function createUser(name, email, password) {
-		$.post("http://wingmanapi.herokuapp.com/api/user/create", { name: name, email: email, password: password }, function(data) {
+		$.post("http://127.0.0.1:5000/api/user/create", { name: name, email: email, password: password }).done(function(data) {
 			if (data.success) {
 				alert("Thanks " + name + ", you've created an account!");
 			} else {
@@ -25,7 +25,7 @@ $(document).ready(function() {
 	 	).done(function(data) {
 	 		console.log(data.success);
 	 		$.extend(true,logged_user,data.user);
-	 		if (data.success === false){ 
+	 		if (data.success === false){
 	 			that.attempt = false;
 	 			return;
 	 		}
@@ -38,6 +38,7 @@ $(document).ready(function() {
 	User.prototype.loginSuccess = function() {
 		$(".before-login").animate({width: "hide", height: "hide"}, 200);
 		$(".after-login").fadeIn("slow");
+		reload = setInterval(getLastTenLines, 500);
 		return this;
 	};
 
@@ -71,12 +72,12 @@ $(document).ready(function() {
 
 	$("#create-user").on("click", function(e) {
 		e.preventDefault();
-		console.log("Creating user..." + email);
 		var pass = $("#create-password").val();
+		console.log(pass, pass.toString());
 		var email = $("#create-email").val();
 		var name = $("#create-name").val();
 		if (pass === "" || email === "" || name === "") return;
-		createUser(name, email, password);
+		createUser(name.toString(), email.toString(), password.toString());
 	});
 
 	$("#msg").on("keydown", function(e) {
