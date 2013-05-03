@@ -162,6 +162,7 @@ $(document).ready(function() {
 
 	$("#submit-flight").on("click", function(e) {
 		var flightnum = $("#flight-number").val();
+		console.log(flightnum);
 		if (flightnum === "") {
 			e.preventDefault();
 			e.stopPropagation();
@@ -170,8 +171,9 @@ $(document).ready(function() {
 		$.get("http://127.0.0.1:5000/api/currentdata", { 
 			flight: flightnum,
 			token: logged_user.token
-		}).done(function(data) {
+		}, function(data) {
 			console.log(data);
+			if 
 		});
 	});
 
