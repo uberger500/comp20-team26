@@ -111,7 +111,7 @@ $(document).ready(function() {
 			reload = window.setInterval(getLastTenLines, 500);
 			$("#trigger-input").trigger("click");
 		}
-		$(".before-login").animate({width: "hide", height: "hide"}, 200);
+		$(".before-login").animate({height: "hide"}, 400);
 		$(".after-login").fadeIn("slow");
 		$(".drop-down").fadeIn("slow");
 		reload = setInterval(getLastTenLines, 500);
@@ -218,39 +218,24 @@ $(document).ready(function() {
 		document.getElementById("msg").value = "";
 		$.post("http://wingmanapi.herokuapp.com/api/chat/submit", {username: logged_user.email, chatline: chatmsg, token: logged_user.token});
 	}
+
 	var chat_calls = 0;
 	function getLastTenLines() {
-	    var request = new XMLHttpRequest();
-		request.open("GET", "http://wingmanapi.herokuapp.com/api/chat/chatlines?token=" + logged_user.token, true);
-		//request.send(null);
-		request.onreadystatechange = function(){
-			try{
-				if (this.readyState ==4 && this.status == 0){
-				console.log("status code 0");
-				throw "noresponse";
-				}
-				else if (this.readyState == 4 && this.status == 200){				
-					response = (this.responseText);
-					parsed_response = JSON.parse(response);
-					elem=document.getElementById("chatlines");
-	                output = "";
-	            	for (chatline in parsed_response) {
-	            		if (typeof parsed_response[chatline].username === "undefined")
-	            			continue;
-						output = output + "<p>" + parsed_response[chatline].username +": " + parsed_response[chatline].chatline + "</p>\n";
-					}
-					elem.innerHTML = output;
-					if (!chat_calls)
-						$('#chatlines').scrollTop($('#chatlines')[0].scrollHeight);
-					chat_calls++;
-				}
-			}				
-			catch(error) {
-	        	if (error == "noresponse") {
-	            	console.log("no chat info returned");
-	        	}
-	    	}
-		}
+		$.get("http://wingmanapi.herokuapp.com/api/chat/chatlines?token=" + logged_user.token, function(data) {
+			parsed_response = data;
+			elem = document.getElementById("chatlines");
+	        output = "";
+	        console.log(parsed_response);
+	    	for (chatline in parsed_response) {
+	    		if (typeof parsed_response[chatline].username === "undefined")
+	    			continue;
+				output = output + "<p>" + parsed_response[chatline].username +": " + parsed_response[chatline].chatline + "</p>\n";
+			}
+			elem.innerHTML = output;
+			if (!chat_calls)
+				$('#chatlines').scrollTop($('#chatlines')[0].scrollHeight);
+			chat_calls++;
+		});
 	}
 
 	//tabbing functionality for dashboard
