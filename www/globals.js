@@ -75,11 +75,12 @@ $(document).ready(function() {
 			reload = setInterval(getLastTenLines, 500);
 			$("#trigger-input").trigger("click");
 		}
-		$(".before-login").animate({width: "hide", height: "hide"}, 200);
+		$(".before-login").animate({height: "hide"}, 400, function() {
+			google.maps.event.trigger(map, 'resize');
+		});
 		$(".after-login").fadeIn("slow");
 		$(".drop-down").fadeIn("slow");
 		reload = setInterval(getLastTenLines, 500);
-		google.maps.event.trigger(map, 'resize');
 		return this;
 	};
 
@@ -162,18 +163,16 @@ $(document).ready(function() {
 
 	$("#submit-flight").on("click", function(e) {
 		var flightnum = $("#flight-number").val();
-		console.log(flightnum);
 		if (flightnum === "") {
 			e.preventDefault();
 			e.stopPropagation();
 			return;
 		}
-		$.get("http://127.0.0.1:5000/api/currentdata", { 
+		$.get("http://127.0.0.1:5000/api/currentdata", {
 			flight: flightnum,
 			token: logged_user.token
 		}, function(data) {
 			console.log(data);
-			if 
 		});
 	});
 
