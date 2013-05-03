@@ -9,28 +9,16 @@
 
     <!-- Le styles -->
     <link href="assets/css/bootstrap.css" rel="stylesheet">
-    <style type="text/css">
-      body {
-        padding-top: 60px;
-        padding-bottom: 40px;
-        background-color: #333333;
-      }
-    </style>
     <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="styles.css">
     <link rel="stylesheet" type="text/css" href="assets/css/snake.css">
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="/assets/js/html5shiv.js"> </script>
-    <![endif]-->
-
-    <!-- Fav and touch icons -->
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
-      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
-                    <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
-                                   <link rel="shortcut icon" href="assets/ico/favicon.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="assets/ico/favicon.png">
     <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src='https://raw.github.com/cyberpython/AwesomeChartJS/master/awesomechart.js'></script>
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true&amp;libraries=places"></script>
     <script type="text/javascript" src="facts.js"></script>
     <script type="text/javascript" src='mapreload.js'></script>
@@ -45,23 +33,26 @@
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
           <a class="brand" href="#">Wingman</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle drop-down" data-toggle="dropdown">Flight<b class="caret"></b></a>
+              <li class="dropdown after-login">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Flight <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <li class="nav-header">Interact</li>
                   <li><a href="#" onclick="msg.focus();">Flight Chat</a></li>
-                  <li><a href="#">Nearby Planes</a></li>
                   <li class="nav-header">Flight Stats</li>
                   <li><a href="#">Altitude</a></li>
                   <li><a href="#">Speed</a></li>
-                           
                 </ul>
               </li>
               <li class="dropdown after-login">
-                <a href="#" class="dropdown-toggle drop-down" data-toggle="dropdown">Entertainment <b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Entertainment <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <li class="nav-header">Games</li>
                   <li><a href="#frogger" data-toggle="modal">Frogger</a></li>
@@ -73,6 +64,9 @@
                 </ul>
               </li>
             </ul>
+            <li class="nobullet pull-right padleft after-login">
+              <button class="btn btn-warning" type="button">Logout</button>
+            </li>
            <li class="dropdown nobullet pull-right padleft before-login">
              <a class="btn btn-warning" data-toggle="dropdown" href="#menu1">
                Create
@@ -103,7 +97,7 @@
                  </fieldset>
                </form>
              </div>
-          </li>       
+          </li>
           </div><!--/.nav-collapse -->
         </div>
       </div>
@@ -115,7 +109,9 @@
            
       <div class="hero-unit before-login">
         <div class="row-fluid">
-           <div class="span12 pagination-centered"><img src="img/wingman.png" alt="Wingman Logo" class="pagination-centered centered" id="wingmanlogo"/></div>
+          <div class="span12 pagination-centered">
+            <img src="img/wingman.png" alt="Wingman Logo" id="wingmanlogo"/>
+          </div>
         </div>
         <h1 id="header">We're your wingman, Maverick.</h1>
         <p>We'll plot out your trip, give you a live updated time of arrival, and we can even contact your loved ones to let them know exactly when you're arriving. We can keep you entertained with live information about the towns, cities, and landmarks over which you're flying.</p>
@@ -130,27 +126,35 @@
         <div id="frogger" class="modal hide fade in" style="display: none; ">  
           <div class="modal-body">  
             <div id="game_div">
-              <br/>
-              <canvas id="game" height="565" width="399"></canvas><br/>
+              <canvas id="game" height="565" width="399"></canvas>
             </div>                    
           </div>  
         </div>
        <div id="snake" class="modal hide fade in" style="display: none; ">  
          <div class="modal-body">  
            <div id="snake-board">
-             <!-- Snake goes here -->
+            <br/>
            </div>
          </div>  
        </div>
 
       <div id="map_canvas"></div>
-      <div class='navbar'>
-        <ul class="nav">
-          <li>Facts</li>
-        </ul>
-      </div>
-      <div id = "facts" class="row-fluid"><h3 id = "curfacts"></h3></div><br/>
+      <ul class='tabs' data-group='dashboard'>
+        <li>Speed</li>
+        <li>Altitude</li>
+        <li>Your Account</li>
+      </ul>
 
+      <div id="dashboard">
+        <div>
+            <canvas id="canvas1" width="300" height="300">
+              Your web-browser does not support the HTML 5 canvas element.
+            </canvas>
+        </div>
+        <div>hello</div>
+        <div>yolo</div>
+      </div>
+      <!-- <div id = "facts"><h3 id = "curfacts"></h3></div><br/> -->
       <div id='plane-chat' class='closed-chat'>
         <div class='close-chat-btn'>X</div>
         <div id="chatlines">
