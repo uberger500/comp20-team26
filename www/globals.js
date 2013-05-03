@@ -11,6 +11,13 @@ function initializeSnake() {
 	});
 }
 
+// function speedGraph(){
+	// var myData = new Array([10, 20], [15, 10], [20, 30], [25, 10], [30, 5]);
+	// var myChart = new JSChart('chartcontainer', 'line');
+	// myChart.setDataArray(myData);
+	// myChart.draw();
+// }
+
 function logoutUser() {
 	$.post("http://wingmanapi.herokuapp.com/api/user/logout", {token: logged_user.token}, function(data) {
 		if (data.success) {
@@ -144,20 +151,6 @@ $(document).ready(function() {
 
 	refreshmap(planecoords);
 	start_game();
-
-	function drawMyChart() {
-        if(!!document.createElement('canvas').getContext){ //check that the canvas
-                                                           // element is supported
-            var mychart = new AwesomeChart('canvas1');
-            mychart.title = "Product Sales - 2010";
-            mychart.data = [1532, 3251, 3460, 1180, 6543];
-            mychart.labels = ["Desktops", "Laptops", "Netbooks", "Tablets", "Smartphones"];
-            mychart.chartType = 'doughnut';
-            mychart.draw();
-        }
-    }
-
-    drawMyChart();
 
 	$("#log-in").on("click", function(e) {
 		e.preventDefault();

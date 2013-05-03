@@ -565,11 +565,17 @@ errorobj.status = "Error finding flight info";
 										dataobj.longitude = finaldata['longitude'];								
 									}		
 									
-									dataobj.status = 1;
+									if (finaldata['position'] == undefined && finaldata['time'] == undefined && finaldata['speed'] == undefined && finaldata['position'] == undefined && finaldata['distance'] == undefined && finaldata['latitude'] == undefined && finaldata['longitude'] == undefined && finaldata['time'] == undefined){
+										console.log("en route but no data found");
+										res.send (errorobj);
+									}
+									else{									
+										dataobj.status = 1;
 																	
-									console.log(dataobj);
+										console.log(dataobj);
 
-									res.send(JSON.stringify(dataobj));
+										res.send(JSON.stringify(dataobj));
+									}
 								}
 								else res.send(errorobj);
 							}
