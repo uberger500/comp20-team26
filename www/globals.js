@@ -6,6 +6,8 @@ $(document).ready(function() {
 	refreshmap(planecoords);
 	start_game();
 
+	$(".drop-down").hide();
+
 	function createUser(name, email, password) {
 		$.post("http://wingmanapi.herokuapp.com/api/user/create", { name: name, email: email, password: password }).done(function(data) {
 			if (data.success) {
