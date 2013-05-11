@@ -313,7 +313,7 @@ app.get(API_PREFIX + '/nearbyplanes', function(request, res) {
   	
 	res.set('Content-Type', 'text/json');
 
-	alert("NEARBYPLANES.JSON CALLED");
+	console.log ("NEARBYPLANES.JSON CALLED");
 
 	//turn request into json and grab the coordinates
 	var args = JSON.parse(JSON.stringify(request.query));
