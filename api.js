@@ -267,6 +267,8 @@ app.get(API_PREFIX + '/checkflight', function(req, res) {
  	res.header("Access-Control-Allow-Headers", "X-Requested-With");
 	res.set('Content-Type', 'text/html');
 
+	console.log("checking if valid flight");
+
 	params = "format=plaintext";
 	var args = JSON.parse(JSON.stringify(req.query));
 	//query should be something like .../checkflight?flight=american+airlines+flight+1234
@@ -311,7 +313,7 @@ app.get(API_PREFIX + '/nearbyplanes', function(request, res) {
   	
 	res.set('Content-Type', 'text/json');
 
-//	console.log ("NEARBYPLANES.JSON CALLED");
+	console.log ("NEARBYPLANES.JSON CALLED");
 
 	//turn request into json and grab the coordinates
 	var args = JSON.parse(JSON.stringify(request.query));
