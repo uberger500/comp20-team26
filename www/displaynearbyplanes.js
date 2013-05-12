@@ -33,7 +33,7 @@ function displaynearbyplanes(){
 					$.each(jsondata, function(i, el){
 						if($.inArray(el, cleanjsondata) === -1) cleanjsondata.push(el);
 					});
-
+					document.getElementById("nearbyplanes").innerHTML = "";
 					document.getElementById("nearbyplanes").innerHTML += "These planes are near you: <br/>";
 					
 					//put all nearby planes in a drop down form

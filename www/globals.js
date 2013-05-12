@@ -1,3 +1,8 @@
+var searchingforchats = false;
+var chatinterval = "empty";
+var reload2;
+var reload1;
+
 function encodeHTML(s) {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 }
@@ -104,13 +109,24 @@ $(document).ready(function() {
 
 	User.prototype.loginSuccess = function() {
 		if (!callct){
-			reload = window.setInterval(getLastTenLines, 50000);
+//			if (searchingforchats == true){
+//				console.log("reload1");
+//				if (reload1){
+//					clearInterval(reload1);
+//				}
+//				reload1 = window.setInterval(getLastTenLines, 1000);
+//			}
 			$("#trigger-input").trigger("click");
 		}
 		$(".before-login").animate({height: "hide"}, 400);
 		$(".after-login").fadeIn("slow");
 		$(".drop-down").fadeIn("slow");
-		reload = setInterval(getLastTenLines, 50000);
+		if (searchingforchats == true){
+			if (reload2){
+				clearInterval(reload2);
+			}
+			reload2 = window.setInterval(getLastTenLines, 1000);
+		}
 		google.maps.event.trigger(map, 'resize');
 		return this;
 	};
@@ -196,11 +212,15 @@ $(document).ready(function() {
 
 		$("#plane-chat").removeClass("closed-chat");
 	}).on("focus", function() {
+		searchingforchats = true;
+		getLastTenLines();
 		$("#plane-chat").removeClass("closed-chat");
 	});
 
 	$(".close-chat-btn").on("click", function() {
 		var $t = $(this);
+		searchingforchats = false;
+		clearInterval(reload2);
 		$t.parent().addClass("closed-chat");
 	});
 

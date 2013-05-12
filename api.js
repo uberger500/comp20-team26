@@ -277,7 +277,7 @@ app.get(API_PREFIX + '/checkflight', function(req, res) {
 	//flight will now be "american+airlines+flight+1234"
 
 	var request = require('request');
-	request('http://api.wolframalpha.com/v2/query?input=' + flight + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
+	request('http://api.wolframalpha.com/v2/query?input=' + flight + "&appid=VYQP33-25K7E8GHXH&" + params, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
 			if (response.body != null){
 				var parseString = require('xml2js').parseString; //parse xml string
@@ -329,8 +329,8 @@ app.get(API_PREFIX + '/nearbyplanes', function(request, res) {
 //HARDCODED WITH A TOKEN CURRENTLY
 
 	var request = require('request');
-	// request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
- request('http://api.wolframalpha.com/v2/query?input=' + "planes+above+boston" + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
+	// request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=VYQP33-25K7E8GHXH&" + params, function (error, response, body) {
+ request('http://api.wolframalpha.com/v2/query?input=' + "planes+above+boston" + "&appid=VYQP33-25K7E8GHXH&" + params, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
 			if (response.body != null){
 				var parseString = require('xml2js').parseString; //parse xml string
@@ -414,7 +414,7 @@ var errorobj = new Object;
 errorobj.status = "Error finding flight info";
 
 	var request = require('request');
-	request('http://api.wolframalpha.com/v2/query?input=' + flight + "&appid=PGPETX-U8JRYTGGRH&" + params, function (error, response, body) {
+	request('http://api.wolframalpha.com/v2/query?input=' + flight + "&appid=VYQP33-25K7E8GHXH&" + params, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
 			if (response.body != null){
 				var parseString = require('xml2js').parseString; //parse xml string
