@@ -54,7 +54,7 @@
                Create
                 <b class="caret"></b>
              </a>
-             <div class="dropdown-menu">
+             <div class="dropdown-menu" id = "creater">
                <form style="margin: 0px" accept-charset="UTF-8" action="#" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /><input name="authenticity_token" type="hidden" value="4L/A2ZMYkhTD3IiNDMTuB/fhPRvyCNGEsaZocUUpw40=" /></div>
                  <fieldset class='textbox' style="padding:10px">
                     <input id="create-name" style="margin-top: 8px" type="text" placeholder="Name" />
@@ -192,6 +192,7 @@
         </div>  
         </div>  
         <!-- Input modal -->
+
        <div id="input-flight" class="modal hide fade in" style="display: none; ">  
             <div class="modal-header">
             <h3>Please enter your flight number:</h3>
@@ -199,7 +200,7 @@
             <div class="modal-body"> 
             <button type = "button" onclick = "displaynearbyplanes()">Find nearby flights</button><br/><br/>
             <div id = "nearbyplanes"></div>
-            <p>Enter in this format <em>exactly</em>: &lt;airline&gt; flight &lt;flightnumber&gt; </p>
+            <p>Or enter in this format <em>exactly</em>: &lt;airline&gt; flight &lt;flightnumber&gt; </p>
             <input type='text' id='flight-number' placeholder='eg. delta flight 9991' />
             </div>  
             <div class="modal-footer">  
