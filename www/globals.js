@@ -81,11 +81,24 @@ $(document).ready(function() {
 					//login with their info automatically
 					logged_user = new User(email2,password2);
 					callct = 0;	
+					
+					
+					
+					
+					var checkUser = window.setInterval(function() {
+					if (logged_user.attempt === true)
+						logged_user.update();
+					else window.clearInterval(checkUser);
+					}, 3000);	
+						
+						
+						
+										
 					$("#creater").hide();
 				} else {
 					alert("Sorry, the email " + email + " is already in use!");
 				}
-				$("#trigger-input").trigger("click");				
+				//$("#trigger-input").trigger("click");				
 			});
 		}
 		else{
@@ -234,19 +247,15 @@ $(document).ready(function() {
 		$t.parent().addClass("closed-chat");
 	});
 
-	$("#submit-flight").on("click", function(e) {
-		var flightnum = $("#flight-number").val();
-		if (flightnum === "") {
-			e.preventDefault();
-			return;
+	$("#flight-number").on("keydown", function(e) {
+		if (e.which == 13) {
+			submitflight();
+
 		}
-		logged_user.Set("flightnum",flightnum);
-		logged_user.updateFlight();
-		flightupdate = window.setInterval(logged_user.updateFlight, 20000);
-		//fix map rendering zoom
-		fixbounds();
-		$("#input-flight").hide();
-		$("#trigger-input").trigger("click");
+	});
+
+	$("#submit-flight").on("click", function(e) {
+		submitflight();
 	});
 
 
@@ -306,3 +315,18 @@ $(document).ready(function() {
 
 
 });
+
+function submitflight(){
+	var flightnum = $("#flight-number").val();
+	if (flightnum === "") {
+		e.preventDefault();
+		return;
+	}
+	logged_user.Set("flightnum",flightnum);
+	logged_user.updateFlight();
+	flightupdate = window.setInterval(logged_user.updateFlight, 20000);
+	//fix map rendering zoom
+	fixbounds();
+	$("#input-flight").hide();
+	$("#trigger-input").trigger("click");
+}

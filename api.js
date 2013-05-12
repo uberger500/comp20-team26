@@ -313,7 +313,7 @@ app.get(API_PREFIX + '/nearbyplanes', function(request, res) {
   	
 	res.set('Content-Type', 'text/json');
 
-	console.log ("NEARBYPLANES.JSON CALLED");
+//	console.log ("NEARBYPLANES.JSON CALLED");
 
 	//turn request into json and grab the coordinates
 	var args = JSON.parse(JSON.stringify(request.query));
@@ -408,10 +408,10 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
 //	flight = "air+canada+flight+100";
 //  flight = "united+airlines+flight+94";
 
-console.log(flight);
+	console.log(flight);
 
-var errorobj = new Object;
-errorobj.status = "Error finding flight info";
+	var errorobj = new Object;
+	errorobj.status = "Error finding flight info";
 
 	var request = require('request');
 	request('http://api.wolframalpha.com/v2/query?input=' + flight + "&appid=VYQP33-25K7E8GHXH&" + params, function (error, response, body) {
@@ -420,7 +420,7 @@ errorobj.status = "Error finding flight info";
 				var parseString = require('xml2js').parseString; //parse xml string
 				parseString(body, function(err, result){
 					jsonresult = JSON.stringify(result);	//parsed xml to string
-					console.dir(jsonresult);
+					// console.dir(jsonresult);
 					jsonobj = JSON.parse(jsonresult);		//parsed string to json
 					if (jsonobj.queryresult.$.success == 'true' && jsonobj.queryresult.$.error == 'false'){ //if successful query
 							
