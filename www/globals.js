@@ -65,22 +65,32 @@ $(document).ready(function() {
 	};
 
 	function createUser(name, email, password) {
-		$.post("http://127.0.0.1:5000/api/user/create", { name: name, email: email, password: password }).done(function(data) {
-			if (data.success) {
-				//send email
-				$.ajax({
-					 type: "POST",
-					 url: "http://planaheadonline.com/sendmail.php",
-					 data: "address=" + email + "&title=" + "WingMan Registration" + "&name=" + name + "&mail=" + "WingManNoReply@gmail.com" + "&message=" + "Welcome!",
-				});
-				alert("Thanks " + name + ", you've created an account!");
-				$("#creater").hide();
-				$("#trigger-input").trigger("click");
-			} else {
-				alert("Sorry, the email " + email + " is already in use!");
-			}
-			$("#trigger-input").trigger("click");
-		});
+		var name2 = encodeHTML(name);
+		var email2 = encodeHTML(email);
+		var password2 = encodeHTML(password);
+		if (name == name2 && email == email2 && password == password2){
+			$.post("http://127.0.0.1:5000/api/user/create", { name: name, email: email, password: password }).done(function(data) {
+				if (data.success) {
+					//send email
+					$.ajax({
+						 type: "POST",
+						 url: "http://planaheadonline.com/sendmail.php",
+						 data: "address=" + email + "&title=" + "WingMan Registration" + "&name=" + name + "&mail=" + "WingManNoReply@gmail.com" + "&message=" + "Welcome!",
+					});
+					alert("Thanks " + name + ", you've created an account!");
+					//login with their info automatically
+					logged_user = new User(email2,password2);
+					callct = 0;	
+					$("#creater").hide();
+				} else {
+					alert("Sorry, the email " + email + " is already in use!");
+				}
+				$("#trigger-input").trigger("click");				
+			});
+		}
+		else{
+			alert("Invalid name, email, or password");
+		}
 	}
 
 	User.prototype.update = function() {
