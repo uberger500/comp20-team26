@@ -163,7 +163,10 @@ $(document).ready(function() {
 				token: logged_user.token,
 				latitude: data.latitude,
 				longitude: data.longitude
+				}, function(data) {
+			
 			});
+
 		
 		
 			//now grab all coordinates, make markers, and put on map with polyline
