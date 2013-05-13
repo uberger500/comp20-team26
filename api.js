@@ -207,6 +207,7 @@ app.post(API_PREFIX + '/user/update', function(request, response) {
 	var flight = request.param('flight');
 	var users = db2.collection('users');
 	var flights = db2.collection('flights');
+	response.set('Content-Type', 'text/json');
 
 //first take flight name and figure out the objectID assigned to the user for that flight
 	users.findOne({'_id' : user_id}, {flightids : 1}, function (err, doc){
@@ -225,11 +226,16 @@ app.post(API_PREFIX + '/user/update', function(request, response) {
 					var newlon = request.param('longitude');
 			  			flights.update({'_id' : idfound}, {$addToSet: {latitudes:newlat, longitudes:newlon, coordinates:[newlat, newlon]}}, {safe:true}, function(err) {
 							if (err) console.warn(err.message);
-					});					
+						});					
+				}
+				else{
+					console.log("params not found");
 				}
 			}
 		}
+		response.send({status:"finished"});
 	});
+	response.send({status:"finished"});
 });
 
 
