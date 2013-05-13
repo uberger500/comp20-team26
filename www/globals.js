@@ -197,8 +197,12 @@ $(document).ready(function() {
 				alt.push([i,parseInt(logged_user.currentFlight[i].altitude) ]);
 				spd.push([i,parseInt(logged_user.currentFlight[i].speed) ]);
 			}
+			altChart.setAxisNameX('Time');
+			altChart.setAxisNameY('Altitude (ft)');
 			altChart.setDataArray(alt);
 			altChart.draw();
+			altChart.setAxisNameX('Time');
+			altChart.setAxisNameY('Speed (mph)');			
 			spdChart.setDataArray(spd);
 			spdChart.draw();
 		});
