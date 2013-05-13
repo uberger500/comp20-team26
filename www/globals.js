@@ -17,7 +17,7 @@ function initializeSnake() {
 }
 
 function logoutUser() {
-	$.post("http://wingmanapi.herokuapp.com/api/user/logout", {token: logged_user.token}, function(data) {
+	$.post("http://127.0.0.1:5000/api/user/logout", {token: logged_user.token}, function(data) {
 		if (data.success) {
 			localStorage.savedUser = null;
 			window.location.reload();
@@ -69,7 +69,7 @@ $(document).ready(function() {
 		var email2 = encodeHTML(email);
 		var password2 = encodeHTML(password);
 		if (name == name2 && email == email2 && password == password2){
-			$.post("http://wingmanapi.herokuapp.com/api/user/create", { name: name, email: email, password: password }).done(function(data) {
+			$.post("http://127.0.0.1:5000/api/user/create", { name: name, email: email, password: password }).done(function(data) {
 				if (data.success) {
 					//send email
 					$.ajax({
@@ -109,7 +109,7 @@ $(document).ready(function() {
 	User.prototype.update = function() {
 		var that = this;
 		localStorage.savedUser = JSON.stringify(that);
-	 	$.post("http://wingmanapi.herokuapp.com/api/user/login",
+	 	$.post("http://127.0.0.1:5000/api/user/login",
 	 	   {
 	 	   		email: this.email,
 	 	   		password: this.password
@@ -156,7 +156,7 @@ $(document).ready(function() {
 
 	User.prototype.updateFlight = function() {
 		var that = this;
-		$.get("http://wingmanapi.herokuapp.com/api/currentdata", {
+		$.get("http://127.0.0.1:5000/api/currentdata", {
 			flight: logged_user.Get("flightnum"),
 			token: "7cb2c74a-f4ec-4691-a92b-540366f0db87"
 		}, function(data) {
@@ -264,12 +264,12 @@ $(document).ready(function() {
 	{
 		chatmsg = encodeHTML(document.getElementById("msg").value);
 		document.getElementById("msg").value = "";
-		$.post("http://wingmanapi.herokuapp.com/api/chat/submit", {username: logged_user.email, chatline: chatmsg, token: logged_user.token});
+		$.post("http://127.0.0.1:5000/api/chat/submit", {username: logged_user.email, chatline: chatmsg, token: logged_user.token});
 	}
 
 	var chat_calls = 0;
 	function getLastTenLines() {
-		$.get("http://wingmanapi.herokuapp.com/api/chat/chatlines?token=" + logged_user.token, function(data) {
+		$.get("http://127.0.0.1:5000/api/chat/chatlines?token=" + logged_user.token, function(data) {
 			parsed_response = data;
 			elem = document.getElementById("chatlines");
 	        output = "";

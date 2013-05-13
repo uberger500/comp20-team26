@@ -17,7 +17,7 @@ function displaynearbyplanes(){
 			// to a get request that respons with json planes
 			
 			//change this to wingmanapi.herokuapp whatever
-			var url = "http://wingmanapi.herokuapp.com/api/nearbyplanes?latitude=" + myLoc.lat() + "&longitude=" + myLoc.lng() + "&token=" + logged_user.token;
+			var url = "http://127.0.0.1:5000/api/nearbyplanes?latitude=" + myLoc.lat() + "&longitude=" + myLoc.lng() + "&token=" + logged_user.token;
 			// console.log(url);
 			$.get(url, function(data){ 
 				// data comes back as an array of flight strings
@@ -34,26 +34,58 @@ function displaynearbyplanes(){
 						if($.inArray(el, cleanjsondata) === -1) cleanjsondata.push(el);
 					});
 					document.getElementById("nearbyplanes").innerHTML = "";
-					document.getElementById("nearbyplanes").innerHTML += "These planes are near you: <br/>";
+					document.getElementById("nearbyplanes").innerHTML += "Found " + cleanjsondata.length + " planes near you. Checking which planes wolfram has data on...<br/><br/>";
 					
 					//put all nearby planes in a drop down form
-					formstring = "<form action=''><select id = 'planedropdown' onchange = 'alertme()'>";
-					for (var j = 0; j < cleanjsondata.length; j++){
-						var formoption = "<option value = '" + cleanjsondata[j] + "'>" + cleanjsondata[j] + "</option>";     
-						formstring += formoption;
-					}
-					formstring += "</select></form>";
-					document.getElementById("nearbyplanes").innerHTML += formstring;
 					
+					formstring = "Valid flights found:<br/><form action=''><select id = 'planedropdown' onchange = 'alertme()'><option value = ''>-- Select a flight --</option>";
+										
+					for (var j = 0; j < cleanjsondata.length; j++){
+						
+												
+						var flight = cleanjsondata[j];
+
+						console.log("checking " + flight);
+
+						
+						if (flight.indexOf("Delta") != -1){
+							flight = flight.replace(" Air Lines ", " "); //querying delta+air+lines+flight+# doesnt work for some reason
+						}
+						
+						var numfound = cleanjsondata.length;
+						var numverified = 0;
+						
+						
+						var flightpluses = flight.replace(/ /g, "+");
+						var url = "http://127.0.0.1:5000/api/checkflight?flight=" + flightpluses + "&token=" + logged_user.token;
+						//check if all flights are valid on wolfram and are either en route or havent taken off yet; landeds will not be returned
+						$.get(url, function(response){ 
+							//else try removing airlines and air lines and airways whatever? formatting weird with delta etc --> extra requests, slow
+						}).done(function(response){
+							console.log(" full response " + JSON.stringify(response));
+							if (response.status == "valid" || response.status == "has not taken off yet"){
+								var formoption = "<option value = '" + response.plane + "'>" + response.plane + "</option>";     
+								formstring += formoption;
+								numverified++;
+							}
+							
+							
+							//CHANGE THIS
+							
+							if (numverified == numfound){
+								console.log("ALL VERIFIED, pushing form");
+								// finish the form and push it if this is the final plane found and the request is done
+								formstring += "</select></form>";
+								document.getElementById("nearbyplanes").innerHTML = formstring;
+							}
+						});
+					}
 				}
-			}).done(function(data) {
-				// console.log(data);
-			});			
-		});	
+			});
+			
+		});
 	}
-	else {
-		document.getElementById("status").innerHTML = "Geolocation not supported";
-	}
+	else document.getElementById("nearbyplanes").innerHTML = "Geolocation not supported";
 }
 
 function alertme(){

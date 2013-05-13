@@ -265,11 +265,13 @@ app.get(API_PREFIX + '/chat/chatlines', function(request, response) {
 app.get(API_PREFIX + '/checkflight', function(req, res) {
 	res.header("Access-Control-Allow-Origin", "*"); // fix this
  	res.header("Access-Control-Allow-Headers", "X-Requested-With");
-	res.set('Content-Type', 'text/html');
+	res.set('Content-Type', 'text/json');
 
 	console.log("checking if valid flight");
 
-	params = "format=plaintext";
+
+	var params = "includepodid=FlightProperties:FlightData&includepodid=FlightSchedule:FlightData&includepodid=FlightStatus:FlightData&format=plaintext";
+//	params = "format=plaintext";
 	var args = JSON.parse(JSON.stringify(req.query));
 	//query should be something like .../checkflight?flight=american+airlines+flight+1234
 	var flight = args.flight;
@@ -286,24 +288,29 @@ app.get(API_PREFIX + '/checkflight', function(req, res) {
 //					console.dir(jsonresult);					
 					jsonobj = JSON.parse(jsonresult);		//parsed string to json
 					if (jsonobj.queryresult.$.success == 'true' && jsonobj.queryresult.$.error == 'false'){ //if successful query
-						// if the plantext contains (today) or (yesterday) or (tomorrow) 
-						// they will contain these if they are ongoing or just landed or about to depart
-						// therefore if the user makes a typo they won't get stuck with an old but valid flight
 						var responsestring = JSON.stringify(jsonobj.queryresult);
-						if (responsestring.indexOf("(today)") != -1 || responsestring.indexOf("(yesterday)") != -1 || responsestring.indexOf("(tomorrow)") != -1){
-							res.send("valid flight");
+						if (responsestring.indexOf("arrived at") != -1){
+							res.send({status:"has landed", plane:flight});
+						}			
+						else if (responsestring.indexOf("estimated to depart") != -1){
+							res.send({status:"has not taken off yet", plane:flight});
 						}
-						else res.send("invalid flight");
+						else if (responsestring.indexOf("en route") != -1){
+							res.send({status:"valid", plane:flight});
+						}
+						else{
+							res.send({status:"is invalid", plane:flight});
+						}
 					}
-					else res.send("invalid flight");
+					else res.send({status:"information not available from wolfram", plane:flight});
 				});
 			}
-			else res.send("invalid flight");
+			else res.send({status:"info unavailable; cannot connect to wolfram", plane:flight});
 		}
-		else res.send("invalid flight");
 	});
 });
 
+		
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
 // FIND NEARBY PLANES, PASSED USER LOCATION
