@@ -146,6 +146,7 @@ function draw_marker(tally){
 	planepic = 'images/planesmall3.png';	
 	
 	myLoc = new google.maps.LatLng(myLat, myLon);
+	console.log("lolwat2");
 	map.setCenter(myLoc);
 	meMarker = new google.maps.Marker({
 		position: myLoc,
@@ -224,6 +225,7 @@ function geo(){
 			geoloc = position.coords.latitude;
 			
 			myLoc = new google.maps.LatLng(geolat,geolng);
+			console.log("lolwat3");
 			map.setCenter(myLoc);
 			
 			meMarker = new google.maps.Marker({

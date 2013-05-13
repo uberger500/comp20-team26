@@ -29,11 +29,12 @@ function findnearbyplanes(){
 			geoloc = position.coords.latitude;
 			
 			myLoc = new google.maps.LatLng(geolat,geolng);
+			console.log("lolwat");
 			map.setCenter(myLoc);
 			meMarker = new google.maps.Marker({
 				position: myLoc,
 			});
-			meMarker.setMap(map);
+			//meMarker.setMap(map);
 
 			// now search for nearby planes, sending longitude and latitude as args
 			// to a get request that respons with json planes

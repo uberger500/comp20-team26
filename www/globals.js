@@ -2,6 +2,7 @@ var searchingforchats = false;
 var chatinterval = "empty";
 var reload2;
 var reload1;
+olddata = 'a';
 
 function encodeHTML(s) {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
@@ -17,7 +18,7 @@ function initializeSnake() {
 }
 
 function logoutUser() {
-	$.post("http://wingmanapi.herokuapp.com/api/user/logout", {token: logged_user.token}, function(data) {
+	$.post("http://127.0.0.1:5000/api/user/logout", {token: logged_user.token}, function(data) {
 		if (data.success) {
 			localStorage.savedUser = null;
 			window.location.reload();
@@ -37,17 +38,17 @@ $(document).ready(function() {
 	}
 
 	User.prototype.placeLoc = function() {
-		var len = this.currentFlight.length - 1;
-		var lat = this.currentFlight[len].latitude;
-		var lon = this.currentFlight[len].longitude;
-		var coords = new google.maps.LatLng(lat,lon);
-		var location = new google.maps.Marker({
-			position: coords
-		});
-		location.setMap(null);
-		location.setMap(map);
-		map.setCenter(coords);
-		refreshfacts(coords);
+//		var len = this.currentFlight.length - 1;
+//		var lat = this.currentFlight[len].latitude;
+//		var lon = this.currentFlight[len].longitude;
+//		var coords = new google.maps.LatLng(lat,lon);
+//		var location = new google.maps.Marker({
+//			position: coords
+//		});
+//		location.setMap(null);
+//		location.setMap(map);
+//		map.setCenter(coords);
+//		refreshfacts(coords);
 	};
 
 	User.prototype.Set = function(prop, val) {
@@ -69,7 +70,7 @@ $(document).ready(function() {
 		var email2 = encodeHTML(email);
 		var password2 = encodeHTML(password);
 		if (name == name2 && email == email2 && password == password2){
-			$.post("http://wingmanapi.herokuapp.com/api/user/create", { name: name, email: email, password: password }).done(function(data) {
+			$.post("http://127.0.0.1:5000/api/user/create", { name: name, email: email, password: password }).done(function(data) {
 				if (data.success) {
 					//send email
 					$.ajax({
@@ -80,20 +81,13 @@ $(document).ready(function() {
 					alert("Thanks " + name + ", you've created an account!");
 					//login with their info automatically
 					logged_user = new User(email2,password2);
-					callct = 0;	
-					
-					
-					
-					
+	
 					var checkUser = window.setInterval(function() {
 					if (logged_user.attempt === true)
 						logged_user.update();
 					else window.clearInterval(checkUser);
 					}, 3000);	
-						
-						
-						
-										
+					
 					$("#creater").hide();
 				} else {
 					alert("Sorry, the email " + email + " is already in use!");
@@ -109,7 +103,7 @@ $(document).ready(function() {
 	User.prototype.update = function() {
 		var that = this;
 		localStorage.savedUser = JSON.stringify(that);
-	 	$.post("http://wingmanapi.herokuapp.com/api/user/login",
+	 	$.post("http://127.0.0.1:5000/api/user/login",
 	 	   {
 	 	   		email: this.email,
 	 	   		password: this.password
@@ -150,16 +144,42 @@ $(document).ready(function() {
 			}
 			reload2 = window.setInterval(getLastTenLines, 1000);
 		}
+
 		google.maps.event.trigger(map, 'resize');
 		return this;
 	};
 
 	User.prototype.updateFlight = function() {
 		var that = this;
-		$.get("http://wingmanapi.herokuapp.com/api/currentdata", {
+		$.get("http://127.0.0.1:5000/api/currentdata", {
 			flight: logged_user.Get("flightnum"),
-			token: "7cb2c74a-f4ec-4691-a92b-540366f0db87"
+//			token: "7cb2c74a-f4ec-4691-a92b-540366f0db87"
+			token: logged_user.token
 		}, function(data) {
+		
+			//send new info to database for given flight
+			$.post("http://127.0.0.1:5000/api/user/update", {
+				flight: logged_user.Get("flightnum"),
+				token: logged_user.token,
+				latitude: data.latitude,
+				longitude: data.longitude
+			});
+		
+		
+			//now grab all coordinates, make markers, and put on map with polyline
+			$.get("http://127.0.0.1:5000/api/user/pathcoords", {
+				flight: logged_user.Get("flightnum"),
+				token: logged_user.token
+			}, function(data){
+				datastr = JSON.stringify(data);
+				if (datastr != olddata){
+					refreshmap(data);
+					olddata = datastr;
+				}
+			});
+			
+
+
 			if (typeof data.altitude !== "undefined") {
 				logged_user.currentFlight.push(data);
 				logged_user.placeLoc();
@@ -195,7 +215,13 @@ $(document).ready(function() {
 		}
 	}
 
-	refreshmap(planecoords);
+	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+	var middleUSA = new google.maps.LatLng(39.8282, -98.5795);
+//	console.log("setting to middle usa");
+	map.setCenter(middleUSA);
+
+	
+//	refreshmap([[39.8282, -98.5795]]);
 	start_game();
 		
 
@@ -243,10 +269,13 @@ $(document).ready(function() {
 	$(".close-chat-btn").on("click", function() {
 		var $t = $(this);
 		searchingforchats = false;
-		clearInterval(reload2);
+		clearInterval(reload2); //turn off chat request interval
 		$t.parent().addClass("closed-chat");
 	});
 
+
+
+// INSERT LOADING GIF HERE NEXT TWO POSSIBLE SUBMITS?
 	$("#flight-number").on("keydown", function(e) {
 		if (e.which == 13) {
 			submitflight();
@@ -264,12 +293,12 @@ $(document).ready(function() {
 	{
 		chatmsg = encodeHTML(document.getElementById("msg").value);
 		document.getElementById("msg").value = "";
-		$.post("http://wingmanapi.herokuapp.com/api/chat/submit", {username: logged_user.email, chatline: chatmsg, token: logged_user.token});
+		$.post("http://127.0.0.1:5000/api/chat/submit", {username: logged_user.email, chatline: chatmsg, token: logged_user.token});
 	}
 
 	var chat_calls = 0;
 	function getLastTenLines() {
-		$.get("http://wingmanapi.herokuapp.com/api/chat/chatlines?token=" + logged_user.token, function(data) {
+		$.get("http://127.0.0.1:5000/api/chat/chatlines?token=" + logged_user.token, function(data) {
 			parsed_response = data;
 			elem = document.getElementById("chatlines");
 	        output = "";
@@ -312,21 +341,40 @@ $(document).ready(function() {
 		$g.children(":gt(0)").hide();
 		$g.children().first().addClass("active-page");
 	});
-
-
 });
 
 function submitflight(){
 	var flightnum = $("#flight-number").val();
+
 	if (flightnum === "") {
 		e.preventDefault();
 		return;
 	}
-	logged_user.Set("flightnum",flightnum);
-	logged_user.updateFlight();
-	flightupdate = window.setInterval(logged_user.updateFlight, 20000);
-	//fix map rendering zoom
-	fixbounds();
-	$("#input-flight").hide();
-	$("#trigger-input").trigger("click");
+	
+	//check if valid on wolfram
+	var flightpluses = flightnum.replace(/ /g, "+");
+	var url = "http://127.0.0.1:5000/api/checkflight?flight=" + flightpluses + "&token=" + logged_user.token;
+	//check if all flights are valid on wolfram and are either en route or havent taken off yet; landeds will not be returned
+	$.get(url, function(response){ 
+		if (response.status == "valid" || response.status == "has not taken off yet"){
+			if (response.status == "has not taken off yet"){
+				alert("Valid flight but either hasn't taken off yet or no post-takeoff data available yet; there may be a delay in tracking.");
+			}
+			
+			//add flight to database
+			$.post("http://127.0.0.1:5000/api/user/addflight", {username: logged_user.email, token: logged_user.token, flight: flightnum});
+
+	
+			logged_user.Set("flightnum",flightnum);
+			logged_user.updateFlight();
+			flightupdate = window.setInterval(logged_user.updateFlight, 20000);
+			//fix map rendering zoom
+//			fixbounds();
+			$("#input-flight").hide();
+			$("#trigger-input").trigger("click");
+		}
+		else{
+			alert("Invalid flight number, please try again. Make sure you use the correct format if inputting directly. Some flight data unavailable.");
+		}
+	});
 }

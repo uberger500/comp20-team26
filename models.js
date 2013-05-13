@@ -30,20 +30,38 @@ var scoreSchema = new Schema({
     created_at: {type: Date, default: new Date()}
 });
 
+var flightSchema = new Schema({
+	flightnum: {type: String, default: "nullflight"},
+	latitudes: {type: [Number], default: [0], unique: true},
+	longitudes: {type: [Number], default: [0], unique: true}
+});
+
+var flightSchema2 = new Schema({
+	coords: {type: [Number, Number]}
+});
+
 var userSchema = new Schema({
 	name : String,
 	email : {type: String, unique: true},
 	password : String, // bcrypt
     flights: {type: [String], default: []},
-    total_flights: {type: Number, default: 0},
-    total_miles: {type: Number, default: 0},
-    average_speed: {type: Number, default: 0},
-    average_altitude: {type: Number, default: 0},
-    all_speeds: {type: [Number], default: [0]},
-    all_altitudes: {type: [Number], default: [0]},
-    number_of_states: {type: Number, default: 0},
-    states: {type:[String], default: []}
+    
+    flightdata: {type: [flightSchema2]},
+    latitudes: {type: [Number], default:[], unique: false},
+	longitudes: {type:[Number], defualt:[], unique: false},
+    
+//    total_flights: {type: Number, default: 0},
+//    total_miles: {type: Number, default: 0},
+//    average_speed: {type: Number, default: 0},
+//    average_altitude: {type: Number, default: 0},
+//    all_speeds: {type: [Number], default: [0]},
+//    all_altitudes: {type: [Number], default: [0]},
+//    number_of_states: {type: Number, default: 0},
+//    states: {type:[String], default: []}
 });
+
+
+
 
 userSchema.set('toJSON', { transform: function (doc, ret, options) {
 	delete ret.__v;

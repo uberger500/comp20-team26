@@ -19,6 +19,13 @@ var app = express();
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 
+
+
+var db2 = mongo.Db.connect(mongoUri, function (error, databaseConnection) {
+	db2 = databaseConnection;
+});
+
+
 // Main Pages
 
 app.get(/(.+)\.(.+)/, function(request, response, next) {
@@ -153,18 +160,115 @@ app.post(API_PREFIX + '/user/delete', function(request, response) {
 app.post(API_PREFIX + '/user/addflight', function(request, response) {
 	var flight = request.param('flight');
 	var user_id = request.session.user;
+	
+//	var doc = userSchema.flightSchema.id(id);
+//	console.log(doc)
+
+	var flightdb = db2.collection('flights');
+
+
+//First insert new flight into flights collection	
+	flightdb.insert({name: flight}, {safe:true}, function(err, objects) {
+		if (err) console.warn(err.message);
+		if (err && err.message.indexOf('E11000 ') !== -1) {
+		  // this _id was already inserted in the database
+		}
+		newflightid = objects[0]._id;
+		
+//then add ID of new flight	into users collection for the logged in user
+		var users = db2.collection('users');
+		users.update({'_id' : user_id}, {$addToSet: {flightids:{name:flight, id:newflightid}}}, {safe:true}, function(err) {
+			
+		});
+
+	});	
+
+//EXTRA?
 	models.User.findByIdAndUpdate(user_id, {$addToSet: {flights: flight}}, function(err, user) {
+		console.log("adding " + flight);
 		if (err || !user) {
+			console.log("add flight fail");
 			response.json({success: false, error: 'Error saving user data'});
 		} else {
+			console.log("add flight success");
 			response.json({success: true});
 		}
 	});
+//^^extra?
+
+	
+	
+	
+	
 });
 
 app.post(API_PREFIX + '/user/update', function(request, response) {
 	var user_id = request.session.user;
-	models.User.findById(user_id, function(err, user) {
+	var flight = request.param('flight');
+	var users = db2.collection('users');
+	var flights = db2.collection('flights');
+
+//first take flight name and figure out the objectID assigned to the user for that flight
+	users.findOne({'_id' : user_id}, {flightids : 1}, function (err, doc){
+		if (doc != null){			
+			var idfound = "";
+			//search all their flights for the correct id
+			for (var i = 0; i < doc.flightids.length; i++){
+				if (doc.flightids[i].name == flight){
+					idfound = doc.flightids[i].id;
+				}
+			}
+// then add coordinates to that object ID			
+			if (idfound != ""){
+				if (request.param('latitude') != undefined && request.param('longitude') != undefined){
+					var newlat = request.param('latitude');
+					var newlon = request.param('longitude');
+			  			flights.update({'_id' : idfound}, {$addToSet: {latitudes:newlat, longitudes:newlon, coordinates:[newlat, newlon]}}, {safe:true}, function(err) {
+							if (err) console.warn(err.message);
+					});					
+				}
+			}
+		}
+	});
+});
+
+
+app.get(API_PREFIX + '/user/pathcoords', function(request, response) {
+	var user_id = request.session.user;
+	var flight = request.param('flight');
+	var users = db2.collection('users');
+	var flights = db2.collection('flights');
+	response.set('Content-Type', 'text/json');
+
+//first take flight name and figure out the objectID assigned to the user for that flight
+	users.findOne({'_id' : user_id}, {flightids : 1}, function (err, doc){
+		if (doc != null){			
+			var idfound = "";
+			//search all their flights for the correct id
+			for (var i = 0; i < doc.flightids.length; i++){
+				if (doc.flightids[i].name == flight){
+					idfound = doc.flightids[i].id;
+				}
+			}
+// then grab all the coordinates from that flight ID
+			if (idfound != ""){
+				console.log("searching for coords plane key " + idfound);
+				flights.find({'_id' : idfound}, {coordinates:1}).toArray(function (err, doc){
+					if (doc != null){
+						response.send(doc[0].coordinates);				
+//						console.dir(doc[0].coordinates);
+					}
+				});
+			}
+
+		}
+	});
+});
+
+
+
+
+/*
 		var properties = ['total_flights', 'total_miles', 'average_speed', 'average_altitude', 'number_of_states'];
 		for (var i = 0; i < properties.length; i++) {
 			var prop = properties[i];
@@ -179,6 +283,70 @@ app.post(API_PREFIX + '/user/update', function(request, response) {
 				user.all_altitudes.push(new_val);
 			}
 		}
+
+
+
+		var users = db2.collection('users');
+		users.find({'_id' : user_id}, {limit:2}).toArray(function (err, doc){
+			if (doc != null){
+				console.dir(doc);
+
+				var flightpluses = request.param('flight').replace(/ /g, "+");
+
+			  	users.update({'_id' : user_id}, {$addToSet: {latitudes:9001}}, {safe:true}, function(err) {
+						if (err) console.warn(err.message);
+						else console.log('successfully updated');
+			  	});
+
+			  	users.update({'_id' : user_id}, {$addToSet: {flightlist:flightpluses}}, {safe:true}, function(err) {
+						if (err) console.warn(err.message);
+						else console.log('successfully updated');
+			  	});
+			  	
+
+			  	users.update({'_id' : user_id}, {$addToSet: {flightpluses:1}}, {safe:true}, function(err) {
+						if (err) console.warn(err.message);
+						else console.log('successfully updated');
+			  	});
+
+			  	
+			}
+		});
+
+	models.User.findById(user_id, function(err, user) {
+
+		
+		if (request.param('latitude') != undefined && request.param('longitude') != undefined){
+			console.log("adding new lat long " + request.param('latitude') + " " + request.param('longitude'));
+
+			var newlat = request.param('latitude');
+			var newlon = request.param('longitude');
+		
+
+			models.User.findByIdAndUpdate(user_id, {$addToSet: {latitudes: newlat, longitudes: newlon}}, function(err, user) {
+				if (err || !user) {
+					console.log("couldnt add just latlon");
+					response.json({success: false, error: 'Error saving user data'});
+				} else {
+					console.log("added latlon");
+					response.json({success: true});
+				}
+			});
+
+			var newcoords = new Array;
+			newcoords.push(request.param('latitude'));
+			newcoords.push(request.param('longitude'));
+			models.User.findByIdAndUpdate(user_id, {$addToSet: {flightdata: newcoords}}, function(err, user) {
+				if (err || !user) {
+					console.log("couldnt add both");
+					response.json({success: false, error: 'Error saving user data'});
+				} else {
+					console.log("added both");
+					response.json({success: true});
+				}
+			});
+		}
+		
 		user.save(function(err) {
 			if (err) {
 				response.json({success: false, error: 'Error saving user data'});
@@ -188,6 +356,8 @@ app.post(API_PREFIX + '/user/update', function(request, response) {
 		});
 	});
 });
+*/
+
 
 app.post(API_PREFIX + '/score/submit', function(request, response) {
 	var user_id = request.session.user;
@@ -267,9 +437,6 @@ app.get(API_PREFIX + '/checkflight', function(req, res) {
  	res.header("Access-Control-Allow-Headers", "X-Requested-With");
 	res.set('Content-Type', 'text/json');
 
-	console.log("checking if valid flight");
-
-
 	var params = "includepodid=FlightProperties:FlightData&includepodid=FlightSchedule:FlightData&includepodid=FlightStatus:FlightData&format=plaintext";
 //	params = "format=plaintext";
 	var args = JSON.parse(JSON.stringify(req.query));
@@ -279,7 +446,7 @@ app.get(API_PREFIX + '/checkflight', function(req, res) {
 	//flight will now be "american+airlines+flight+1234"
 
 	var request = require('request');
-	request('http://api.wolframalpha.com/v2/query?input=' + flight + "&appid=VYQP33-25K7E8GHXH&" + params, function (error, response, body) {
+	request('http://api.wolframalpha.com/v2/query?input=' + flight + "&appid=JJ5AL3-K5KPHHHLJH&" + params, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
 			if (response.body != null){
 				var parseString = require('xml2js').parseString; //parse xml string
@@ -336,8 +503,8 @@ app.get(API_PREFIX + '/nearbyplanes', function(request, res) {
 //HARDCODED WITH A TOKEN CURRENTLY
 
 	var request = require('request');
-	// request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=VYQP33-25K7E8GHXH&" + params, function (error, response, body) {
- request('http://api.wolframalpha.com/v2/query?input=' + "planes+above+boston" + "&appid=VYQP33-25K7E8GHXH&" + params, function (error, response, body) {
+	// request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=JJ5AL3-K5KPHHHLJH&" + params, function (error, response, body) {
+ request('http://api.wolframalpha.com/v2/query?input=' + "planes+above+boston" + "&appid=JJ5AL3-K5KPHHHLJH&" + params, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
 			if (response.body != null){
 				var parseString = require('xml2js').parseString; //parse xml string
@@ -394,10 +561,10 @@ app.get(API_PREFIX + '/nearbyplanes', function(request, res) {
 
 // CURRENTDATA(.json)
 // REQUEST PARAMETER: &flight+company+flight+###
-// RESPONSE (example): {"time": "Current information (10:20 pm EDT)", "altitude": 36900, "position": "44.52N, 87.53W", "speed": 519, "distance": 1816, "latitude": 44.52, "longitude": -87.53}
-//          (example2): {'errorA'}	
-//			(example3): {'landed'}
-//			(example4): {'Plane hasn't taken off yet or post-takeoff data not available yet'}
+// RESPONSE (example): {status:1, "time": "Current information (10:20 pm EDT)", "altitude": 36900, "position": "44.52N, 87.53W", "speed": 519, "distance": 1816, "latitude": 44.52, "longitude": -87.53}
+//          (example2): {status:'errorA'}	
+//			(example3): {status:'landed'}
+//			(example4): {status:'Plane hasn't taken off yet or post-takeoff data not available yet'}
 app.get(API_PREFIX + '/currentdata', function(req, res) {
 	res.header("Access-Control-Allow-Origin", "*");		//fix this
   	res.header("Access-Control-Allow-Headers", "X-Requested-With");
@@ -421,7 +588,7 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
 	errorobj.status = "Error finding flight info";
 
 	var request = require('request');
-	request('http://api.wolframalpha.com/v2/query?input=' + flight + "&appid=VYQP33-25K7E8GHXH&" + params, function (error, response, body) {
+	request('http://api.wolframalpha.com/v2/query?input=' + flight + "&appid=JJ5AL3-K5KPHHHLJH&" + params, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
 			if (response.body != null){
 				var parseString = require('xml2js').parseString; //parse xml string
@@ -441,7 +608,6 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
 								res.send('{"status":"Plane hasn\'t taken off yet or post-takeoff data not available yet"}');
 							}
 							else if (responsestring.indexOf("en route") != -1){
-								console.log("going to search for specific info now");
 								if (jsonobj.queryresult.pod != undefined && jsonobj.queryresult.pod[2] != undefined && jsonobj.queryresult.pod[2].subpod != undefined && jsonobj.queryresult.pod[2].subpod[0] != undefined && jsonobj.queryresult.pod[2].subpod[0].plaintext != undefined && jsonobj.queryresult.pod[2].subpod[0].plaintext != ""){
 									var data = JSON.stringify(jsonobj.queryresult.pod[2].subpod[0].plaintext[0]);
 								

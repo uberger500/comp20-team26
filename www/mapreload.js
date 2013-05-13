@@ -1,6 +1,6 @@
 var fieldscorner = new google.maps.LatLng(42.300093,-71.061667);
 var myOptions = {
-	zoom: 10, // The larger the zoom number, the bigger the zoom
+	zoom: 7, // The larger the zoom number, the bigger the zoom
 	center: fieldscorner,	// center south station while your location loads
 	mapTypeId: google.maps.MapTypeId.HYBRID
 	};
@@ -34,7 +34,7 @@ planecoords.push([44.41, -83.15]);
 planecoords.push([44.17, -82.07]);
 planecoords.push([43.97, -81.12]);
 planecoords.push([43.77, -80.13]);
-planecoords.push([43.6, -79.2]);
+/*planecoords.push([43.6, -79.2]);
 planecoords.push([43.47, -78.24]);
 planecoords.push([43.3, -77.2]);
 planecoords.push([43.19, -76.35]);
@@ -55,7 +55,7 @@ planecoords.push([42.33, -70.95]);
 planecoords.push([42.33, -70.97]);
 planecoords.push([42.35, -70.99]);
 planecoords.push([42.3631, -71.0064]);
-
+*/
 
 //planecoords[0][0] and planecoords[0][1] is first set of coordinates
 //planecoords[1][0] and planecoords[1][0] is the second set
@@ -95,26 +95,30 @@ function refreshmap(planecoords){
 		markers.push(newMarker);
 
 		//draw 1st marker
-		if (i == 0){ 
-			newMarker.setMap(map);
-		}
+//		if (i == 0){ 
+//			newMarker.setMap(map);
+//		}
 	}
 	//draw final marker and polyline
+//	console.log("setting final marker");
 	newMarker.setMap(map);
 	drawlines(polyline);
 
 	//if path is only 1 dot, have a larger zoom out
 	if (polyline.length == 1){ 
+//		console.log("length 1 setting to " + coords);
 		map.setCenter(coords);
 	}
 	else{	
-		fixbounds();
+//		fixbounds();
+	map.setCenter(coords);
 	}
 
-	var state = refreshfacts(coords); // pass final coords; the most recent coords
+	var state = refreshfacts([coords.lat(), coords.lng()]); // pass final coords; the most recent coords
 	return state;
 
 }
+
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
@@ -123,7 +127,7 @@ function drawlines(path){
 
 	newline = new google.maps.Polyline({
 			path: path,
-			strokeColor: "#48a627",
+			strokeColor: "#fbff00",
 			strokeWeight: 4
 		});
 	newline.setMap(map);
@@ -135,8 +139,10 @@ function drawlines(path){
 // facts have variable length - scrollbar on display of them or what?
 function refreshfacts(coords){
 
-	var lat = coords.lat();
-	var lon = coords.lng();
+//	console.log("refreshing at " + coords);
+
+	var lat = coords[0];
+	var lon = coords[1];
 
 	url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + lat + "," + lon + "&sensor=true";
 
@@ -148,10 +154,11 @@ function refreshfacts(coords){
 	request.send(null);
 	request.onreadystatechange = function(){
 		if (this.status == 0){
-//			console.log("status code 0");
+			console.log("status code 0");
 		}
 		else if (this.readyState == 4 && this.status == 200){			
 			response = (this.responseText);
+//			console.log(response);
 			parsed_response = JSON.parse(response);
 			if (parsed_response.status == "OK"){
 				//search response for all states to identify which youre in
@@ -164,7 +171,7 @@ function refreshfacts(coords){
 					}
 				}
 				if (found == false){
-					if(response.indexOf("Canada")){
+					if(response.indexOf("Canada") != -1){
 						state_simple = "canada";
 						state_regular = "Canada";
 						found = true;
@@ -188,7 +195,8 @@ function refreshfacts(coords){
 				}
 			}
 			else{
-		//		console.log("gmaps api failed request");
+				state_simple = "ocean";
+				state_regular = "Ocean";
 			}
 		}
 	}
@@ -225,9 +233,11 @@ function randOrd(){
 
 function fixbounds(){
 	var bounds = new google.maps.LatLngBounds();
-	for (var i = 0; i < polyline.length; i++){
-		bounds.extend(polyline[i]);
+	if (polyline != undefined && polyline.length > 1){
+		for (var i = 0; i < polyline.length; i++){
+			bounds.extend(polyline[i]);
+		}
+		map.fitBounds(bounds);
 	}
-	map.fitBounds(bounds);
 }
 
