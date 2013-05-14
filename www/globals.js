@@ -6,6 +6,10 @@ function encodeHTML(s) {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 }
 
+function capitalize(s){
+    return s.toLowerCase().replace( /\b./g, function(a){ return a.toUpperCase(); } );
+};
+
 function initializeSnake() {
 	var mySnakeBoard = new SNAKE.Board({
 		boardContainer: "snake-board",
@@ -16,7 +20,7 @@ function initializeSnake() {
 }
 
 function logoutUser() {
-	$.post("http://wingmanapi.herokuapp.com/api/user/logout", {token: logged_user.token}, function(data) {
+	$.post("http://127.0.0.1:5000/api/user/logout", {token: logged_user.token}, function(data) {
 		if (data.success) {
 			localStorage.savedUser = null;
 			window.location.reload();
@@ -68,7 +72,7 @@ $(document).ready(function() {
 		var email2 = encodeHTML(email);
 		var password2 = encodeHTML(password);
 		if (name == name2 && email == email2 && password == password2){
-			$.post("http://wingmanapi.herokuapp.com/api/user/create", { name: name, email: email, password: password }).done(function(data) {
+			$.post("http://127.0.0.1:5000/api/user/create", { name: name, email: email, password: password }).done(function(data) {
 				if (data.success) {
 					//send email
 					$.ajax({
@@ -101,7 +105,7 @@ $(document).ready(function() {
 	User.prototype.update = function() {
 		var that = this;
 		localStorage.savedUser = JSON.stringify(that);
-	 	$.post("http://wingmanapi.herokuapp.com/api/user/login",
+	 	$.post("http://127.0.0.1:5000/api/user/login",
 	 	   {
 	 	   		email: this.email,
 	 	   		password: this.password
@@ -142,14 +146,14 @@ $(document).ready(function() {
 
 	User.prototype.updateFlight = function() {
 		var that = this;
-		$.get("http://wingmanapi.herokuapp.com/api/currentdata", {
+		$.get("http://127.0.0.1:5000/api/currentdata", {
 			flight: logged_user.Get("flightnum"),
 //			token: "7cb2c74a-f4ec-4691-a92b-540366f0db87"
 			token: logged_user.token
 		}, function(data) {
 		
 			//send new info to database for given flight
-			$.post("http://wingmanapi.herokuapp.com/api/user/update", {
+			$.post("http://127.0.0.1:5000/api/user/update", {
 				flight: logged_user.Get("flightnum"),
 				token: logged_user.token,
 				latitude: data.latitude,
@@ -158,27 +162,30 @@ $(document).ready(function() {
 			
 			});
 
-			document.getElementById('flightname').innerHTML = "<h4>" + logged_user.Get("flightnum") + "</h4>";
+			document.getElementById('flightname').innerHTML = "<h4>" + capitalize(logged_user.Get("flightnum")) + "</h4>";
 			document.getElementById('time').innerHTML = "";
-			document.getElementById('Distance').innerHTML = "<span class = 'boldy'>Distance Since Departure: </span>";
+			document.getElementById('Distance').innerHTML = "<span class = 'boldy'>Distance Since Takeoff: </span>";
 			var datafields = ['Altitude', 'Speed', 'Position'];
 			for (var i = 0; i < datafields.length; i++){
 				document.getElementById(datafields[i]).innerHTML = "<span class = 'boldy'>" + datafields[i]+": </span>";
 			}
-			if (data.time != undefined)
-				document.getElementById('time').innerHTML = "<h5>" + data.time + "</h5>";
-			if (data.altitude != undefined)
-				document.getElementById('Altitude').innerHTML += data.altitude + " feet";
-			if (data.speed != undefined)
-				document.getElementById('Speed').innerHTML += data.speed + " mph";
-			if (data.position != undefined)
-				document.getElementById('Position').innerHTML += data.position;			
-			if (data.distance != undefined)
-				document.getElementById('Distance').innerHTML += data.distance + " miles";	
+			if (data.time != undefined) document.getElementById('time').innerHTML = "<h5>" + data.time + "</h5>";
+			
+			if (data.altitude != undefined) document.getElementById('Altitude').innerHTML += data.altitude + " feet";
+			else document.getElementById('Altitude').innerHTML += "<span class = 'ital'> (Unavailable)</span>";
+			
+			if (data.speed != undefined)document.getElementById('Speed').innerHTML += data.speed + " mph";
+			else document.getElementById('Speed').innerHTML += "<span class = 'ital'> (Unavailable)</span>";
+
+			if (data.position != undefined)document.getElementById('Position').innerHTML += data.position;			
+			else document.getElementById('Position').innerHTML += "<span class = 'ital'> (Unavailable)</span>";
+
+			if (data.distance != undefined)document.getElementById('Distance').innerHTML += data.distance + " miles";	
+			else document.getElementById('Distance').innerHTML += "<span class = 'ital'> (Unavailable)</span>";
 
 
 			//now grab all coordinates, make markers, and put on map with polyline
-			$.get("http://wingmanapi.herokuapp.com/api/user/pathcoords", {
+			$.get("http://127.0.0.1:5000/api/user/pathcoords", {
 				flight: logged_user.Get("flightnum"),
 				token: logged_user.token
 			}, function(data){
@@ -306,12 +313,12 @@ $(document).ready(function() {
 	{
 		chatmsg = encodeHTML(document.getElementById("msg").value);
 		document.getElementById("msg").value = "";
-		$.post("http://wingmanapi.herokuapp.com/api/chat/submit", {username: logged_user.email, chatline: chatmsg, token: logged_user.token});
+		$.post("http://127.0.0.1:5000/api/chat/submit", {username: logged_user.email, chatline: chatmsg, token: logged_user.token});
 	}
 
 	var chat_calls = 0;
 	function getLastTenLines() {
-		$.get("http://wingmanapi.herokuapp.com/api/chat/chatlines?token=" + logged_user.token, function(data) {
+		$.get("http://127.0.0.1:5000/api/chat/chatlines?token=" + logged_user.token, function(data) {
 			parsed_response = data;
 			elem = document.getElementById("chatlines");
 	        output = "";
