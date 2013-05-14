@@ -158,7 +158,7 @@ $(document).ready(function() {
 			
 			});
 
-			document.getElementById('flightname').innerHTML = "<h3>" + logged_user.Get("flightnum") + "</h3>";
+			document.getElementById('flightname').innerHTML = "<h4>" + logged_user.Get("flightnum") + "</h4>";
 			document.getElementById('time').innerHTML = "";
 			document.getElementById('Distance').innerHTML = "<span class = 'boldy'>Distance Since Departure: </span>";
 			var datafields = ['Altitude', 'Speed', 'Position'];
@@ -166,7 +166,7 @@ $(document).ready(function() {
 				document.getElementById(datafields[i]).innerHTML = "<span class = 'boldy'>" + datafields[i]+": </span>";
 			}
 			if (data.time != undefined)
-				document.getElementById('time').innerHTML = "<h4>" + data.time + "</h4>";
+				document.getElementById('time').innerHTML = "<h5>" + data.time + "</h5>";
 			if (data.altitude != undefined)
 				document.getElementById('Altitude').innerHTML += data.altitude + " feet";
 			if (data.speed != undefined)
