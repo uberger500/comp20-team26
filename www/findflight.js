@@ -1,5 +1,5 @@
 function displaynearbyplanes(){
-	document.getElementById("nearbyplanes").innerHTML += "";
+	document.getElementById("nearbyplanes").innerHTML = "";
 	document.getElementById("nearbyplanes").innerHTML += "<img src = 'img/loading2.gif' alt = loading'> &nbsp;&nbsp; Attempting geolocation...<br/><br/>";
 
 	if (navigator.geolocation) {
@@ -24,6 +24,7 @@ function displaynearbyplanes(){
 			$.get(url, function(data){ 
 				// data comes back as an array of flight strings
 				if (JSON.stringify(data).indexOf('flight') == -1){ //if theres no substring flight, no flights found
+					document.getElementById("nearbyplanes").innerHTML = "";
 					document.getElementById("nearbyplanes").innerHTML += "Nearby planes not currently available by Wolfram<br/><br/>";
 				}
 				else{
