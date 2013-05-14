@@ -26,10 +26,14 @@
     <script type="text/javascript" src='assets/js/snake.js'></script>
     <script type="text/javascript" src='arrayData.js'></script>
 	 <script type="text/javascript" src="jscharts.js"></script>
-	 <script type="text/javascript" src="displaynearbyplanes.js"></script>
+	 <script type="text/javascript" src="findflight.js"></script>
+
   </head>
 
   <body>
+
+<!-- hidden pic for quick loading -->
+<img id = "hiddenimg" src = 'img/loading2.gif' alt = loading'>
 
 <div class="navbar navbar-inverse navbar-fixed-top before-login">
       <div class="navbar-inner">
@@ -181,18 +185,19 @@
             <h3>Please enter your flight number:</h3>
             </div>  
             <div class="modal-body"> 
-            <button type = "button" onclick = "displaynearbyplanes()">Find nearby flights</button><br/><br/>
+            <button id = 'nearbyplanesbut' type = "button" onclick = "displaynearbyplanes();this.disabled=true;">Find nearby flights</button><br/><br/>
             <div id = "nearbyplanes"></div>
             <p id = 'flightsabove'>Or enter in this format <em>exactly</em>: &lt;airline&gt; flight &lt;flightnumber&gt; </p>
             <input type='text' id='flight-number' placeholder='eg. delta flight 92' />
             </div>  
             <div class="modal-footer">  
-            <a href="#" id='submit-flight' data-dismiss='input-flight' class="btn btn-success">Go!</a>  
+            <a href="#" id='submit-flight' data-dismiss='input-flight' class="btn btn-success" >Go!</a>  
             </div>
         </div>
 
       <div id="map_canvas"></div>
       <ul class='tabs' data-group='dashboard'>
+        <li data-transition='fade'>Current Data</li>
         <li data-transition='fade'>Speed</li>
         <li data-transition='fade'>Altitude</li>
         <li data-transition='fade'>State Facts</li>
@@ -200,9 +205,18 @@
       </ul>
 
       <div id="dashboard">
-        <div id="chartcontainer"></div>
-        <div id="chartcontainer2"></div>
+      	<div id = 'currentdata'>
+      		<p class = 'flighdata' id = 'flightname'></p>
+      		<p class = 'flighdata'id = 'time'></p>
+ 			<p class = 'flighdata'id = 'Distance'></p>
+  			<p class = 'flighdata'id = 'Position'></p>
+      		<p class = 'flighdata'id = 'Altitude'></p>
+      		<p class = 'flighdata'id = 'Speed'></p>
+      	</div>
+        <div id="chartcontainer">Collecting speed data...</div>
+        <div id="chartcontainer2">Collecting altitude data...</div>
         <div id = "facts">
+        	Loading facts from the state you are above...
           <h3 id = "curfacts"></h3>
         </div>
           <div id="account-tab">

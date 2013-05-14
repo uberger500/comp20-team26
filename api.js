@@ -688,7 +688,6 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
 									//Still need to turn coordinates like 46.02N, 64W to 46.02, -64
 			
 									if (finaldata['position'] != undefined){
-										console.log("pos defined, splitting");
 										var coords = finaldata['position'].split(', ');
 										var lat = coords[0];	
 										var lon = coords[1];
@@ -752,7 +751,7 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
 									else{									
 										dataobj.status = 1;
 																	
-										console.log(dataobj);
+//										console.log(dataobj);
 
 										res.send(JSON.stringify(dataobj));
 									}

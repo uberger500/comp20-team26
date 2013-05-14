@@ -107,7 +107,7 @@ h2 {
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     display: inline-block;
-    width: 25%;
+    width: 20%;
     margin: 0 -2px;
     padding: 7px 4px;
     text-align: center;
@@ -130,3 +130,31 @@ h2 {
 #flightsabove{
 	padding-top:0;
 }  
+
+h3, h4{
+	text-align:center;
+	padding:0;
+	margin:0;
+}
+h3{
+	font-size:35px;
+}
+h4{
+	font-size:16px;
+}
+
+#hiddenimg{
+	display:none;
+}
+
+.boldy{
+	font-weight:bold;
+}
+
+.flightdata{
+	font-size:16px;
+}
+
+#currentdata{
+	text-align:center;	
+}
