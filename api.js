@@ -514,7 +514,7 @@ app.get(API_PREFIX + '/checkflight', function(req, res) {
 
 	var request = require('request');
 		
-	request('http://api.wolframalpha.com/v2/query?input=' + flight + "&appid=JJ5AL3-K5KPHHHLJH&" + params, function (error, response, body) {
+	request('http://api.wolframalpha.com/v2/query?input=' + flight + "&appid=LUJKX2-LP3GW5VUGX&" + params, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
 			if (response.body != null){
 				var parseString = require('xml2js').parseString; //parse xml string
@@ -571,8 +571,8 @@ app.get(API_PREFIX + '/nearbyplanes', function(request, res) {
 
 
 	var request = require('request');
-	// request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=JJ5AL3-K5KPHHHLJH&" + params, function (error, response, body) {
- request('http://api.wolframalpha.com/v2/query?input=' + "planes+above+boston" + "&appid=JJ5AL3-K5KPHHHLJH&" + params, function (error, response, body) {
+	// request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=LUJKX2-LP3GW5VUGX&" + params, function (error, response, body) {
+ request('http://api.wolframalpha.com/v2/query?input=' + "planes+above+boston" + "&appid=LUJKX2-LP3GW5VUGX&" + params, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
 			if (response.body != null){
 				var parseString = require('xml2js').parseString; //parse xml string
@@ -666,7 +666,7 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
 	var errorobj = new Object;
 	errorobj.status = "Error finding flight info";
 
-	var url = 'http://api.wolframalpha.com/v2/query?input=' + flight + "+at+" + timeago + "&appid=JJ5AL3-K5KPHHHLJH&" + params;
+	var url = 'http://api.wolframalpha.com/v2/query?input=' + flight + "+at+" + timeago + "&appid=LUJKX2-LP3GW5VUGX&" + params;
 
 	var request = require('request');
 	request(url, function (error, response, body) {

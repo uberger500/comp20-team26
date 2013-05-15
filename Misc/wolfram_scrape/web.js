@@ -85,7 +85,7 @@ app.get('/checkflight', function(req, res) {
 	//flight will now be "american+airlines+flight+1234"
 	
 	var request = require('request');
-	request('http://api.wolframalpha.com/v2/query?input=' + flight + "&appid=JJ5AL3-K5KPHHHLJH&" + params, function (error, response, body) {
+	request('http://api.wolframalpha.com/v2/query?input=' + flight + "&appid=LUJKX2-LP3GW5VUGX&" + params, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
 			if (response.body != null){
 				var parseString = require('xml2js').parseString; //parse xml string
@@ -145,8 +145,8 @@ app.get('/nearbyplanes.json', function(request, res) {
 //	console.log(query + " - " + params);
 
 	var request = require('request');
-//	request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=JJ5AL3-K5KPHHHLJH&" + params, function (error, response, body) {
-	request('http://api.wolframalpha.com/v2/query?input=' + "planes+above+los+angeles" + "&appid=JJ5AL3-K5KPHHHLJH&" + params, function (error, response, body) {
+//	request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=LUJKX2-LP3GW5VUGX&" + params, function (error, response, body) {
+	request('http://api.wolframalpha.com/v2/query?input=' + "planes+above+los+angeles" + "&appid=LUJKX2-LP3GW5VUGX&" + params, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
 			if (response.body != null){
 				var parseString = require('xml2js').parseString; //parse xml string
@@ -208,7 +208,7 @@ query = "spirit+airlines+flight+451";
 params = "includepodid=FlightProperties:FlightData&format=plaintext";
 
 	var request = require('request');
-	request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=JJ5AL3-K5KPHHHLJH&" + params, function (error, response, body) {
+	request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=LUJKX2-LP3GW5VUGX&" + params, function (error, response, body) {
  	if (!error && response.statusCode == 200) {
     
 		var parseString = require('xml2js').parseString;
