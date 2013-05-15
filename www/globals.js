@@ -180,7 +180,7 @@ $(document).ready(function() {
 				}, function(data) {
 			
 			});
-
+ 
 			//Constant per flight at all times:
 			document.getElementById('flightname').innerHTML = "<h4>" + capitalize(logged_user.Get("flightnum")) + "</h4>";
 			document.getElementById('airports').innerHTML = "";
