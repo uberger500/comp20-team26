@@ -185,23 +185,22 @@ app.post(API_PREFIX + '/user/addflight', function(request, response) {
 
 //EXTRA?
 	models.User.findByIdAndUpdate(user_id, {$addToSet: {flights: flight}}, function(err, user) {
-		console.log("adding " + flight);
+//		console.log("adding " + flight);
 		if (err || !user) {
 			console.log("add flight fail");
 			response.json({success: false, error: 'Error saving user data'});
 		} else {
-			console.log("add flight success");
+//			console.log("add flight success");
 			response.json({success: true});
 		}
 	});
-//^^extra?
-
-	
-	
-	
+//^^EXTRA?
 	
 });
 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+//add coordinates etc data to db
 app.post(API_PREFIX + '/user/update', function(request, response) {
 	var user_id = request.session.user;
 	var flight = request.param('flight');
@@ -209,6 +208,30 @@ app.post(API_PREFIX + '/user/update', function(request, response) {
 	var flights = db2.collection('flights');
 	response.set('Content-Type', 'text/json');
 
+	var time = request.param('time');
+	if (time != undefined && time.indexOf(':') != -1 && time.indexOf('EDT') != -1 && time.indexOf('Current information') != -1){
+		var pm = false;
+		time = request.param('time');
+
+		time = time.replace("Current information (", "").replace(" EDT)", "");
+		if (time.indexOf("pm") != -1){
+			pm = true;
+		}
+		time = time.replace(" pm", "").replace(" am", "");
+		datearray = time.split(':');
+		var hour = parseInt(datearray[0]);
+		if (hour < 12 && pm == true){
+			hour = hour + 12;
+		}
+		hour = hour.toString();
+		if (hour == 12 && pm == false){
+			hour = "00";
+		}	
+		time = hour + ":" + datearray[1] + ":00";
+	}
+	else{
+		time = undefined;
+	}
 //first take flight name and figure out the objectID assigned to the user for that flight
 	users.findOne({'_id' : user_id}, {flightids : 1}, function (err, doc){
 		if (doc != null){			
@@ -224,7 +247,7 @@ app.post(API_PREFIX + '/user/update', function(request, response) {
 				if (request.param('latitude') != undefined && request.param('longitude') != undefined){
 					var newlat = request.param('latitude');
 					var newlon = request.param('longitude');
-			  			flights.update({'_id' : idfound}, {$addToSet: {latitudes:newlat, longitudes:newlon, coordinates:[newlat, newlon]}}, {safe:true}, function(err) {
+			  			flights.update({'_id' : idfound}, {$addToSet: {latitudes:newlat, longitudes:newlon, coordinates:[time, newlat, newlon]}}, {safe:true}, function(err) {
 							if (err) console.warn(err.message);
 						});					
 				}
@@ -238,6 +261,7 @@ app.post(API_PREFIX + '/user/update', function(request, response) {
 	response.send({status:"finished"});
 });
 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
 app.get(API_PREFIX + '/user/pathcoords', function(request, response) {
 	var user_id = request.session.user;
@@ -258,11 +282,38 @@ app.get(API_PREFIX + '/user/pathcoords', function(request, response) {
 			}
 // then grab all the coordinates from that flight ID
 			if (idfound != ""){
-				console.log("searching for coords plane key " + idfound);
+//				console.log("searching for coords plane key " + idfound);
 				flights.find({'_id' : idfound}, {coordinates:1}).toArray(function (err, doc){
 					if (doc != null){
-						response.send(doc[0].coordinates);				
-//						console.dir(doc[0].coordinates);
+					
+						//remove times leaving just coordinates?
+						//put in order of times then respond with the correct path w/o times
+						// DONT ADD TO FINAL ARRAY IF ALREADY COORDS WITH SAME TIME MINS
+						
+						timecoordsarray = doc[0].coordinates;
+						finalpath = new Array();
+						
+						if (timecoordsarray != undefined){	
+							// sort by time
+							timecoordsarray = timecoordsarray.sort(comparator);
+							
+							var usedtimes = new Array();
+							
+							//for all sets of times/coordinates for the flight...
+							for (var i = 0; i < timecoordsarray.length; i++){
+								//if there are no coordinates in finalpath array for the given time of this datum...
+								if (usedtimes.indexOf(timecoordsarray[i][0]) == -1){
+									//add the coordinates to the finalpath array of just coordinates, no times
+									var newarray = new Array();
+									newarray.push(timecoordsarray[i][1]); //push lat
+									newarray.push(timecoordsarray[i][2]); //push lon
+									finalpath.push(newarray); //push coords to final array
+								}
+							}
+						}
+//						console.log("FINAL PATH TO RETURN...");
+//						console.dir(finalpath);
+						response.send(finalpath); //pass ordered-by-time & non-duplicates-by-time array of [lat, lon]'s			
 					}
 				});
 			}
@@ -271,8 +322,15 @@ app.get(API_PREFIX + '/user/pathcoords', function(request, response) {
 	});
 });
 
-
-
+function comparator(a,b){
+	if (a[0] < b[0]){
+		return -1;
+	}
+	if (a[0] > b[0]){
+		return 1;
+	}
+	return 0;
+}
 
 /*
 		var properties = ['total_flights', 'total_miles', 'average_speed', 'average_altitude', 'number_of_states'];
@@ -364,6 +422,7 @@ app.get(API_PREFIX + '/user/pathcoords', function(request, response) {
 });
 */
 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
 app.post(API_PREFIX + '/score/submit', function(request, response) {
 	var user_id = request.session.user;
@@ -384,6 +443,8 @@ app.post(API_PREFIX + '/score/submit', function(request, response) {
 		}
 	});
 });
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
 app.get(API_PREFIX + '/score', function(request, response) {
 	models.Score.find({user: request.session.user}, function(err, scores) {
@@ -419,6 +480,8 @@ app.post(API_PREFIX + '/chat/submit', function(request, response) {
 	});
 });
 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
 
 app.get(API_PREFIX + '/chat/chatlines', function(request, response) {
     db.collection('chat', function(err, collection) {
@@ -435,8 +498,6 @@ app.get(API_PREFIX + '/chat/chatlines', function(request, response) {
 
 //= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
-
-
 // CHECK IF INPUT FLIGHT IS VALID AND ON WOLFRAM
 app.get(API_PREFIX + '/checkflight', function(req, res) {
 	res.header("Access-Control-Allow-Origin", "*"); // fix this
@@ -452,6 +513,7 @@ app.get(API_PREFIX + '/checkflight', function(req, res) {
 	//flight will now be "american+airlines+flight+1234"
 
 	var request = require('request');
+		
 	request('http://api.wolframalpha.com/v2/query?input=' + flight + "&appid=JJ5AL3-K5KPHHHLJH&" + params, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
 			if (response.body != null){
@@ -478,8 +540,9 @@ app.get(API_PREFIX + '/checkflight', function(req, res) {
 					else res.send({status:"information not available from wolfram", plane:flight});
 				});
 			}
-			else res.send({status:"info unavailable; cannot connect to wolfram", plane:flight});
+			else res.send({status:"info unavailable; cannot connect to wolfram 1", plane:flight});
 		}
+		else res.send({status:"info unavailable; cannot connect to wolfram 2", plane:flight});
 	});
 });
 
@@ -506,7 +569,6 @@ app.get(API_PREFIX + '/nearbyplanes', function(request, res) {
 	var errorobj = new Object;
 	errorobj.status = "Error finding nearby flights";
 
-//HARDCODED WITH A TOKEN CURRENTLY
 
 	var request = require('request');
 	// request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=JJ5AL3-K5KPHHHLJH&" + params, function (error, response, body) {
@@ -576,25 +638,38 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
   	res.header("Access-Control-Allow-Headers", "X-Requested-With");
 	res.set('Content-Type', 'text/json');
 
+	//calculate 15 mins ago to search for data from 15 min ago
+	curtime = new Date();
+	// 15 mins = 15 mins behind; 60000 = miliseconds per minute
+	var searchtime = new Date(curtime - (15 * 60000));
+
+	var searchhour = searchtime.getHours().toString();
+	var searchmin = searchtime.getMinutes().toString();
+	
+	var timelong = searchhour + ":";
+	if (searchmin.length == 1){
+		timelong = timelong + "0";
+	}
+	var timeago = timelong + searchmin;
+
 	//turn request into json and grab flight
 	var args = JSON.parse(JSON.stringify(req.query));
-	var flight = args.flight;
+	var flight = args.flight.replace(/ /g, "+");
+	
 	var params = "includepodid=FlightProperties:FlightData&includepodid=FlightSchedule:FlightData&includepodid=FlightStatus:FlightData&format=plaintext";
-//	var params = "includepodid=FlightProperties:FlightData&includepodid=FlightSchedule:FlightData&format=plaintext";
-
 
 
 //test flight s
 //	flight = "air+canada+flight+100";
 //  flight = "united+airlines+flight+94";
 
-	console.log(flight);
-
 	var errorobj = new Object;
 	errorobj.status = "Error finding flight info";
 
+	var url = 'http://api.wolframalpha.com/v2/query?input=' + flight + "+at+" + timeago + "&appid=JJ5AL3-K5KPHHHLJH&" + params;
+
 	var request = require('request');
-	request('http://api.wolframalpha.com/v2/query?input=' + flight + "&appid=JJ5AL3-K5KPHHHLJH&" + params, function (error, response, body) {
+	request(url, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
 			if (response.body != null){
 				var parseString = require('xml2js').parseString; //parse xml string
@@ -614,9 +689,34 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
 								res.send('{"status":"Plane hasn\'t taken off yet or post-takeoff data not available yet"}');
 							}
 							else if (responsestring.indexOf("en route") != -1){
+							
+								var departfrom = undefined;
+								var arriveat = undefined;
+							
+								//COLLECT DEPARTURE AIRPORT AND DESTINATION AIRPORT
+								if (jsonobj.queryresult.pod != undefined && jsonobj.queryresult.pod[1] != undefined && jsonobj.queryresult.pod[1].subpod != undefined && jsonobj.queryresult.pod[1].subpod[0] != undefined && jsonobj.queryresult.pod[1].subpod[0].plaintext != undefined && jsonobj.queryresult.pod[1].subpod[0].plaintext != ""){
+									
+									var data = JSON.stringify(jsonobj.queryresult.pod[1].subpod[0].plaintext[0]);
+									data = data.replace(/\\n/g, " || "); //put in || for splitting into array
+									data = data.replace("\"", ''); //remove double quotes
+									var dataarray = data.split(' || ');
+									for (var i = 0; i < dataarray.length; i++){
+										var datumarray = dataarray[i].split(' | '); //split into individual fields
+										if (datumarray[0] == "departure airport"){
+											departfrom = datumarray[1];
+										}
+										if (datumarray[0] == "arrival airport"){
+											arriveat = datumarray[1];
+										}
+									}
+								}
+							
+								//COLLECT ALTITUDE, DISTANCE, COORDINATES, SPEED, THEN TIME IN SEPARATE POD
 								if (jsonobj.queryresult.pod != undefined && jsonobj.queryresult.pod[2] != undefined && jsonobj.queryresult.pod[2].subpod != undefined && jsonobj.queryresult.pod[2].subpod[0] != undefined && jsonobj.queryresult.pod[2].subpod[0].plaintext != undefined && jsonobj.queryresult.pod[2].subpod[0].plaintext != ""){
 									var data = JSON.stringify(jsonobj.queryresult.pod[2].subpod[0].plaintext[0]);
-								
+										
+//									console.dir(data);	
+																	
 									data = data.replace(/\\n/g, " || ");
 									data = data.replace("\"", ''); //remove double quotes
 									data = data.replace("°N", "N").replace("°S", "S").replace("°W", "W").replace("°E", "E");
@@ -644,6 +744,10 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
 										var time = JSON.stringify(jsonobj.queryresult.pod[2].$.title);
 										time = time.replace(/["']/g, ""); //remove double quotes							
 										finaldata['time'] = time;
+									}
+									else{
+										console.log("notime");
+										finaldata['time'] = undefined;
 									}
 						
 									// Still need to convert coordinates into google maps acceptible coords
@@ -722,6 +826,12 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
 																
 									dataobj = new Object;
 									
+									if (arriveat != undefined){
+										dataobj.arriveat = arriveat;
+									}
+									if (departfrom != undefined){
+										dataobj.departfrom = departfrom;
+									}
 									if (finaldata['time'] != undefined){
 										dataobj.time = finaldata['time'];								
 									}
@@ -740,20 +850,20 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
 									if (finaldata['latitude'] != undefined){
 										dataobj.latitude = finaldata['latitude'];								
 									}									
-										if (finaldata['longitude'] != undefined){
+									if (finaldata['longitude'] != undefined){
 										dataobj.longitude = finaldata['longitude'];								
 									}		
 									
 									if (finaldata['position'] == undefined && finaldata['time'] == undefined && finaldata['speed'] == undefined && finaldata['position'] == undefined && finaldata['distance'] == undefined && finaldata['latitude'] == undefined && finaldata['longitude'] == undefined && finaldata['time'] == undefined){
 										console.log("en route but no data found");
+										console.log("sending back " + tally);
+										tally++;
 										res.send (errorobj);
 									}
 									else{									
 										dataobj.status = 1;
-																	
 //										console.log(dataobj);
-
-										res.send(JSON.stringify(dataobj));
+										res.send(dataobj);
 									}
 								}
 								else res.send(errorobj);

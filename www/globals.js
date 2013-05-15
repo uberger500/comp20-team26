@@ -1,6 +1,7 @@
 var searchingforchats = false;
 var reload2;
 olddata = 'a';
+var firstcoords = true;
 
 function encodeHTML(s) {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
@@ -20,7 +21,7 @@ function initializeSnake() {
 }
 
 function logoutUser() {
-	$.post("http://wingmanapi.herokuapp.com/api/user/logout", {token: logged_user.token}, function(data) {
+	$.post("http://127.0.0.1:5000/api/user/logout", {token: logged_user.token}, function(data) {
 		if (data.success) {
 			localStorage.savedUser = null;
 			window.location.reload();
@@ -72,7 +73,7 @@ $(document).ready(function() {
 		var email2 = encodeHTML(email);
 		var password2 = encodeHTML(password);
 		if (name == name2 && email == email2 && password == password2){
-			$.post("http://wingmanapi.herokuapp.com/api/user/create", { name: name, email: email, password: password }).done(function(data) {
+			$.post("http://127.0.0.1:5000/api/user/create", { name: name, email: email, password: password }).done(function(data) {
 				if (data.success) {
 					//send email
 					$.ajax({
@@ -105,7 +106,7 @@ $(document).ready(function() {
 	User.prototype.update = function() {
 		var that = this;
 		localStorage.savedUser = JSON.stringify(that);
-	 	$.post("http://wingmanapi.herokuapp.com/api/user/login",
+	 	$.post("http://127.0.0.1:5000/api/user/login",
 	 	   {
 	 	   		email: this.email,
 	 	   		password: this.password
@@ -146,46 +147,66 @@ $(document).ready(function() {
 
 	User.prototype.updateFlight = function() {
 		var that = this;
-		$.get("http://wingmanapi.herokuapp.com/api/currentdata", {
+		$.get("http://127.0.0.1:5000/api/currentdata", {
 			flight: logged_user.Get("flightnum"),
-//			token: "7cb2c74a-f4ec-4691-a92b-540366f0db87"
 			token: logged_user.token
 		}, function(data) {
 		
+			//if this is the first set of coordinates we want to add it immediately to the map so it updates before adding the data to the db, sorting the coordinates, making up the polyline path, etc
+			if (data.latitude != undefined && data.longitude != undefined && firstcoords == true){
+				var coords = new google.maps.LatLng(data.latitude,data.longitude);
+				newMarker = new google.maps.Marker({		
+					position: coords
+				});
+				map.setCenter(coords);
+				newMarker.setMap(map);
+				firstcoords = false;
+			}
+
 			//send new info to database for given flight
-			$.post("http://wingmanapi.herokuapp.com/api/user/update", {
+			$.post("http://127.0.0.1:5000/api/user/update", {
 				flight: logged_user.Get("flightnum"),
 				token: logged_user.token,
 				latitude: data.latitude,
-				longitude: data.longitude
+				longitude: data.longitude,
+				time: data.time,
+				arrivat: data.arriveat,
+				departfrom: data.departfrom
 				}, function(data) {
 			
 			});
 
+			//Constant per flight at all times:
 			document.getElementById('flightname').innerHTML = "<h4>" + capitalize(logged_user.Get("flightnum")) + "</h4>";
-			document.getElementById('time').innerHTML = "";
-			document.getElementById('Distance').innerHTML = "<span class = 'boldy'>Distance Since Takeoff: </span>";
-			var datafields = ['Altitude', 'Speed', 'Position'];
-			for (var i = 0; i < datafields.length; i++){
-				document.getElementById(datafields[i]).innerHTML = "<span class = 'boldy'>" + datafields[i]+": </span>";
+			document.getElementById('airports').innerHTML = "";
+			if (data.departfrom != undefined && data.arriveat != undefined) document.getElementById('airports').innerHTML += "<span class = 'boldy'>" + data.departfrom + " to " + data.arriveat + "</span>";   
+
+			//Variable at different times: 
+			// Only update all if there is some new info; if data unavailable currently, dont delete last update 
+			if (data.time != undefined || data.altitude != undefined || data.speed != undefined || data.position != undefined || data.distance != undefined){
+				document.getElementById('time').innerHTML = "";
+				document.getElementById('Distance').innerHTML = "<span class = 'boldy'>Distance Since Takeoff: </span>";
+				var datafields = ['Altitude', 'Speed', 'Position'];
+				for (var i = 0; i < datafields.length; i++){
+					document.getElementById(datafields[i]).innerHTML = "<span class = 'boldy'>" + datafields[i]+": </span>";
+				}
+				if (data.time != undefined) document.getElementById('time').innerHTML = "<h5>" + data.time + "</h5>";
+			
+				if (data.altitude != undefined) document.getElementById('Altitude').innerHTML += data.altitude + " feet";
+				else document.getElementById('Altitude').innerHTML += "<span class = 'ital'> (Unavailable)</span>";
+			
+				if (data.speed != undefined) document.getElementById('Speed').innerHTML += data.speed + " mph";
+				else document.getElementById('Speed').innerHTML += "<span class = 'ital'> (Unavailable)</span>";
+
+				if (data.position != undefined) document.getElementById('Position').innerHTML += data.position;			
+				else document.getElementById('Position').innerHTML += "<span class = 'ital'> (Unavailable)</span>";
+
+				if (data.distance != undefined) document.getElementById('Distance').innerHTML += data.distance + " miles";	
+				else document.getElementById('Distance').innerHTML += "<span class = 'ital'> (Unavailable)</span>";
 			}
-			if (data.time != undefined) document.getElementById('time').innerHTML = "<h5>" + data.time + "</h5>";
 			
-			if (data.altitude != undefined) document.getElementById('Altitude').innerHTML += data.altitude + " feet";
-			else document.getElementById('Altitude').innerHTML += "<span class = 'ital'> (Unavailable)</span>";
-			
-			if (data.speed != undefined)document.getElementById('Speed').innerHTML += data.speed + " mph";
-			else document.getElementById('Speed').innerHTML += "<span class = 'ital'> (Unavailable)</span>";
-
-			if (data.position != undefined)document.getElementById('Position').innerHTML += data.position;			
-			else document.getElementById('Position').innerHTML += "<span class = 'ital'> (Unavailable)</span>";
-
-			if (data.distance != undefined)document.getElementById('Distance').innerHTML += data.distance + " miles";	
-			else document.getElementById('Distance').innerHTML += "<span class = 'ital'> (Unavailable)</span>";
-
-
 			//now grab all coordinates, make markers, and put on map with polyline
-			$.get("http://wingmanapi.herokuapp.com/api/user/pathcoords", {
+			$.get("http://127.0.0.1:5000/api/user/pathcoords", {
 				flight: logged_user.Get("flightnum"),
 				token: logged_user.token
 			}, function(data){
@@ -313,12 +334,12 @@ $(document).ready(function() {
 	{
 		chatmsg = encodeHTML(document.getElementById("msg").value);
 		document.getElementById("msg").value = "";
-		$.post("http://wingmanapi.herokuapp.com/api/chat/submit", {username: logged_user.email, chatline: chatmsg, token: logged_user.token});
+		$.post("http://127.0.0.1:5000/api/chat/submit", {username: logged_user.email, chatline: chatmsg, token: logged_user.token});
 	}
 
 	var chat_calls = 0;
 	function getLastTenLines() {
-		$.get("http://wingmanapi.herokuapp.com/api/chat/chatlines?token=" + logged_user.token, function(data) {
+		$.get("http://127.0.0.1:5000/api/chat/chatlines?token=" + logged_user.token, function(data) {
 			parsed_response = data;
 			elem = document.getElementById("chatlines");
 	        output = "";

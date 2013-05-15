@@ -19,7 +19,7 @@ function displaynearbyplanes(){
 			// to a get request that respons with json planes
 			
 			//change this to wingmanapi.herokuapp whatever
-			var url = "http://wingmanapi.herokuapp.com/api/nearbyplanes?latitude=" + myLoc.lat() + "&longitude=" + myLoc.lng() + "&token=" + logged_user.token;
+			var url = "http://127.0.0.1:5000/api/nearbyplanes?latitude=" + myLoc.lat() + "&longitude=" + myLoc.lng() + "&token=" + logged_user.token;
 			// console.log(url);
 			$.get(url, function(data){ 
 				// data comes back as an array of flight strings
@@ -36,8 +36,14 @@ function displaynearbyplanes(){
 					$.each(jsondata, function(i, el){
 						if($.inArray(el, cleanjsondata) === -1) cleanjsondata.push(el);
 					});
+					
+					pluralplanes = "";
+					if (cleanjsondata.length > 1){	//if multiple planes found, say "planes found" instead of "plane found"
+						pluralplanes = "s";
+					}
+					
 					document.getElementById("nearbyplanes").innerHTML = "";
-					document.getElementById("nearbyplanes").innerHTML += "<img src = 'img/loading2.gif' alt = loading'> &nbsp;&nbsp;Found " + cleanjsondata.length + " planes near you. Checking which planes wolfram has data on...<br/><br/>";
+					document.getElementById("nearbyplanes").innerHTML += "<img src = 'img/loading2.gif' alt = loading'> &nbsp;&nbsp;Found " + cleanjsondata.length + " plane" + pluralplanes +" near you. Checking which planes wolfram has data on...<br/><br/>";
 					
 					//put all nearby planes in a drop down form
 					
@@ -53,7 +59,7 @@ function displaynearbyplanes(){
 						var numverified = 0;
 						
 						var flightpluses = flight.replace(/ /g, "+");
-						var url = "http://wingmanapi.herokuapp.com/api/checkflight?flight=" + flightpluses + "&token=" + logged_user.token;
+						var url = "http://127.0.0.1:5000/api/checkflight?flight=" + flightpluses + "&token=" + logged_user.token;
 						//check if all flights are valid on wolfram and are either en route or havent taken off yet; landeds will not be returned
 						$.ajax({
 							url: url,
@@ -106,7 +112,7 @@ function submitflight(){
 	
 	//check if valid on wolfram
 	var flightpluses = flightnum.replace(/ /g, "+");
-	var url = "http://wingmanapi.herokuapp.com/api/checkflight?flight=" + flightpluses + "&token=" + logged_user.token;
+	var url = "http://127.0.0.1:5000/api/checkflight?flight=" + flightpluses + "&token=" + logged_user.token;
 	//check if all flights are valid on wolfram and are either en route or havent taken off yet; landeds will not be returned
 	$.get(url, function(response){ 
 		if (response.status == "valid" || response.status == "has not taken off yet"){
@@ -115,7 +121,7 @@ function submitflight(){
 			}
 			
 			//add flight to database
-			$.post("http://wingmanapi.herokuapp.com/api/user/addflight", {username: logged_user.email, token: logged_user.token, flight: flightnum});
+			$.post("http://127.0.0.1:5000/api/user/addflight", {username: logged_user.email, token: logged_user.token, flight: flightnum});
 
 	
 			logged_user.Set("flightnum",flightnum);
