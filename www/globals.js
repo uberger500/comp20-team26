@@ -152,6 +152,10 @@ $(document).ready(function() {
 			token: logged_user.token
 		}, function(data) {
 		
+			if (data.status == "landed"){
+				alert("Flight has landed");
+			}
+		
 			//if this is the first set of coordinates we want to add it immediately to the map so it updates before adding the data to the db, sorting the coordinates, making up the polyline path, etc
 			if (data.latitude != undefined && data.longitude != undefined && firstcoords == true){
 				var coords = new google.maps.LatLng(data.latitude,data.longitude);

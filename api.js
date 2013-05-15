@@ -826,6 +826,7 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
 																
 									dataobj = new Object;
 									
+									
 									if (arriveat != undefined){
 										dataobj.arriveat = arriveat;
 									}
@@ -858,6 +859,7 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
 										console.log("en route but no data found");
 										console.log("sending back " + tally);
 										tally++;
+										dataobj.status = 2;
 										res.send (errorobj);
 									}
 									else{									
