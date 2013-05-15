@@ -695,6 +695,7 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
 							
 					// check if entire string contains "actual landing time"
 						var responsestring = JSON.stringify(jsonobj.queryresult);
+						console.log(responsestring);
 						if (responsestring.indexOf("arrived at") != -1){
 							res.send('{"status":"landed"}');
 						}			
