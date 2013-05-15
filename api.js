@@ -160,6 +160,11 @@ app.post(API_PREFIX + '/user/delete', function(request, response) {
 app.post(API_PREFIX + '/user/addflight', function(request, response) {
 	var flight = request.param('flight');
 	var user_id = request.session.user;
+
+	var curtime = new Date();
+	var curtime30less = new Date(curtime - (30 * 60000));
+	var starttimeformatted = formattime(curtime30less); //still without tail :00
+	starttimeformatted = starttimeformatted + ":00";
 	
 //	var doc = userSchema.flightSchema.id(id);
 //	console.log(doc)
@@ -168,7 +173,7 @@ app.post(API_PREFIX + '/user/addflight', function(request, response) {
 
 
 //First insert new flight into flights collection	
-	flightdb.insert({name: flight}, {safe:true}, function(err, objects) {
+	flightdb.insert({name: flight, trackingstart: starttimeformatted}, {safe:true}, function(err, objects) {
 		if (err) console.warn(err.message);
 		if (err && err.message.indexOf('E11000 ') !== -1) {
 		  // this _id was already inserted in the database
@@ -271,26 +276,27 @@ app.get(API_PREFIX + '/user/pathcoords', function(request, response) {
 	response.set('Content-Type', 'text/json');
 
 //first take flight name and figure out the objectID assigned to the user for that flight
-	users.findOne({'_id' : user_id}, {flightids : 1}, function (err, doc){
-		if (doc != null){			
+	users.findOne({'_id' : user_id}, {flightids : 1}, function (err, doc1){
+		if (doc1 != null){			
 			var idfound = "";
 			//search all their flights for the correct id
-			for (var i = 0; i < doc.flightids.length; i++){
-				if (doc.flightids[i].name == flight){
-					idfound = doc.flightids[i].id;
+			for (var i = 0; i < doc1.flightids.length; i++){
+				if (doc1.flightids[i].name == flight){
+					idfound = doc1.flightids[i].id;
 				}
 			}
 // then grab all the coordinates from that flight ID
 			if (idfound != ""){
 //				console.log("searching for coords plane key " + idfound);
-				flights.find({'_id' : idfound}, {coordinates:1}).toArray(function (err, doc){
-					if (doc != null){
+				flights.find({'_id' : idfound}, {coordinates:1, trackingstart:1}).toArray(function (err, doc2){
+					if (doc2 != null){
 					
 						//remove times leaving just coordinates?
 						//put in order of times then respond with the correct path w/o times
 						// DONT ADD TO FINAL ARRAY IF ALREADY COORDS WITH SAME TIME MINS
 						
-						timecoordsarray = doc[0].coordinates;
+						timecoordsarray = doc2[0].coordinates;
+
 						finalpath = new Array();
 						
 						if (timecoordsarray != undefined){	
@@ -301,8 +307,13 @@ app.get(API_PREFIX + '/user/pathcoords', function(request, response) {
 							
 							//for all sets of times/coordinates for the flight...
 							for (var i = 0; i < timecoordsarray.length; i++){
-								//if there are no coordinates in finalpath array for the given time of this datum...
-								if (usedtimes.indexOf(timecoordsarray[i][0]) == -1){
+								//if there are no coordinates in finalpath array for the given time of this datum... 
+								//new: And if time is later than the time the user started tracking the time - 30 min... (so their path starts about where they started tracking)
+
+								trackingstart = doc2[0].trackingstart;
+
+								if (usedtimes.indexOf(timecoordsarray[i][0]) == -1 && timecoordsarray[i][0] >= trackingstart){
+//									console.log("Coords time of " + timecoordsarray[i][0] + " is >= " + trackingstart);
 									//add the coordinates to the finalpath array of just coordinates, no times
 									var newarray = new Array();
 									newarray.push(timecoordsarray[i][1]); //push lat
@@ -627,6 +638,18 @@ app.get(API_PREFIX + '/nearbyplanes', function(request, res) {
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
+function formattime(date){ //date into HH:MM format
+	var hour = date.getHours().toString();
+	var min = date.getMinutes().toString();
+	var timestr = hour + ":";
+	if (min.length == 1){
+		timestr = timestr + "0";
+	}
+	return timestr + min; //returns time in format HH:MM	
+}
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
 // CURRENTDATA(.json)
 // REQUEST PARAMETER: &flight+company+flight+###
 // RESPONSE (example): {status:1, "time": "Current information (10:20 pm EDT)", "altitude": 36900, "position": "44.52N, 87.53W", "speed": 519, "distance": 1816, "latitude": 44.52, "longitude": -87.53}
@@ -638,19 +661,10 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
   	res.header("Access-Control-Allow-Headers", "X-Requested-With");
 	res.set('Content-Type', 'text/json');
 
-	//calculate 15 mins ago to search for data from 15 min ago
-	curtime = new Date();
-	// 15 mins = 15 mins behind; 60000 = miliseconds per minute
-	var searchtime = new Date(curtime - (15 * 60000));
-
-	var searchhour = searchtime.getHours().toString();
-	var searchmin = searchtime.getMinutes().toString();
+	var curtime = new Date();
 	
-	var timelong = searchhour + ":";
-	if (searchmin.length == 1){
-		timelong = timelong + "0";
-	}
-	var timeago = timelong + searchmin;
+	var timeago = new Date(curtime - (15 * 60000));
+	var timeago = formattime(timeago);
 
 	//turn request into json and grab flight
 	var args = JSON.parse(JSON.stringify(req.query));

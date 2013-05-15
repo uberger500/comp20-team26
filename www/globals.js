@@ -152,6 +152,7 @@ $(document).ready(function() {
 			token: logged_user.token
 		}, function(data) {
 		
+//			console.log(data);
 			if (data.status == "landed"){
 				document.getElementById('landed').innerHTML = "Landed";
 			}

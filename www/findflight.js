@@ -99,7 +99,8 @@ function alertme(){
 }
 
 function submitflight(){
-	
+	document.getElementById('landed').innerHTML = "";
+
 	//disable user re-clicking it
 	$('#submit-flight').attr('disabled', 'disabled').addClass('disabled');
 
