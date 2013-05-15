@@ -153,7 +153,7 @@ $(document).ready(function() {
 		}, function(data) {
 		
 			if (data.status == "landed"){
-				alert("Flight has landed");
+				document.getElementById('landed').innerHTML = "Landed";
 			}
 		
 			//if this is the first set of coordinates we want to add it immediately to the map so it updates before adding the data to the db, sorting the coordinates, making up the polyline path, etc
