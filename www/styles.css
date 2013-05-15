@@ -163,3 +163,8 @@ h5{
 #currentdata{
 	text-align:center;	
 }
+
+#problem{
+	text-align:left;
+	color:red;
+}
