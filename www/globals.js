@@ -158,6 +158,13 @@ $(document).ready(function() {
 //			console.log(data);
 			if (data.status == "landed"){
 				document.getElementById('landed').innerHTML = "Landed";
+				var datafields = ['Altitude', 'Speed', 'Position'];
+				for (var i = 0; i < datafields.length; i++){
+					document.getElementById(datafields[i]).innerHTML = "<span class = 'boldy'>" + datafields[i]+": </span>";
+					document.getElementById('Position').innerHTML += "<span class = 'ital'> Landed</span>";
+					document.getElementById('Speed').innerHTML += "<span class = 'ital'> 0 mph</span>";
+					document.getElementById('Altitude').innerHTML += "<span class = 'ital'> 0 ft</span>";
+				}
 			}
 		
 			//if this is the first set of coordinates we want to add it immediately to the map so it updates before adding the data to the db, sorting the coordinates, making up the polyline path, etc
@@ -179,11 +186,12 @@ $(document).ready(function() {
 				longitude: data.longitude,
 				time: data.time,
 				arrivat: data.arriveat,
-				departfrom: data.departfrom
+				departfrom: data.departfrom,
+				eta: data.eta
 				}, function(data) {
 			
 			});
- 
+			 
 			//Constant per flight at all times:
 			document.getElementById('flightname').innerHTML = "<h4>" + capitalize(logged_user.Get("flightnum")) + "</h4>";
 			document.getElementById('airports').innerHTML = "";
@@ -195,12 +203,15 @@ $(document).ready(function() {
 				document.getElementById('time').innerHTML = "";
 				document.getElementById('landed').innerHTML = "";
 				document.getElementById('Distance').innerHTML = "<span class = 'boldy'>Distance Since Takeoff: </span>";
-				var datafields = ['Altitude', 'Speed', 'Position'];
+				var datafields = ['ETA', 'Altitude', 'Speed', 'Position'];
 				for (var i = 0; i < datafields.length; i++){
 					document.getElementById(datafields[i]).innerHTML = "<span class = 'boldy'>" + datafields[i]+": </span>";
 				}
 				if (data.time != undefined) document.getElementById('time').innerHTML = "<h5>" + data.time + "</h5>";
 			
+				if (data.eta != undefined) document.getElementById('ETA').innerHTML += data.eta;
+				else document.getElementById('ETA').innerHTML += "<span class = 'ital'> (Unavailable)</span>";
+
 				if (data.altitude != undefined) document.getElementById('Altitude').innerHTML += data.altitude + " feet";
 				else document.getElementById('Altitude').innerHTML += "<span class = 'ital'> (Unavailable)</span>";
 			

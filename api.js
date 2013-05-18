@@ -712,6 +712,7 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
 								console.log("en route");
 								var departfrom = undefined;
 								var arriveat = undefined;
+								var eta = undefined;
 							
 								//COLLECT DEPARTURE AIRPORT AND DESTINATION AIRPORT
 								if (jsonobj.queryresult.pod != undefined && jsonobj.queryresult.pod[1] != undefined && jsonobj.queryresult.pod[1].subpod != undefined && jsonobj.queryresult.pod[1].subpod[0] != undefined && jsonobj.queryresult.pod[1].subpod[0].plaintext != undefined && jsonobj.queryresult.pod[1].subpod[0].plaintext != ""){
@@ -727,6 +728,10 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
 										}
 										if (datumarray[0] == "arrival airport"){
 											arriveat = datumarray[1];
+										}
+										if (datumarray[0] == "estimated landing time"){
+											eta = datumarray[1];
+											eta = eta.slice(0, eta.lastIndexOf(" ("));
 										}
 									}
 								}
@@ -852,6 +857,9 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
 									}
 									if (departfrom != undefined){
 										dataobj.departfrom = departfrom;
+									}
+									if (eta != undefined){
+										dataobj.eta = eta;
 									}
 									if (finaldata['time'] != undefined){
 										dataobj.time = finaldata['time'];								
