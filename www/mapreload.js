@@ -11,7 +11,7 @@ var myLoc = new google.maps.LatLng(0,0);
 var request = new XMLHttpRequest();
 
 
-var planepic = 'img/planesmall3.png';	
+
 
 // Arrays of google.maps.LatLng coordinates used to draw the polyline paths
 var polyline = [];
@@ -79,40 +79,78 @@ function refreshmap(planecoords){
 	request = new XMLHttpRequest();
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 
-
+	rotateangle = 0;
 	polyline = [];
 	markers = [];
 	var newMarker;
 	for (var i = 0; i < planecoords.length; i++){
-		var coords = new google.maps.LatLng(planecoords[i][0], planecoords[i][1]);
+		coords = new google.maps.LatLng(planecoords[i][0], planecoords[i][1]);
 		polyline.push(coords);	
+	}
 
-		//add markers for all coords
+	if (planecoords.length == 1){
+		var picurl = "img/planesmall3.png";
+		newMarker = new google.maps.Marker({		
+			position: coords,
+			icon: picurl
+		});	
+		newMarker.setMap(map);
+		map.setCenter(coords);
+	}
+	else if (planecoords.length > 1){
+		rotateangle = 0;
+		for (var i = 0; i < polyline.length; i++){
+			if (i > 0){
+				var pastcoords = polyline[i-1];
+				var curcoords = polyline[i];
+				rotateangle = google.maps.geometry.spherical.computeHeading(pastcoords,curcoords);
+				if (rotateangle < 0){
+					rotateangle = 360 - (rotateangle * -1);
+				}	
+			}		
+		}
+			
+		//now rotateangle is the angle of the final set of coordinates (current location)
+		//figure out which degrees-turned-image matches the direction it's traveled since the last set of coords
+		var picangle = 0;
+		if (rotateangle >= 10 && rotateangle < 30) picangle = 20;
+		else if (rotateangle >= 30 && rotateangle < 50) picangle = 40;
+		else if (rotateangle >= 50 && rotateangle < 70) picangle = 60;		
+		else if (rotateangle >= 70 && rotateangle < 90) picangle = 80;		
+		else if (rotateangle >= 90 && rotateangle < 110) picangle = 100;		
+		else if (rotateangle >= 110 && rotateangle < 130) picangle = 120;
+		else if (rotateangle >= 130 && rotateangle < 150) picangle = 140;				
+		else if (rotateangle >= 150 && rotateangle < 170) picangle = 160;
+		else if (rotateangle >= 170 && rotateangle < 190) picangle = 180;								
+		else if (rotateangle >= 190 && rotateangle < 210) picangle = 200;		
+		else if (rotateangle >= 210 && rotateangle < 230) picangle = 220;		
+		else if (rotateangle >= 230 && rotateangle < 250) picangle = 240;		
+		else if (rotateangle >= 250 && rotateangle < 270) picangle = 260;
+		else if (rotateangle >= 270 && rotateangle < 290) picangle = 280;
+		else if (rotateangle >= 290 && rotateangle < 310) picangle = 300;
+		else if (rotateangle >= 310 && rotateangle < 330) picangle = 320;
+		else if (rotateangle >= 330 && rotateangle < 350) picangle = 340;
+		else picangle = 0; // >= 350 || < 10
+		
+		var picurl = "img/angled/" + picangle + ".png";	
+		
+		var planepic = new google.maps.MarkerImage(
+			picurl, 
+			null,
+			new google.maps.Point(0,0),
+			new google.maps.Point(22, 22)
+		);	
 		newMarker = new google.maps.Marker({		
 			position: coords,
 			icon: planepic
-		});
-		markers.push(newMarker);
-
-		//draw 1st marker
-//		if (i == 0){ 
-//			newMarker.setMap(map);
-//		}
-	}
-	//draw final marker and polyline
-//	console.log("setting final marker");
-	newMarker.setMap(map);
-	drawlines(polyline);
-
-	//if path is only 1 dot, have a larger zoom out
-	if (polyline.length == 1){ 
-//		console.log("length 1 setting to " + coords);
+		});	
+	
+		//draw final marker and polyline
+		newMarker.setMap(map);
+		drawlines(polyline);
 		map.setCenter(coords);
 	}
-	else{	
-//		fixbounds();
-	map.setCenter(coords);
-	}
+
 
 	var state = refreshfacts([coords.lat(), coords.lng()]); // pass final coords; the most recent coords
 	return state;

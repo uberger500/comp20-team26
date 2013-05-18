@@ -669,6 +669,7 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
 	//turn request into json and grab flight
 	var args = JSON.parse(JSON.stringify(req.query));
 	var flight = args.flight.replace(/ /g, "+");
+	console.log(flight);
 	
 	var params = "includepodid=FlightProperties:FlightData&includepodid=FlightSchedule:FlightData&includepodid=FlightStatus:FlightData&format=plaintext";
 
@@ -683,7 +684,7 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
 	var url = 'http://api.wolframalpha.com/v2/query?input=' + flight + "&appid=LUJKX2-LP3GW5VUGX&" + params;
 
 //	var url = 'http://api.wolframalpha.com/v2/query?input=' + flight + "+at+" + timeago + "&appid=LUJKX2-LP3GW5VUGX&" + params;
-	console.log(url);
+//	console.log(url);
 
 	var request = require('request');
 	request(url, function (error, response, body) {
@@ -709,7 +710,7 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
 								res.send('{"status":"Plane hasn\'t taken off yet or post-takeoff data not available yet"}');
 							}
 							else if (responsestring.indexOf("en route") != -1){
-								console.log("en route");
+//								console.log("en route");
 								var departfrom = undefined;
 								var arriveat = undefined;
 								var eta = undefined;
