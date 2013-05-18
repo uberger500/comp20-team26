@@ -160,9 +160,17 @@ app.post(API_PREFIX + '/user/delete', function(request, response) {
 app.post(API_PREFIX + '/user/addflight', function(request, response) {
 	var flight = request.param('flight');
 	var user_id = request.session.user;
-
+	var local = request.param('local');
+	
 	var curtime = new Date();
-	var curtime30less = new Date(curtime - (30 * 60000));
+	if (local == "true"){
+		console.log("LOCAL");
+		var curtime30less = new Date(curtime - (30 * 60000));
+	}
+	else{
+		console.log("NOT LOCAL");
+		var curtime30less = new Date(curtime - (30 * 60000) - (4 * 60 * 60000));
+	}
 	var starttimeformatted = formattime(curtime30less); //still without tail :00
 	starttimeformatted = starttimeformatted + ":00";
 	
@@ -312,6 +320,12 @@ app.get(API_PREFIX + '/user/pathcoords', function(request, response) {
 
 								trackingstart = doc2[0].trackingstart;
 
+								if (timecoordsarray[i][0] >= trackingstart){
+									console.log("yes");
+								}
+								else{
+									console.log("no");
+								}
 								if (usedtimes.indexOf(timecoordsarray[i][0]) == -1 && timecoordsarray[i][0] >= trackingstart){
 //									console.log("Coords time of " + timecoordsarray[i][0] + " is >= " + trackingstart);
 									//add the coordinates to the finalpath array of just coordinates, no times
@@ -525,7 +539,7 @@ app.get(API_PREFIX + '/checkflight', function(req, res) {
 
 	var request = require('request');
 		
-	request('http://api.wolframalpha.com/v2/query?input=' + flight + "&appid=LUJKX2-LP3GW5VUGX&" + params, function (error, response, body) {
+	request('http://api.wolframalpha.com/v2/query?input=' + flight + "&appid=6QEQPA-TU5LP4WJG9&" + params, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
 			if (response.body != null){
 				var parseString = require('xml2js').parseString; //parse xml string
@@ -582,8 +596,8 @@ app.get(API_PREFIX + '/nearbyplanes', function(request, res) {
 
 
 	var request = require('request');
-	// request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=LUJKX2-LP3GW5VUGX&" + params, function (error, response, body) {
- request('http://api.wolframalpha.com/v2/query?input=' + "planes+above+boston" + "&appid=LUJKX2-LP3GW5VUGX&" + params, function (error, response, body) {
+	// request('http://api.wolframalpha.com/v2/query?input=' + query + "&appid=6QEQPA-TU5LP4WJG9&" + params, function (error, response, body) {
+ request('http://api.wolframalpha.com/v2/query?input=' + "planes+above+boston" + "&appid=6QEQPA-TU5LP4WJG9&" + params, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
 			if (response.body != null){
 				var parseString = require('xml2js').parseString; //parse xml string
@@ -681,9 +695,9 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
 	var errorobj = new Object;
 	errorobj.status = "Error finding flight info";
 
-	var url = 'http://api.wolframalpha.com/v2/query?input=' + flight + "&appid=LUJKX2-LP3GW5VUGX&" + params;
+	var url = 'http://api.wolframalpha.com/v2/query?input=' + flight + "&appid=6QEQPA-TU5LP4WJG9&" + params;
 
-//	var url = 'http://api.wolframalpha.com/v2/query?input=' + flight + "+at+" + timeago + "&appid=LUJKX2-LP3GW5VUGX&" + params;
+//	var url = 'http://api.wolframalpha.com/v2/query?input=' + flight + "+at+" + timeago + "&appid=6QEQPA-TU5LP4WJG9&" + params;
 //	console.log(url);
 
 	var request = require('request');

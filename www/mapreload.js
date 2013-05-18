@@ -98,6 +98,7 @@ function refreshmap(planecoords){
 		map.setCenter(coords);
 	}
 	else if (planecoords.length > 1){
+		console.log(planecoords + " " + polyline)
 		rotateangle = 0;
 		for (var i = 0; i < polyline.length; i++){
 			if (i > 0){
