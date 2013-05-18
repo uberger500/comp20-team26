@@ -19,7 +19,7 @@ function displaynearbyplanes(){
 			// to a get request that respons with json planes
 			
 			//change this to wingmanapi.herokuapp whatever
-			var url = "http://wingmanapi.herokuapp.com/api/nearbyplanes?latitude=" + myLoc.lat() + "&longitude=" + myLoc.lng() + "&token=" + logged_user.token;
+			var url = "http://127.0.0.1:5000/api/nearbyplanes?latitude=" + myLoc.lat() + "&longitude=" + myLoc.lng() + "&token=" + logged_user.token;
 			// console.log(url);
 			$.get(url, function(data){ 
 				// data comes back as an array of flight strings
@@ -59,7 +59,7 @@ function displaynearbyplanes(){
 						var numverified = 0;
 						
 						var flightpluses = flight.replace(/ /g, "+");
-						var url = "http://wingmanapi.herokuapp.com/api/checkflight?flight=" + flightpluses + "&token=" + logged_user.token;
+						var url = "http://127.0.0.1:5000/api/checkflight?flight=" + flightpluses + "&token=" + logged_user.token;
 						//check if all flights are valid on wolfram and are either en route or havent taken off yet; landeds will not be returned
 						$.ajax({
 							url: url,
@@ -99,6 +99,7 @@ function alertme(){
 }
 
 function submitflight(){
+
 	document.getElementById('landed').innerHTML = "";
 
 	//disable user re-clicking it
@@ -113,23 +114,24 @@ function submitflight(){
 	
 	//check if valid on wolfram
 	var flightpluses = flightnum.replace(/ /g, "+");
-	var url = "http://wingmanapi.herokuapp.com/api/checkflight?flight=" + flightpluses + "&token=" + logged_user.token;
+	var url = "http://127.0.0.1:5000/api/checkflight?flight=" + flightpluses + "&token=" + logged_user.token;
 	//check if all flights are valid on wolfram and are either en route or havent taken off yet; landeds will not be returned
 	$.get(url, function(response){ 
 		if (response.status == "valid" || response.status == "has not taken off yet"){
 			if (response.status == "has not taken off yet"){
 				alert("Valid flight but either hasn't taken off yet or no post-takeoff data available yet; there may be a delay in tracking.");
 			}
-			
-			//add flight to database
-			$.post("http://wingmanapi.herokuapp.com/api/user/addflight", {username: logged_user.email, token: logged_user.token, flight: flightnum});
+			//add flight num header to top of page
+			document.getElementById('flightbox').style.display = ""; //turn on display; past display:none
+			document.getElementById('flightnamebox').innerHTML = "<h1>" + capitalize(flightnum.replace(/\+/g, " ")) + "</h1>";
 
-	
+			//add flight to database
+			$.post("http://127.0.0.1:5000/api/user/addflight", {username: logged_user.email, token: logged_user.token, flight: flightnum});
+
 			logged_user.Set("flightnum",flightnum);
 			logged_user.updateFlight();
 			flightupdate = window.setInterval(logged_user.updateFlight, 20000);
-			//fix map rendering zoom
-//			fixbounds();
+
 			$("#input-flight").hide();
 			$("#trigger-input").trigger("click");
 			$('#submit-flight').removeAttr('disabled');		

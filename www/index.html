@@ -131,7 +131,7 @@
 
 				<li class="divider-vertical"></li>
 			   
-				<li><a href="#input-flight" data-toggle="modal">Select Flight</a></li>
+				<li><a href="#input-flight" data-toggle="modal" onClick = 'document.location.reload(true)'>New Flight</a></li>
 			 
 				<li class="divider-vertical"></li>
 			  
@@ -191,10 +191,20 @@
             <input type='text' id='flight-number' placeholder='eg. delta flight 92' />
             </div>  
             <div class="modal-footer">  
-            <div id = 'problem'>* Since approximately 2:00 PM on May 14th Wolfram has been providing bad (old) data for queries like "planes above me." Data from hours ago is likely inaccurate now; flights detected may already have landed causing site errors."</div>
-            <a href="#" id='submit-flight' data-dismiss='input-flight' class="btn btn-success" >Go!</a>  
+				<div class="alert alert-error">
+					<button type="button" class="close" data-dismiss="alert">&times;</button>
+					<strong>ALERT</strong><br/> Since approximately 2:00 PM on May 14th, Wolfram has been providing bad (old) data for queries like "planes above me." Flights tracked may have already landed causing tracking errors.
+				</div>
+				<a href="#" id='submit-flight' data-dismiss='input-flight' class="btn btn-success" >Go!</a>  
             </div>
         </div>
+
+
+<div id = "flightbox">
+<div id = "flightnamebox"></div>
+<div id = "airports"></div>
+
+</div>
 
       <div id="map_canvas"></div>
       <ul class='tabs' data-group='dashboard'>
@@ -207,9 +217,9 @@
 
       <div id="dashboard">
       	<div id = 'currentdata'>
-      		<p class = 'flightdata' id = 'flightname'></p>
+<!--       		<p class = 'flightdata' id = 'flightname'></p> 	-->
       		<p class = 'flightdata' id = 'landed'></p>
-      		<p class = 'flightdata' id = 'airports'></p>
+<!--      		<p class = 'flightdata' id = 'airports'></p>	-->
       		<p class = 'flightdata' id = 'time'></p>
  			<p class = 'flightdata' id = 'Distance'></p>
   			<p class = 'flightdata' id = 'ETA'></p>

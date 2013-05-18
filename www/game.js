@@ -160,7 +160,7 @@ function gameloop(){
 		scoreobj.score = score;
 		scoreobj.token = "7cb2c74a-f4ec-4691-a92b-540366f0db87";
 
-		$.post("http://wingmanapi.herokuapp.com/api/score/submit", scoreobj);
+		$.post("http://127.0.0.1:5000/api/score/submit", scoreobj);
 //		$.post("http://localhost:3000/submit.json", scoreobj);
 //		$.post("http://localhost:3000/submit.json", {game_title: "frogger", username: "bob", score:9001});
 		clearInterval(a); //stop game loop

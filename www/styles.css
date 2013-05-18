@@ -141,7 +141,7 @@ h4{
 	padding:10px;
 }
 h5{
-	font-size:20px;
+	font-size:22px;
 }
 
 #hiddenimg{
@@ -164,7 +164,24 @@ h5{
 	text-align:center;	
 }
 
-#problem{
+.alert{
 	text-align:left;
-	color:red;
 }
+
+#flightbox {
+	width: 95%;
+	height:auto;
+	margin: 10px auto;
+	text-align:center;
+  	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #2b2d30), color-stop(100%, black));
+    color: #959595;
+	padding-bottom:1px;
+	padding-top:1px;
+	border-radius: 5px;
+}
+
+#airports{
+	font-size:18px;
+	padding-bottom:10px;
+}
+
