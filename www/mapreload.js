@@ -3,7 +3,7 @@ var myOptions = {
 	zoom: 7, // The larger the zoom number, the bigger the zoom
 	center: fieldscorner,	// center south station while your location loads
 	mapTypeId: google.maps.MapTypeId.HYBRID
-	};
+};
 var map;
 var myLat = 0;
 var myLng = 0;
@@ -19,6 +19,7 @@ var markers = [];
 
 //Delta 818
 var planecoords = [];
+/*
 planecoords.push([44.88, -93.22]);
 planecoords.push([45.02, -93.14]);
 planecoords.push([45.31, -92.16]);
@@ -34,7 +35,7 @@ planecoords.push([44.41, -83.15]);
 planecoords.push([44.17, -82.07]);
 planecoords.push([43.97, -81.12]);
 planecoords.push([43.77, -80.13]);
-/*planecoords.push([43.6, -79.2]);
+planecoords.push([43.6, -79.2]);
 planecoords.push([43.47, -78.24]);
 planecoords.push([43.3, -77.2]);
 planecoords.push([43.19, -76.35]);
@@ -98,7 +99,6 @@ function refreshmap(planecoords){
 		map.setCenter(coords);
 	}
 	else if (planecoords.length > 1){
-		console.log(planecoords + " " + polyline)
 		rotateangle = 0;
 		for (var i = 0; i < polyline.length; i++){
 			if (i > 0){
@@ -116,9 +116,12 @@ function refreshmap(planecoords){
 		var picangle = 0;
 		if (rotateangle >= 10 && rotateangle < 30) picangle = 20;
 		else if (rotateangle >= 30 && rotateangle < 50) picangle = 40;
-		else if (rotateangle >= 50 && rotateangle < 70) picangle = 60;		
-		else if (rotateangle >= 70 && rotateangle < 90) picangle = 80;		
-		else if (rotateangle >= 90 && rotateangle < 110) picangle = 100;		
+		else if (rotateangle >= 50 && rotateangle < 70) picangle = 60;	
+		else if (rotateangle >= 70 && rotateangle < 85) picangle = 80;		
+		
+		else if (rotateangle >= 85 && rotateangle < 95) picangle = 90;
+		
+		else if (rotateangle >= 95 && rotateangle < 110) picangle = 100;		
 		else if (rotateangle >= 110 && rotateangle < 130) picangle = 120;
 		else if (rotateangle >= 130 && rotateangle < 150) picangle = 140;				
 		else if (rotateangle >= 150 && rotateangle < 170) picangle = 160;
@@ -126,8 +129,11 @@ function refreshmap(planecoords){
 		else if (rotateangle >= 190 && rotateangle < 210) picangle = 200;		
 		else if (rotateangle >= 210 && rotateangle < 230) picangle = 220;		
 		else if (rotateangle >= 230 && rotateangle < 250) picangle = 240;		
-		else if (rotateangle >= 250 && rotateangle < 270) picangle = 260;
-		else if (rotateangle >= 270 && rotateangle < 290) picangle = 280;
+		else if (rotateangle >= 250 && rotateangle < 265) picangle = 260;
+		
+		else if (rotateangle >= 265 && rotateangle < 275) picangle = 270;
+		
+		else if (rotateangle >= 275 && rotateangle < 290) picangle = 280;
 		else if (rotateangle >= 290 && rotateangle < 310) picangle = 300;
 		else if (rotateangle >= 310 && rotateangle < 330) picangle = 320;
 		else if (rotateangle >= 330 && rotateangle < 350) picangle = 340;
@@ -178,8 +184,6 @@ function drawlines(path){
 // facts have variable length - scrollbar on display of them or what?
 function refreshfacts(coords){
 
-//	console.log("refreshing at " + coords);
-
 	var lat = coords[0];
 	var lon = coords[1];
 
@@ -220,7 +224,6 @@ function refreshfacts(coords){
 					state_simple = "ocean";
 					state_regular = "Ocean";
 				}
-//				console.log("adding facts for " + state_regular);
 					
 				// now find facts for the state
 				var fivefacts = findfacts(state_simple);

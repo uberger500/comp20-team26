@@ -78,8 +78,6 @@ app.post(API_PREFIX + '/user/create', function(request, response) {
 		response.json({success: false, error: 'Invalid input'});
 		return;
 	}
-	console.log("Email: " + email);
-	console.log("Pass: " + pass);
 	bcrypt.hash(pass, 10, function(err, hash) {
 		if (err || !hash) {
 			response.json({success: false, error: 'Password could not be hashed'});
@@ -164,21 +162,15 @@ app.post(API_PREFIX + '/user/addflight', function(request, response) {
 	
 	var curtime = new Date();
 	if (local == "true"){
-		console.log("LOCAL");
 		var curtime30less = new Date(curtime - (30 * 60000));
 	}
 	else{
-		console.log("NOT LOCAL");
 		var curtime30less = new Date(curtime - (30 * 60000) - (4 * 60 * 60000));
 	}
 	var starttimeformatted = formattime(curtime30less); //still without tail :00
 	starttimeformatted = starttimeformatted + ":00";
-	
-//	var doc = userSchema.flightSchema.id(id);
-//	console.log(doc)
 
 	var flightdb = db2.collection('flights');
-
 
 //First insert new flight into flights collection	
 	flightdb.insert({name: flight, trackingstart: starttimeformatted}, {safe:true}, function(err, objects) {
@@ -320,12 +312,6 @@ app.get(API_PREFIX + '/user/pathcoords', function(request, response) {
 
 								trackingstart = doc2[0].trackingstart;
 
-								if (timecoordsarray[i][0] >= trackingstart){
-									console.log("yes");
-								}
-								else{
-									console.log("no");
-								}
 								if (usedtimes.indexOf(timecoordsarray[i][0]) == -1 && timecoordsarray[i][0] >= trackingstart){
 //									console.log("Coords time of " + timecoordsarray[i][0] + " is >= " + trackingstart);
 									//add the coordinates to the finalpath array of just coordinates, no times

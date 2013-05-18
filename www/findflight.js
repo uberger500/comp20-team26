@@ -20,7 +20,6 @@ function displaynearbyplanes(){
 			
 			//change this to wingmanapi.herokuapp whatever
 			var url = masterurl + "/api/nearbyplanes?latitude=" + myLoc.lat() + "&longitude=" + myLoc.lng() + "&token=" + logged_user.token;
-			// console.log(url);
 			$.get(url, function(data){ 
 				// data comes back as an array of flight strings
 				if (JSON.stringify(data).indexOf('flight') == -1){ //if theres no substring flight, no flights found
@@ -100,8 +99,6 @@ function alertme(){
 
 function submitflight(){
 
-	document.getElementById('landed').innerHTML = "";
-
 	//disable user re-clicking it
 	$('#submit-flight').attr('disabled', 'disabled').addClass('disabled');
 
@@ -126,7 +123,6 @@ function submitflight(){
 //			document.getElementById('flightnamebox').style.display = "";
 			document.getElementById('flightbox').innerHTML = "<h1>" + capitalize(flightnum.replace(/\+/g, " ")) + "</h5>";
 
-			console.log("local " + local);
 			//add flight to database
 			$.post(masterurl + "/api/user/addflight", {username: logged_user.email, token: logged_user.token, flight: flightnum, local: local});
 

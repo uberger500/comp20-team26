@@ -169,19 +169,16 @@ $(document).ready(function() {
 			token: logged_user.token
 		}, function(data) {
 		
-			if (data.status == "Error finding flight info"){
-				console.log("Error finding flight info");
-			}
 			if (data.status == "landed"){
 			
-				document.getElementById('landed').innerHTML = "Landed";
 				var datafields = ['Altitude', 'Speed', 'Position'];
 				for (var i = 0; i < datafields.length; i++){
 					document.getElementById(datafields[i]).innerHTML = "<span class = 'boldy'>" + datafields[i]+": </span>";
-					document.getElementById('Position').innerHTML += "<span class = 'ital'> Landed</span>";
-					document.getElementById('Speed').innerHTML += "<span class = 'ital'> 0 mph</span>";
-					document.getElementById('Altitude').innerHTML += "<span class = 'ital'> 0 ft</span>";
+					if (datafields[i] == "Position") document.getElementById('Position').innerHTML += "<span class = 'ital'> Landed</span>";
+					else if (datafields[i] == "Speed") document.getElementById('Speed').innerHTML += "<span class = 'ital'> 0 mph</span>";
+					else if (datafields[i] == "Altitude") document.getElementById('Altitude').innerHTML += "<span class = 'ital'> 0 ft</span>";
 				}
+				document.getElementById('flightbox').innerHTML = "<h1>" + capitalize(logged_user.Get("flightnum").replace(/\+/g, " ")) + "</h1>" + "<h6>LANDED</h6>";
 			}
 		
 			//if this is the first set of coordinates we want to add it immediately to the map so it updates before adding the data to the db, sorting the coordinates, making up the polyline path, etc
@@ -228,7 +225,6 @@ $(document).ready(function() {
 			// Only update all if there is some new info; if data unavailable currently, dont delete last update 
 			if (data.time != undefined || data.altitude != undefined || data.speed != undefined || data.position != undefined || data.distance != undefined){
 				document.getElementById('time').innerHTML = "";
-				document.getElementById('landed').innerHTML = "";
 				document.getElementById('Distance').innerHTML = "<span class = 'boldy'>Distance Since Takeoff: </span>";
 				var datafields = ['ETA', 'Altitude', 'Speed', 'Position'];
 				for (var i = 0; i < datafields.length; i++){
@@ -305,7 +301,6 @@ $(document).ready(function() {
 
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 	var middleUSA = new google.maps.LatLng(39.8282, -98.5795);
-//	console.log("setting to middle usa");
 	map.setCenter(middleUSA);
 
 	
