@@ -161,6 +161,9 @@ $(document).ready(function() {
 			token: logged_user.token
 		}, function(data) {
 		
+			if (data.status == "Error finding flight info"){
+				console.log("Error finding flight info");
+			}
 //			console.log(data);
 			if (data.status == "landed"){
 			
@@ -178,7 +181,8 @@ $(document).ready(function() {
 			if (data.latitude != undefined && data.longitude != undefined && firstcoords == true){
 				var coords = new google.maps.LatLng(data.latitude,data.longitude);
 				newMarker = new google.maps.Marker({		
-					position: coords
+					position: coords,
+					icon: "img/planesmall3.png"
 				});
 				map.setCenter(coords);
 				newMarker.setMap(map);
