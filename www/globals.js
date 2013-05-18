@@ -64,8 +64,11 @@ $(document).ready(function() {
 
 	User.prototype.populateFields = function() {
 		$("#username-p").html(this.name);
-		$("#flights-p").html(this.total_flights + "3");
-		$("#miles-p").html(this.total_miles + "3247");
+//		$("#flights-p").html(this.total_flights + "3");
+//		$("#miles-p").html(this.total_miles + "3247");
+		$("#flights-p").html(this.total_flights + "1");
+		$("#miles-p").html(this.total_miles + "###");
+
 	};
 
 	function createUser(name, email, password) {
@@ -190,6 +193,7 @@ $(document).ready(function() {
 			// Only update all if there is some new info; if data unavailable currently, dont delete last update 
 			if (data.time != undefined || data.altitude != undefined || data.speed != undefined || data.position != undefined || data.distance != undefined){
 				document.getElementById('time').innerHTML = "";
+				document.getElementById('landed').innerHTML = "";
 				document.getElementById('Distance').innerHTML = "<span class = 'boldy'>Distance Since Takeoff: </span>";
 				var datafields = ['Altitude', 'Speed', 'Position'];
 				for (var i = 0; i < datafields.length; i++){

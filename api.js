@@ -680,7 +680,10 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
 	var errorobj = new Object;
 	errorobj.status = "Error finding flight info";
 
-	var url = 'http://api.wolframalpha.com/v2/query?input=' + flight + "+at+" + timeago + "&appid=LUJKX2-LP3GW5VUGX&" + params;
+	var url = 'http://api.wolframalpha.com/v2/query?input=' + flight + "&appid=LUJKX2-LP3GW5VUGX&" + params;
+
+//	var url = 'http://api.wolframalpha.com/v2/query?input=' + flight + "+at+" + timeago + "&appid=LUJKX2-LP3GW5VUGX&" + params;
+	console.log(url);
 
 	var request = require('request');
 	request(url, function (error, response, body) {
@@ -695,8 +698,10 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
 							
 					// check if entire string contains "actual landing time"
 						var responsestring = JSON.stringify(jsonobj.queryresult);
-						console.log(responsestring);
+						//console.log(responsestring);
 						if (responsestring.indexOf("arrived at") != -1){
+							console.log(responsestring);
+							console.log("^ contains words arrived at");
 							res.send('{"status":"landed"}');
 						}			
 						else{
@@ -704,7 +709,7 @@ app.get(API_PREFIX + '/currentdata', function(req, res) {
 								res.send('{"status":"Plane hasn\'t taken off yet or post-takeoff data not available yet"}');
 							}
 							else if (responsestring.indexOf("en route") != -1){
-							
+								console.log("en route");
 								var departfrom = undefined;
 								var arriveat = undefined;
 							
