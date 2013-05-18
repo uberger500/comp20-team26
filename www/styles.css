@@ -168,7 +168,7 @@ h5{
 	text-align:left;
 }
 
-#flightbox {
+#flightbox{
 	width: 95%;
 	height:auto;
 	margin: 10px auto;
@@ -180,8 +180,8 @@ h5{
 	border-radius: 5px;
 }
 
-#airports{
+h6{
 	font-size:18px;
-	padding-bottom:10px;
+	padding-bottom:5px;
 }
 

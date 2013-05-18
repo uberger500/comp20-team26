@@ -2,6 +2,7 @@ var searchingforchats = false;
 var reload2;
 olddata = 'a';
 var firstcoords = true;
+var airportsshown = false;
 
 function encodeHTML(s) {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
@@ -32,8 +33,9 @@ function logoutUser() {
 $(document).ready(function() {
 	var callct = 0;
 
-	document.getElementById('flightbox').style.display = "none";
-	document.getElementById('airports').style.display = "none";
+//	document.getElementById('flightbox').style.display = "none";
+//	document.getElementById('airports').style.display = "none";
+//	document.getElementById('flightnamebox').style.display = "none";
 
 
 	function User(email, password) {
@@ -161,6 +163,7 @@ $(document).ready(function() {
 		
 //			console.log(data);
 			if (data.status == "landed"){
+			
 				document.getElementById('landed').innerHTML = "Landed";
 				var datafields = ['Altitude', 'Speed', 'Position'];
 				for (var i = 0; i < datafields.length; i++){
@@ -201,11 +204,12 @@ $(document).ready(function() {
 //			document.getElementById('airports').innerHTML = "";
 //			if (data.departfrom != undefined && data.arriveat != undefined) document.getElementById('airports').innerHTML += "<span class = 'boldy'>" + data.departfrom + " to " + data.arriveat + "</span>";   
 
-			if (document.getElementById('airports').innerHTML == "" && data.departfrom != undefined && data.arriveat != undefined){
-				document.getElementById('airports').style.display = "";
+			if (airportsshown == false && data.departfrom != undefined && data.arriveat != undefined){
+				document.getElementById('flightbox').style.display = "";
 				var departairport = data.departfrom.slice(0, data.departfrom.lastIndexOf(" ("));
 				var arriveairport = data.arriveat.slice(0, data.arriveat.lastIndexOf(" ("));
-				document.getElementById('airports').innerHTML += departairport + " to " + arriveairport;
+				document.getElementById('flightbox').innerHTML = "<h1>" + capitalize(logged_user.Get("flightnum").replace(/\+/g, " ")) + "</h1>" + "<h6>" + departairport + " to " + arriveairport + "</h6>";
+				airportsshown = true;
 			}
 			//document.getElementById('airports').innerHTML += "<span class = 'boldy'>" + data.departfrom + " to " + data.arriveat + "</span>";   
 

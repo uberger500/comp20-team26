@@ -122,8 +122,9 @@ function submitflight(){
 				alert("Valid flight but either hasn't taken off yet or no post-takeoff data available yet; there may be a delay in tracking.");
 			}
 			//add flight num header to top of page
-			document.getElementById('flightbox').style.display = ""; //turn on display; past display:none
-			document.getElementById('flightnamebox').innerHTML = "<h1>" + capitalize(flightnum.replace(/\+/g, " ")) + "</h1>";
+//			document.getElementById('flightbox').style.display = ""; //turn on display; past display:none
+//			document.getElementById('flightnamebox').style.display = "";
+			document.getElementById('flightbox').innerHTML = "<h1>" + capitalize(flightnum.replace(/\+/g, " ")) + "</h5>";
 
 			//add flight to database
 			$.post("http://127.0.0.1:5000/api/user/addflight", {username: logged_user.email, token: logged_user.token, flight: flightnum});
