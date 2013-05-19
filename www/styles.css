@@ -170,7 +170,6 @@ h5{
 
 #flightbox{
 	width: 95%;
-	height:auto;
 	margin: 10px auto;
 	text-align:center;
   	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #2b2d30), color-stop(100%, black));
@@ -180,8 +179,16 @@ h5{
 	border-radius: 5px;
 }
 
+
 h6{
 	font-size:18px;
-	padding-bottom:5px;
+	padding:0;
+	margin-bottom:4px;
 }
+
+#smallplane{
+	vertical-align:middle;
+}
+
+
 

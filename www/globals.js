@@ -207,15 +207,12 @@ $(document).ready(function() {
 			});
 			 
 			//Constanta datper flight at all times:
-//			document.getElementById('flightname').innerHTML = "<h4>" + capitalize(logged_user.Get("flightnum").replace(/\+/g, " ")) + "</h4>";
-//			document.getElementById('airports').innerHTML = "";
-//			if (data.departfrom != undefined && data.arriveat != undefined) document.getElementById('airports').innerHTML += "<span class = 'boldy'>" + data.departfrom + " to " + data.arriveat + "</span>";   
 
 			if (airportsshown == false && data.departfrom != undefined && data.arriveat != undefined){
 				document.getElementById('flightbox').style.display = "";
 				var departairport = data.departfrom.slice(0, data.departfrom.lastIndexOf(" ("));
 				var arriveairport = data.arriveat.slice(0, data.arriveat.lastIndexOf(" ("));
-				document.getElementById('flightbox').innerHTML = "<h1>" + capitalize(logged_user.Get("flightnum").replace(/\+/g, " ")) + "</h1>" + "<h6>" + departairport + " to " + arriveairport + "</h6>";
+				document.getElementById('flightbox').innerHTML = "<h1>" + capitalize(logged_user.Get("flightnum").replace(/\+/g, " ")) + "</h1>" + "<h6>" + departairport + " <img id = 'smallplane' src = 'img/angled/90v4.png' alt = 'planeicon'> " + arriveairport + "</h6>";
 				airportsshown = true;
 			}
 			//document.getElementById('airports').innerHTML += "<span class = 'boldy'>" + data.departfrom + " to " + data.arriveat + "</span>";   
