@@ -80,8 +80,8 @@ $(document).ready(function() {
 		$("#username-p").html(this.name);
 //		$("#flights-p").html(this.total_flights + "3");
 //		$("#miles-p").html(this.total_miles + "3247");
-		$("#flights-p").html(this.total_flights + "1");
-		$("#miles-p").html(this.total_miles + "###");
+		$("#flights-p").html("1");
+//		$("#miles-p").html(this.total_miles + "###"); later
 
 	};
 
@@ -241,7 +241,10 @@ $(document).ready(function() {
 				if (data.position != undefined) document.getElementById('Position').innerHTML += data.position;			
 				else document.getElementById('Position').innerHTML += "<span class = 'ital'> (Unavailable)</span>";
 
-				if (data.distance != undefined) document.getElementById('Distance').innerHTML += data.distance + " miles";	
+				if (data.distance != undefined){
+					document.getElementById('Distance').innerHTML += data.distance + " miles";
+					$("#miles-p").html(data.distance + " miles");	
+				}
 				else document.getElementById('Distance').innerHTML += "<span class = 'ital'> (Unavailable)</span>";
 			}
 			
